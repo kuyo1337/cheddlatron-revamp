@@ -1,5 +1,5 @@
 # coding: utf8
-ver = "Alpha"
+ver = "revamped"
 stopper = False
 seshid = None
 seshidhash = None
@@ -152,7 +152,7 @@ async def make_server(name, icon=None):
     data = res.read()
     data = json.loads(data.decode('utf-8'))
     try:
-        websocket = Cheddlatron._get_websocket()
+        websocket = Repent._get_websocket()
         await websocket.send_as_json({"op":37,"d":{"subscriptions":{data['id']:{"typing":True,"threads":True,"activities":True,"members":[],"member_updates":True,"channels":{},"thread_member_lists":[]}}}})
     except Exception as e:
         pass
@@ -320,7 +320,7 @@ def customcmds():
                 file_path = os.path.join('Data/CustomCmds', thing).replace('\\', '/')
                 with open(file_path, encoding="utf-8") as file:
                     code = file.read()
-                pattern = r"@Cheddlatron\.command\(.*?help\s*=\s*['\"](.*?)['\"].*?\)"
+                pattern = r"@Repent\.command\(.*?help\s*=\s*['\"](.*?)['\"].*?\)"
                 matches = re.findall(pattern, code, re.DOTALL)
                 for match in matches:
                     code = code.replace(match, match.lower())
@@ -334,7 +334,7 @@ def customcmds():
 
                     for line in lines:
                         line = line.strip()
-                        if line.startswith("@Cheddlatron.command"):
+                        if line.startswith("@Repent.command"):
                             decorator_found = True 
                         elif decorator_found and re.search(def_pattern, line):
                             command_name = re.match(def_pattern, line).group(1)
@@ -407,15 +407,15 @@ def setting_edit(data, new_value):
 
 def notif(message):
     notification = Notify()
-    notification.application_name = "Cheddlatron Selfbot"
-    notification.title = f"Cheddlatron"
+    notification.application_name = "repent.life"
+    notification.title = f"repent"
     notification.message = message
-    notification.icon = "cheddlatronlogo.ico"
+    notification.icon = "repentlogo.ico"
     notification.send()
 
 def windowname(commandsdone):
     if os.name == "nt":
-             ctypes.windll.kernel32.SetConsoleTitleW(f"Cheddlatron  |  Cmds Used: {commandsdone}  |  Amount of guilds: {len(Cheddlatron.guilds)}  |  Prefix: {config_get('prefix')}  |  {config_get('prefix')}help for help command!")
+             ctypes.windll.kernel32.SetConsoleTitleW(f"Repent  |  Cmds Used: {commandsdone}  |  Amount of guilds: {len(Repent.guilds)}  |  Prefix: {config_get('prefix')}  |  {config_get('prefix')}help for help command!")
 
 def get_time():
     t = time.localtime()
@@ -646,12 +646,12 @@ def apply_theming(text):
         '{bright}': Style.BRIGHT,
         '{dim}': Style.DIM,
         '{reset}': Fore.RESET,
-        '{friends}': str(len(Cheddlatron.user.friends)),
-        '{guilds}': str(len(Cheddlatron.guilds)),
-        '{commands}': str(len(Cheddlatron.commands)),
+        '{friends}': str(len(Repent.user.friends)),
+        '{guilds}': str(len(Repent.guilds)),
+        '{commands}': str(len(Repent.commands)),
         '{prefix}': config_get('prefix'),
         '{version}': ver,
-        '{user}': Cheddlatron.user.name,
+        '{user}': Repent.user.name,
         '{discord}': "https://discord.gg/9FFDd3y9Rv",
         '{customcmds}': str(count_custom_commands()),
         '{nitrosniper}': str(config_get('nitro_sniper')),
@@ -671,7 +671,7 @@ def read_theme(file_path):
     theme_dir = "Data//Themes//"
     matched_files = glob.glob(f"{theme_dir}{file_path}*")
     if not matched_files:
-        print(f"{Fore.LIGHTRED_EX}[Error]: {Fore.WHITE}No file named '{file_path}' found. Loading Cheddlatron theme instead.")
+        print(f"{Fore.LIGHTRED_EX}[Error]: {Fore.WHITE}No file named '{file_path}' found. Loading Repent theme instead.")
         time.sleep(3)
         config_edit('theme', "")
         clear_console()
@@ -684,7 +684,7 @@ def read_theme(file_path):
             themed_content = apply_theming(content)
             print(themed_content)
     except FileNotFoundError:
-        print(f"{Fore.LIGHTRED_EX}[Error]: {Fore.WHITE}File '{file_path}' not found. Loading Cheddlatron theme instead.")
+        print(f"{Fore.LIGHTRED_EX}[Error]: {Fore.WHITE}File '{file_path}' not found. Loading Repent theme instead.")
         asyncio.run(send_webhook("Theme File Error", f"File '{file_path}' not found. Attempting to load default theme.", config_get('error_webhook_url')))
         asyncio.sleep(3)
         config_edit('theme', "")
@@ -780,7 +780,7 @@ async def jeyyapi(ctx, user: discord.User, endpointer: str, file_extension: str)
     async with aiohttp.ClientSession() as session:
         async with session.get(f'https://api.jeyy.xyz/v2/image/{endpointer}', params=params, headers=headers) as response:
             buffer = io.BytesIO(await response.read())
-            await ctx.send(file=discord.File(buffer, f'Cheddlatron_{endpointer}.{file_extension}'))
+            await ctx.send(file=discord.File(buffer, f'Repent_{endpointer}.{file_extension}'))
 
 async def redeem_code(code, token):
     async with httpx.AsyncClient() as client:
@@ -852,7 +852,7 @@ def gettokens():
     return tokens
 
 def check_and_add_alias(command_name, alias):
-    command = Cheddlatron.get_command(command_name)
+    command = Repent.get_command(command_name)
     with open("Data//Settings//Configs//aliases.json", "r") as file:
         aliases = json.load(file)
     
@@ -868,9 +868,9 @@ def check_and_add_alias(command_name, alias):
             aliases.setdefault(command_name, []).append(alias)
             with open('Data//Settings//Configs//aliases.json', 'w') as file:
                 json.dump(aliases, file, indent=4)
-            Cheddlatron.remove_command(command.name)
+            Repent.remove_command(command.name)
             new_command = commands.Command(command.callback, name=command.name, aliases=command.aliases, description=command.description)
-            Cheddlatron.add_command(new_command)
+            Repent.add_command(new_command)
             heading = "Successfully added alias!"
             body = f"Alias '{alias}' added for command '{command_name}'!"
             cmdname = "alias"
@@ -906,9 +906,9 @@ def check_and_remove_alias(alias):
     
     with open('Data//Settings//Configs//aliases.json', 'w') as file:
         json.dump(aliases, file, indent=4)
-    for command_name, command_alias in list(Cheddlatron.all_commands.items()):
+    for command_name, command_alias in list(Repent.all_commands.items()):
         if command_name == alias:
-            del Cheddlatron.all_commands[command_name]
+            del Repent.all_commands[command_name]
         
     heading = "Successfully removed alias!"
     body = f"Alias '{alias}' removed."
@@ -921,17 +921,17 @@ def load_custom_aliases():
         aliases = json.load(file)
     
     for command_name, alias_list in aliases.items():
-        command = Cheddlatron.get_command(command_name)
+        command = Repent.get_command(command_name)
         if command:
             new_command = commands.Command(command.callback, name=command.name, aliases=alias_list, description=command.description)
-            Cheddlatron.remove_command(command.name)
-            Cheddlatron.add_command(new_command)
+            Repent.remove_command(command.name)
+            Repent.add_command(new_command)
 
 async def scrape(guild_id, count):
     fullmemberlist = set()
     char_list = list('abcdefghijklmnopqrstuvwxyz0123456789_.!-_@*?$/')
     alphabet = char_list
-    guild = await Cheddlatron.fetch_guild(int(guild_id))
+    guild = await Repent.fetch_guild(int(guild_id))
     max_members = count
 
     for idx, fuckinwhatcunt in enumerate(alphabet):
@@ -947,7 +947,7 @@ async def scrapeid(guild_id, count):
     fullmemberlist = set()
     char_list = list('abcdefghijklmnopqrstuvwxyz0123456789_.!-_@*?$/')
     alphabet = char_list
-    guild = await Cheddlatron.fetch_guild(int(guild_id))
+    guild = await Repent.fetch_guild(int(guild_id))
     max_members = count
 
     for idx, char in enumerate(alphabet):
@@ -1033,7 +1033,7 @@ async def aigen(ctx, prompt: str, model: str, negative="", seed=None):
     async with aiohttp.ClientSession() as session:
         async with session.get(f"https://images.prodia.xyz/{id}.png") as response:
             buffer = io.BytesIO(await response.read())
-            await ctx.send(file=discord.File(buffer, f'Cheddlatron_{model}.png'))
+            await ctx.send(file=discord.File(buffer, f'Repent_{model}.png'))
 
 async def apiimg(ctx, url):
     url = str(url)
@@ -1041,7 +1041,7 @@ async def apiimg(ctx, url):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             image_data = io.BytesIO(await response.read())
-            await ctx.send(file=discord.File(image_data, f'Cheddlatron_IMG.{media}')) 
+            await ctx.send(file=discord.File(image_data, f'Repent_IMG.{media}')) 
 
 async def process_messagee(message):
     author = message.author.name
@@ -1166,13 +1166,13 @@ def downloadshit():
 
     if os_name == 'windows':
         updater_file = ('Updater.exe', 'https://3l.wtf/BotAssets/FirstRunAssets/Updater.exe')
-        icon_file = ('cheddlatronlogo.ico', 'https://3l.wtf/BotAssets/FirstRunAssets/cheddlatronlogo.ico')
+        icon_file = ('repentlogo.ico', 'https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.ico')
     elif os_name == 'darwin': 
-        updater_file = ('Cheddlatron-macOS', 'https://3l.wtf/BotAssets/FirstRunAssets/Cheddlatron-macOS')
-        icon_file = ('cheddlatronlogo.icns', 'https://3l.wtf/BotAssets/FirstRunAssets/cheddlatronlogo.icns')
+        updater_file = ('Repent-macOS', 'https://3l.wtf/BotAssets/FirstRunAssets/Repent-macOS')
+        icon_file = ('repentlogo.icns', 'https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.icns')
     elif os_name == 'linux':
-        updater_file = ('Cheddlatron-Linux', 'https://3l.wtf/BotAssets/FirstRunAssets/Cheddlatron-Linux')
-        icon_file = ('cheddlatronlogo.png', 'https://3l.wtf/BotAssets/FirstRunAssets/cheddlatronlogo.png')
+        updater_file = ('Repent-Linux', 'https://3l.wtf/BotAssets/FirstRunAssets/Repent-Linux')
+        icon_file = ('repentlogo.png', 'https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.png')
     else:
         print("Unsupported operating system - Report in the Discord")
         return
@@ -1204,9 +1204,9 @@ def downloadshit():
         ('Data//Settings//Configs//aliases.json', {}),
         # RPC FILE + DATA
         ('Data/rpc_configs/rpc.json', {
-            "Title": "Cheddlatron",
+            "Title": "Repent",
             "Description": "Selfbot",
-            "Large_Image": "https://3l.wtf/BotAssets/FirstRunAssets/cheddlatronlogo.png",
+            "Large_Image": "https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.png",
             "Small_Image": "",
             "Large_Image_Text": "Wraith was here",
             "Small_Image_Text": "",
@@ -1217,21 +1217,21 @@ def downloadshit():
             "Watch_Url": "",
             "Buttons": [
                 {
-                    "label": "Cheddlatron.com",
-                    "url": "https://cheddlatron.com"
+                    "label": "Repent.com",
+                    "url": "https://repent.com"
                 },
                 {
                     "label": "Discord",
-                    "url": "https://discord.gg/cheddlatron"
+                    "url": "https://discord.gg/repent"
                 }
             ]
         }),
         #console rpc
         ('Data/rpc_configs/console.json', {
-            "Title": "Cheddlatron",
+            "Title": "Repent",
             "Description": "Selfbot",
             "SubText": "King of Selfbots!",
-            "Large_Image": "https://3l.wtf/BotAssets/FirstRunAssets/cheddlatronlogo.png",
+            "Large_Image": "https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.png",
             "Small_Image": "",
             "Large_Image_Text": "Wraith was here",
             "Small_Image_Text": "",
@@ -1241,10 +1241,10 @@ def downloadshit():
         }),
         # SPOTIFY FILE + DATA
         ('Data/rpc_configs/spotify.json', {
-            "SongTitle": "Cheddlatron Selfbot",
+            "SongTitle": "Repent Selfbot",
             "ArtistName": "Wraith",
-            "AlbumName": "discord.gg/cheddlatron",
-            "Image": "https://3l.wtf/BotAssets/FirstRunAssets/cheddlatronlogo.png",
+            "AlbumName": "discord.gg/repent",
+            "Image": "https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.png",
             "SongLength": 120,
             "Status": "dnd",
             "Buttons": True,
@@ -1260,19 +1260,19 @@ def downloadshit():
         ('Data//Settings//Configs//Ethemes//Default.json', {
             "title_url": "https://3l.wtf",
             "color": "#AB3939",
-            "image": "https://3l.wtf/BotAssets/FirstRunAssets/cheddlatron_logo.png",
+            "image": "https://3l.wtf/BotAssets/FirstRunAssets/repent_logo.png",
             "large": True,
             "cmd_url": "https://3l.wtf",
-            "author_name": "Cheddlatron",
+            "author_name": "Repent",
             "author_url": "https://3l.wtf"
         }),
         # WEBHOOK FILE + DATA
         ('Data//Settings//Configs//Webhooks.json', {
-            "Webhook_Avatar": "https://3l.wtf/BotAssets/FirstRunAssets/cheddlatron_logo.png",
-            "Webhook_Username": "Cheddlatron Logs",
+            "Webhook_Avatar": "https://3l.wtf/BotAssets/FirstRunAssets/repent_logo.png",
+            "Webhook_Username": "Repent Logs",
             "Webhook_Colour": 11221305,
             "Webhook_Footer": "",
-            "Webhook_Image": "https://3l.wtf/BotAssets/FirstRunAssets/cheddlatron_logo.png"
+            "Webhook_Image": "https://3l.wtf/BotAssets/FirstRunAssets/repent_logo.png"
         }),
     ]
 
@@ -1322,7 +1322,7 @@ def config():
  ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝     ╚═╝ ╚═════╝
 \n"""))
     print("IF YOU ARE STUCK ON ANYTHING HERE REFER TO LINK BELLOW")
-    print("https://docs.cheddlatron.com")
+    print("https://docs.repent.com")
     open_config_write_if_not_exists(config_data, "token", "Please enter a discord token: ")
     open_config_write_if_not_exists(config_data, "prefix", "Please enter a prefix: ")
     open_config_write_if_not_exists(config_data, "embed_mode", "Please enter an embed mode (web or indent): ")
@@ -1355,7 +1355,7 @@ try:
 except:
     pass
 config()
-Cheddlatron = commands.Bot(command_prefix = config_get("prefix"), case_insensitive=True, help_command=None)
+Repent = commands.Bot(command_prefix = config_get("prefix"), case_insensitive=True, help_command=None)
 
 #MAIN MENU------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def terminalui():
@@ -1375,12 +1375,12 @@ def terminalui():
  else:
     read_theme(config_get("theme"))
 #MAIN MENU------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(name=f'{config_get("prefix")}{config_get("prefix")}') 
+@Repent.command(name=f'{config_get("prefix")}{config_get("prefix")}') 
 async def DONOTREMOVETHIS(ctx):
     pass
 #ON CONNECT------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 async def retardpresence():
-    ws = Cheddlatron._get_websocket()
+    ws = Repent._get_websocket()
     if config_get('rpc') == "":
         req = requesters.get("https://discord.com/api/v9/users/@me/settings-proto/1", headers={"Authorization": config_get('token'), "x-super-properties": getxsuper()}).json()
         settings = base64.b64decode(req['settings']).decode('utf-8', errors='ignore')
@@ -1463,7 +1463,7 @@ async def retardpresence():
 
                 Large_Image = RetardPresenceConfig.get("Large_Image")
                 if Large_Image == "" or Large_Image == " " or requesters.get(Large_Image).status_code != 200:
-                    Large_Image = "https://cheddlatron.com/BotAssets/Avatar/Invis.png"
+                    Large_Image = "https://repent.com/BotAssets/Avatar/Invis.png"
                 Large_Image = getExternalToken(Large_Image)
 
                 Small_Image = RetardPresenceConfig.get("Small_Image")
@@ -1581,7 +1581,7 @@ async def retardpresence():
 
                 Image = RetardPresenceConfig.get("Image")
                 if Image == "" or Image == " " or requesters.get(Image).status_code != 200:
-                    Image = "https://cheddlatron.com/BotAssets/Avatar/Invis.png"
+                    Image = "https://repent.com/BotAssets/Avatar/Invis.png"
                 Image = getExternalToken(Image)
 
                 SongLength = RetardPresenceConfig.get("SongLength")
@@ -1638,7 +1638,7 @@ async def retardpresence():
                                 "end": ((start_time*1000) + SongLength * 1000)
                             },
                             "party": {
-                                "id": f"spotify:{Cheddlatron.user.id}"
+                                "id": f"spotify:{Repent.user.id}"
                             },
                             "id": id,
                             "flags": flags,
@@ -1669,7 +1669,7 @@ async def retardpresence():
 
                 Large_Image = RetardPresenceConfig.get("Large_Image")
                 if Large_Image == "" or Large_Image == " " or requesters.get(Large_Image).status_code != 200:
-                    Large_Image = "https://cheddlatron.com/BotAssets/Avatar/Invis.png"
+                    Large_Image = "https://repent.com/BotAssets/Avatar/Invis.png"
                 Large_Image = getExternalToken(Large_Image)
 
                 Small_Image = RetardPresenceConfig.get("Small_Image")
@@ -1753,7 +1753,7 @@ async def retardpresence():
 
 start_time = time.time()
 async def subscringeguilds(ws):
-    large_guilds = [g for g in Cheddlatron.guilds if g.member_count > 100000]
+    large_guilds = [g for g in Repent.guilds if g.member_count > 100000]
     for guild in large_guilds:
         try:
             await ws.send_as_json({"op": 37, "d": {"subscriptions": {f"{guild.id}": {"typing": True,"threads": True,"activities": False,"members": [],"member_updates": False,"channels": {},"thread_member_lists": []}}}})
@@ -1772,10 +1772,10 @@ async def subscringedms(ws):
         else:
             pass
 
-@Cheddlatron.event
+@Repent.event
 async def on_connect():
     try:    
-        ws = Cheddlatron._get_websocket()
+        ws = Repent._get_websocket()
         await retardpresence()
         asyncio.create_task(subscringeguilds(ws))
         asyncio.create_task(subscringedms(ws))
@@ -1785,7 +1785,7 @@ async def on_connect():
         customcmds()
         windowname(0)
         load_custom_aliases()
-        notif("Cheddlatron Has Loaded!")
+        notif("Repent Has Loaded!")
         non_custom_cmds, custom_cmds = commandrecs()
         commands_data = json.dumps({
             'customCmds': custom_cmds,
@@ -1797,7 +1797,7 @@ async def on_connect():
 #logrpc/session------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 fetchedactivity = ""
 lastsesh = ""
-@Cheddlatron.listen('on_socket_raw_receive')
+@Repent.listen('on_socket_raw_receive')
 async def activitycollector(data):
     global lastsesh
     global soundspambool
@@ -1807,7 +1807,7 @@ async def activitycollector(data):
         if data['d']['application_id'] == '1298647912456257557':
             headers = {"Authorization": config_get('token'), 'X-Super-Properties': getxsuper()}
             requesters.post("https://discord.com/api/v9/oauth2/authorize?client_id=1298647912456257557&scope=applications.commands", headers=headers, json_data={"permissions":"0","authorize":True,"integration_type":1})
-    if data["t"] == "VOICE_STATE_UPDATE" and soundspambool is True and data['d']['member']['user']['id'] == str(Cheddlatron.user.id):
+    if data["t"] == "VOICE_STATE_UPDATE" and soundspambool is True and data['d']['member']['user']['id'] == str(Repent.user.id):
         if data['d']['channel_id'] == None:
             print(data['d'])
             soundspambool = False
@@ -1851,15 +1851,15 @@ async def activitycollector(data):
             info = f"ID Hash: {latest['id_hash']}\nDate: {timee}\nOS: {latest['client_info']['os']}\nPlatform: {latest['client_info']['platform']}\nLocation: {latest['client_info']['location']}"
             print(f"{Fore.LIGHTRED_EX}[New Session Detected]{Fore.WHITE}\n{info}")
             notification = Notify()
-            notification.application_name = "Cheddlatron Selfbot"
+            notification.application_name = "Repent Selfbot"
             notification.title = f"New Session Detected"
             notification.message = "Check console for more info!"
-            notification.icon = "cheddlatronlogo.ico"
+            notification.icon = "repentlogo.ico"
             notification.send()
 
     elif data['t'] == "GUILD_CREATE":
-        ws = Cheddlatron._get_websocket()
-        guild = Cheddlatron.get_guild(int(data['d']['id']))
+        ws = Repent._get_websocket()
+        guild = Repent.get_guild(int(data['d']['id']))
         if guild.member_count > 100000:
             try:
                 await ws.send_as_json({"op": 37, "d": {"subscriptions": {f"{guild.id}": {"typing": True,"threads": True,"activities": True,"members": [],"member_updates": True,"channels": {},"thread_member_lists": []}}}})
@@ -1876,14 +1876,14 @@ async def activitycollector(data):
         API.updatenums(guildnum, friendnum)
 
     elif data['t'] == 'VOICE_STATE_UPDATE':
-        if int(data['d']['user_id']) == Cheddlatron.user.id:
+        if int(data['d']['user_id']) == Repent.user.id:
             global currentvc
             currentvc = data['d']['channel_id']
         
 #logrpc/session------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #SESHID EVENT------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.listen('on_ready')
+@Repent.listen('on_ready')
 async def seshidnignignignignog(data):
         global seshid
         global seshidhash
@@ -1904,14 +1904,14 @@ def getExternalToken(url):
         image.save(buffer, format="PNG")
         buffer.seek(0)
         headers = {"Authorization": "Client-ID 546c25a59c58ad7"}
-        files = {"image": ("Cheddlatron.png", buffer, "image/png")}
+        files = {"image": ("Repent.png", buffer, "image/png")}
         req = requested.post("https://api.imgur.com/3/upload", headers=headers, files=files).json()
         url = req['data']['link']
     elif parsed_url.netloc in ["cdn.discordapp.com", "media.discordapp.net"]:
         payload = {
             "image": url,
             "type": "url",
-            "name": f"Cheddlatron{ext}"
+            "name": f"Repent{ext}"
         }
         headers = {"Authorization": "Client-ID 546c25a59c58ad7"}
         req = requested.post("https://api.imgur.com/3/upload", headers=headers, json=payload).json()
@@ -1925,11 +1925,11 @@ def getExternalToken(url):
 
 
 #ON COMMAND------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.before_invoke
+@Repent.before_invoke
 async def before_command(ctx):
     if ctx.command.name != ">>":
         await ctx.message.delete()
-        Cheddlatron.command_prefix = config_get('prefix')
+        Repent.command_prefix = config_get('prefix')
         if not hasattr(before_command, "commandsdone"):
             before_command.commandsdone = 0
         print(f"{Fore.LIGHTRED_EX}[{get_time()}] Command Used {Fore.LIGHTWHITE_EX}~ {ctx.command.name}" + Fore.RESET)
@@ -1941,7 +1941,7 @@ async def before_command(ctx):
 
 
 #ON COMMAND ERROR------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.event
+@Repent.event
 async def on_command_error(ctx, error):
     try:
         try:
@@ -1951,7 +1951,7 @@ async def on_command_error(ctx, error):
         heading = "Error"
         cmdname = "ERROR"
         error_str = str(error)
-        Cheddlatron.command_prefix = config_get('prefix')
+        Repent.command_prefix = config_get('prefix')
         if isinstance(error, commands.CommandNotFound):
             print(f"{Fore.LIGHTRED_EX}[ERROR]: {Fore.WHITE}The command entered does not exist." + Fore.RESET)
             body = "Command Not Found!"
@@ -1991,7 +1991,7 @@ async def on_command_error(ctx, error):
 
 
 #SESHID EVENT------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.event
+@Repent.event
 async def on_spotify_session_replace(userid, session_id, state, syncid):
     global seshid
     seshid = session_id
@@ -1999,11 +1999,11 @@ async def on_spotify_session_replace(userid, session_id, state, syncid):
 
 
 #ON MESSAGE------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.event
+@Repent.event
 async def on_message(message):
     #try:
-        if message.author.id == Cheddlatron.user.id:
-            await Cheddlatron.process_commands(message)
+        if message.author.id == Repent.user.id:
+            await Repent.process_commands(message)
         sniper = config_get('nitro_sniper')
         token = config_get('token')
         time = datetime.now().strftime('%H:%M:%S %p')
@@ -2055,7 +2055,7 @@ async def on_message(message):
                         if config_get('webhooknotifs') and config_get('nitro_webhook_url') != "": 
                             if status == "Real":
                                 title = "__SNIPED NITRO__"
-                                description = f"\n\n**Delay:** {delay}ms\n**Time Sniped:** {time}\n**Server:** {message.guild}\n**Sent By:** {message.author.mention}\n**Code:** discord.gift/{code}\n**Channel:** {channel_info}\n**Message:** [**{channel_info}**]({message.jump_url})\n**Status:** {status}\n\n<@{Cheddlatron.user.id}>"
+                                description = f"\n\n**Delay:** {delay}ms\n**Time Sniped:** {time}\n**Server:** {message.guild}\n**Sent By:** {message.author.mention}\n**Code:** discord.gift/{code}\n**Channel:** {channel_info}\n**Message:** [**{channel_info}**]({message.jump_url})\n**Status:** {status}\n\n<@{Repent.user.id}>"
                             else:
                                 title ="__NITRO SNIPER LOG__"
                                 description = f"\n\n**Delay:** {delay}ms\n**Time Sniped:** {time}\n**Server:** {message.guild}\n**Sent By:** {message.author.mention}\n**Code:** discord.gift/{code}\n**Channel:** {channel_info}\n**Message:** [**{channel_info}**]({message.jump_url})\n**Status:** {status}"
@@ -2068,26 +2068,26 @@ async def on_message(message):
                 resolved_user = message.reference.resolved.author
             except:
                 resolved_user = ""
-        if message.reference and message.reference.resolved and resolved_user == Cheddlatron.user or Cheddlatron.user.mention in message.content and message.author.id != Cheddlatron.user.id:
+        if message.reference and message.reference.resolved and resolved_user == Repent.user or Repent.user.mention in message.content and message.author.id != Repent.user.id:
             try:
                 if message.author.id in userpingbanlist:
                     if message.guild.me.guild_permissions.ban_members:
-                        await message.author.ban(reason="Cheddlatron Ping-Ban")
+                        await message.author.ban(reason="Repent Ping-Ban")
                     else:
                         pass
                 if message.guild.id in serverpingbanlist:
                     if message.guild.me.guild_permissions.ban_members:
-                        await message.author.ban(reason="Cheddlatron Ping-Ban")
+                        await message.author.ban(reason="Repent Ping-Ban")
                     else:
                         pass
                 if message.guild.id in serverpingkicklist:
                     if message.guild.me.guild_permissions.kick_members:
-                        await message.author.kick(reason="Cheddlatron Ping-Kick")
+                        await message.author.kick(reason="Repent Ping-Kick")
                     else:
                         pass
                 if message.author.id in userpingkicklist:
                     if message.guild.me.guild_permissions.kick_members:
-                        await message.author.kick(reason="Cheddlatron Ping-Kick")
+                        await message.author.kick(reason="Repent Ping-Kick")
                     else:
                         pass
             except:
@@ -2095,7 +2095,7 @@ async def on_message(message):
             if "Chedmind" in message.content:
                 return
             if config_get('pinglogger') == True:
-                if message.author == Cheddlatron.user:
+                if message.author == Repent.user:
                     return
                 if isinstance(message.channel, discord.DMChannel) or isinstance(message.channel, discord.GroupChannel):
                     jumpurl = f"discord://-/channels/@me/{message.channel.id}/{message.id}"
@@ -2124,8 +2124,8 @@ async def on_message(message):
         if dmlogid is not None and isinstance(message.channel, discord.GroupChannel) == False:
             if isinstance(message.channel, discord.DMChannel):
                 try:
-                    if message.author.id in dmlogid or message.author.id == Cheddlatron.user.id and message.channel.recipient.id in dmlogid:
-                        if message.author.id != Cheddlatron.user.id:
+                    if message.author.id in dmlogid or message.author.id == Repent.user.id and message.channel.recipient.id in dmlogid:
+                        if message.author.id != Repent.user.id:
                             if config_get('dmlogger_webhook_url') != "" and config_get('webhooknotifs'):
                                 title = "__Direct Message Logged!__"
                                 description = f"**Author:** {message.author.mention}\n**Message:** {message.content}\n"
@@ -2412,7 +2412,7 @@ async def on_message(message):
 
 #GWSNIPER----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 joinedgwlist = []
-@Cheddlatron.listen('on_socket_raw_receive')
+@Repent.listen('on_socket_raw_receive')
 async def universalgiveawaybot(data):
     giveawaybotlist = config_get('giveaway_bot_ids')
     blacklist = config_get('giveaway_blacklist_ids')
@@ -2487,7 +2487,7 @@ def getxsuper():
 #HELP COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def get_command_categories():
     categories = set()  
-    for command in Cheddlatron.commands:
+    for command in Repent.commands:
         if command.help:
             categories.add(command.help.lower())
     return sorted(categories)
@@ -2495,7 +2495,7 @@ def get_command_categories():
 def get_commands(category, num=None):
     commands = set()
     category = category
-    sorted_commands = sorted(Cheddlatron.commands, key=lambda x: x.name)
+    sorted_commands = sorted(Repent.commands, key=lambda x: x.name)
     filtered_commands = [command for command in sorted_commands if command and command.help == category]
     max_panels = len(filtered_commands) // 11 + (1 if len(filtered_commands) % 11 != 0 else 0)
     try:
@@ -2520,7 +2520,7 @@ def format_catagories(catagories):
 
 def is_cmd(cmd):
     cmd = cmd.lower()
-    for command in Cheddlatron.commands:
+    for command in Repent.commands:
         if command.name == cmd or cmd in [alias.lower() for alias in command.aliases]:
             if command.description is None:
                 description = "None"
@@ -2529,7 +2529,7 @@ def is_cmd(cmd):
             return True, description
     return False, None
 
-@Cheddlatron.command(description=f"Displays all help panels. \nUsage: {config_get('prefix')}help [panel name/command name] [panel number]", help = "utility")
+@Repent.command(description=f"Displays all help panels. \nUsage: {config_get('prefix')}help [panel name/command name] [panel number]", help = "utility")
 async def help(ctx, category="None", num=None):
     heading = ""
     body = ""
@@ -2585,11 +2585,11 @@ async def help(ctx, category="None", num=None):
 #HELP COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #SEARCHING COMMANDS COMMAND------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Uses the search function to find commands matching the given word. \nUsage: {config_get('prefix')}search <query>", help = "utility")
+@Repent.command(description=f"Uses the search function to find commands matching the given word. \nUsage: {config_get('prefix')}search <query>", help = "utility")
 async def search(ctx, word):
     matching_commands = []
 
-    for command in Cheddlatron.commands:
+    for command in Repent.commands:
         if word in command.name:
             matching_commands.append(command.name)
 
@@ -2607,11 +2607,11 @@ async def search(ctx, word):
 #SEARCHING COMMANDS COMMAND------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #RAID COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Pings a user then deletes the message to hide it. \nUsage: {config_get('prefix')}ghostping <@user/role>", help="raid")
+@Repent.command(description=f"Pings a user then deletes the message to hide it. \nUsage: {config_get('prefix')}ghostping <@user/role>", help="raid")
 async def ghostping(ctx, user):
     pass
 
-@Cheddlatron.command(description=f"Rapes a token by changing a bunch of settings making a bunch of servers etc. \nUsage: {config_get('prefix')}tokenfuck <token>", help="raid")
+@Repent.command(description=f"Rapes a token by changing a bunch of settings making a bunch of servers etc. \nUsage: {config_get('prefix')}tokenfuck <token>", help="raid")
 async def tokenfuck(ctx, token):
     valid = tokenvalid(token)
     if valid:
@@ -2679,7 +2679,7 @@ async def tokenfuck(ctx, token):
     asyncio.create_task(make_servers())
     await tasks_close_remove
 
-@Cheddlatron.command(description=f"Invisibly pings someone. \nUsage: {config_get('prefix')}invisping <@user> [message]", help="raid")
+@Repent.command(description=f"Invisibly pings someone. \nUsage: {config_get('prefix')}invisping <@user> [message]", help="raid")
 async def invisping(ctx, User: discord.User, *, msg = None):
     if msg == None:
         msg = "** **"
@@ -2687,7 +2687,7 @@ async def invisping(ctx, User: discord.User, *, msg = None):
     msg == msg or ""
     await ctx.send(f"‏‏‎{msg}||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||‎‎||‎||‎‎||‎‎||‎‎||‎‎||||||||||||||||||||||{userping}")
 
-@Cheddlatron.command(description=f"Spams threads in a channel. \nUsage: {config_get('prefix')}threadspam [number of threads]", help="raid") 
+@Repent.command(description=f"Spams threads in a channel. \nUsage: {config_get('prefix')}threadspam [number of threads]", help="raid") 
 async def threadspam(ctx, Amount=10):   
     global stopper
     token = config_get('token')
@@ -2708,10 +2708,10 @@ async def threadspam(ctx, Amount=10):
         print(f'{Fore.LIGHTRED_EX}[ERROR]: {Fore.WHITE}There was an error with threadspam: {e}')
         asyncio.run(await send_webhook("Thread Spam Error", f"There was an error with threadspam: {str(e)}. Please check the logs for more details.", config_get('error_webhook_url')))
 
-@Cheddlatron.command(description=f"Bans everyone from a server. \nUsage: {config_get('prefix')}massban", help="raid")
+@Repent.command(description=f"Bans everyone from a server. \nUsage: {config_get('prefix')}massban", help="raid")
 async def massban(ctx):
     users = await scrapeid(ctx.guild.id, ctx.guild.member_count)
-    headers = {"Authorization": config_get('token'), "X-Super-Properties": getxsuper(), "X-Audit-Log-Reason": "Cheddlatron"}
+    headers = {"Authorization": config_get('token'), "X-Super-Properties": getxsuper(), "X-Audit-Log-Reason": "Repent"}
     json = {"delete_message_seconds": 0}
     for user in users:
         try:
@@ -2734,13 +2734,13 @@ async def massban(ctx):
             print(f"{Fore.RED}[ERROR]: {Fore.WHITE}{e}")
             break
 
-@Cheddlatron.command(description=f"Unbans everyone from a server. \nUsage: {config_get('prefix')}unbanall", help="raid")
+@Repent.command(description=f"Unbans everyone from a server. \nUsage: {config_get('prefix')}unbanall", help="raid")
 async def unbanall(ctx):
     if ctx.author.guild_permissions.ban_members:
         banned_users = await ctx.guild.bans() 
         for ban_entry in banned_users:
             user = ban_entry.user
-            await ctx.guild.unban(user, reason="Cheddlatron")
+            await ctx.guild.unban(user, reason="Repent")
             time.sleep(0.25)
         heading = "Unban All"
         body = "All users have been unbanned."
@@ -2765,7 +2765,7 @@ def read_proxies_from_file(filename):
         return None
     return proxy_list
 
-@Cheddlatron.command(description=f"Spams a server with channels and webhooks. \nUsage: {config_get('prefix')}hookraid [message] [number of channels] [delay]", help="raid")
+@Repent.command(description=f"Spams a server with channels and webhooks. \nUsage: {config_get('prefix')}hookraid [message] [number of channels] [delay]", help="raid")
 async def hookraid(ctx, message: str=None, channel_amount: int=None, delay: int=0):
     global stop_signals
     if message is None:
@@ -2773,9 +2773,9 @@ async def hookraid(ctx, message: str=None, channel_amount: int=None, delay: int=
     if channel_amount is None:
         channel_amount = 10
     author_name = str(ctx.author.name).lower()
-    avatar = str(Cheddlatron.user.avatar)
+    avatar = str(Repent.user.avatar)
     if requesters.get(avatar).status_code != 200:
-        avatar = "https://3l.wtf/BotAssets/FirstRunAssets/cheddlatron_logo.png"
+        avatar = "https://3l.wtf/BotAssets/FirstRunAssets/repent_logo.png"
     webhook_tasks = []
 
     async def send_with_proxy(webhook, message, stop_signal, proxy_url):
@@ -2835,7 +2835,7 @@ async def hookraid(ctx, message: str=None, channel_amount: int=None, delay: int=
         done, _ = await asyncio.wait(webhook_tasks, return_when=asyncio.FIRST_COMPLETED)
         webhook_tasks = list(done)
 
-@Cheddlatron.command(description=f"Stops the hookraid loop. \nUsage: {config_get('prefix')}stophookraid", help="raid")
+@Repent.command(description=f"Stops the hookraid loop. \nUsage: {config_get('prefix')}stophookraid", help="raid")
 async def stophookraid(ctx):
     for channel in ctx.guild.channels:
         if isinstance(channel, discord.TextChannel) and channel.name.lower() == str(ctx.author.name).lower():
@@ -2849,15 +2849,15 @@ async def stophookraid(ctx):
                         pass
     stop_signals.clear()
 
-@Cheddlatron.command(description=f"Leaves all servers you are currently in. \nUsage: {config_get('prefix')}leaveservers", help="raid")
+@Repent.command(description=f"Leaves all servers you are currently in. \nUsage: {config_get('prefix')}leaveservers", help="raid")
 async def leaveservers(ctx):
-    for guild in Cheddlatron.guilds:
+    for guild in Repent.guilds:
         try:
             await guild.leave()
         except:
             print("Cannot leave server")
 
-@Cheddlatron.command(description=f"Mass timeouts people in a server. \nUsage: {config_get('prefix')}masstimeout", help="raid")
+@Repent.command(description=f"Mass timeouts people in a server. \nUsage: {config_get('prefix')}masstimeout", help="raid")
 async def masstimeout(ctx):
     token = config_get('token')
     s=datetime.now().date()
@@ -2875,7 +2875,7 @@ async def masstimeout(ctx):
         elif response.status_code == 200:
             pass
 
-@Cheddlatron.command(description=f"Spams a message. \nUsage: {config_get('prefix')}spam [times to spam] <message>", help="raid")
+@Repent.command(description=f"Spams a message. \nUsage: {config_get('prefix')}spam [times to spam] <message>", help="raid")
 async def spam(ctx, amount: int=10, *, message):
     global stopper
     for _i in range(amount):
@@ -2884,7 +2884,7 @@ async def spam(ctx, amount: int=10, *, message):
         await ctx.send(message)
         await asyncio.sleep(1)
 
-@Cheddlatron.command(description=f"Deletes all channels in a Discord server. \nUsage: {config_get('prefix')}delchannels", help="raid")
+@Repent.command(description=f"Deletes all channels in a Discord server. \nUsage: {config_get('prefix')}delchannels", help="raid")
 async def delchannels(ctx):
     async def delete_channel(channel):
         try:
@@ -2896,8 +2896,8 @@ async def delchannels(ctx):
     delete_tasks = [delete_channel(channel) for channel in ctx.guild.channels]
     await asyncio.gather(*delete_tasks)
 
-@Cheddlatron.command(description=f"Mass creates channels. \nUsage: {config_get('prefix')}masschannel [channel name] [number of channels]", help="raid")
-async def masschannel(ctx, *, name="Cheddlatron", channelnum=None):
+@Repent.command(description=f"Mass creates channels. \nUsage: {config_get('prefix')}masschannel [channel name] [number of channels]", help="raid")
+async def masschannel(ctx, *, name="Repent", channelnum=None):
     if channelnum is None:
         channelnum = 10
     async def create_channel(_):
@@ -2912,11 +2912,11 @@ async def masschannel(ctx, *, name="Cheddlatron", channelnum=None):
     creation_tasks = [create_channel(_) for _ in range(channelnum)]
     await asyncio.gather(*creation_tasks)
 
-@Cheddlatron.command(description=f"Sends a wall of blank text. \nUsage: {config_get('prefix')}wall", help="raid")
+@Repent.command(description=f"Sends a wall of blank text. \nUsage: {config_get('prefix')}wall", help="raid")
 async def wall(ctx):
     await ctx.send("**" + "\n" * 1996 + "**")
 
-@Cheddlatron.command(description=f"Sends a message in every channel. \nUsage: {config_get('prefix')}sendall <message>", help="raid")
+@Repent.command(description=f"Sends a message in every channel. \nUsage: {config_get('prefix')}sendall <message>", help="raid")
 async def sendall(ctx, *, message):
     try:
         channels = ctx.guild.text_channels
@@ -2925,7 +2925,7 @@ async def sendall(ctx, *, message):
     except:
         pass
 
-@Cheddlatron.command(description=f"Mass pings people. \nUsage: {config_get('prefix')}massmention [times to massmention] [delay]", help="raid")
+@Repent.command(description=f"Mass pings people. \nUsage: {config_get('prefix')}massmention [times to massmention] [delay]", help="raid")
 async def massmention(ctx, amount=10, delay=1):
     ids = await scrapeid(ctx.guild.id, ctx.guild.member_count)
     pos = 0
@@ -2933,7 +2933,7 @@ async def massmention(ctx, amount=10, delay=1):
         message = ""
         while True:
             mention_id = ids[pos]
-            if mention_id != Cheddlatron.user.id:
+            if mention_id != Repent.user.id:
                 mention = f"<@{mention_id}>"
                 if len(message) + len(mention) > 2000:
                     await ctx.send(message)
@@ -2947,7 +2947,7 @@ async def massmention(ctx, amount=10, delay=1):
             await ctx.send(message)
             await asyncio.sleep(delay)
 
-@Cheddlatron.command(description=f"Renames every channel. \nUsage: {config_get('prefix')}renamechannels <name>", help="raid")
+@Repent.command(description=f"Renames every channel. \nUsage: {config_get('prefix')}renamechannels <name>", help="raid")
 async def renamechannels(ctx, *, name):
     async def rename_channel(channel):
         try:
@@ -2959,7 +2959,7 @@ async def renamechannels(ctx, *, name):
     rename_tasks = [rename_channel(channel) for channel in ctx.guild.channels]
     await asyncio.gather(*rename_tasks)
 
-@Cheddlatron.command(description=f"Changes everyone's nickname. \nUsage: {config_get('prefix')}nickall <nickname>", help="raid")
+@Repent.command(description=f"Changes everyone's nickname. \nUsage: {config_get('prefix')}nickall <nickname>", help="raid")
 async def nickall(ctx, nickname):
     users = await scrape(ctx.guild.id, ctx.guild.member_count)
     for member in users:
@@ -2969,7 +2969,7 @@ async def nickall(ctx, nickname):
         except Exception as e:
             print(e)
 
-@Cheddlatron.command(description=f"Spams reactions on messages. \nUsage: {config_get('prefix')}reactspam <emoji> [number of reactions]", help="raid")
+@Repent.command(description=f"Spams reactions on messages. \nUsage: {config_get('prefix')}reactspam <emoji> [number of reactions]", help="raid")
 async def reactionspam(ctx, emoji, messages: int=10):
     global stopper
     async def add_reaction_task(msg):
@@ -2979,7 +2979,7 @@ async def reactionspam(ctx, emoji, messages: int=10):
     tasks = [add_reaction_task(msg) async for msg in ctx.channel.history(limit=messages)]
     await asyncio.gather(*tasks)
 
-@Cheddlatron.command(description=f"Spams emojis to lag discord clients. \nUsage: {config_get('prefix')}emojispam [times to spam]", help="raid")
+@Repent.command(description=f"Spams emojis to lag discord clients. \nUsage: {config_get('prefix')}emojispam [times to spam]", help="raid")
 async def emojispam(ctx, num=2):
     global stopper
     for i in range(int(num)):
@@ -2998,7 +2998,7 @@ async def emojispam(ctx, num=2):
         await ctx.send(""":flag_white::flag_black::checkered_flag::triangular_flag_on_post::rainbow_flag::transgender_flag::pirate_flag::flag_af::flag_ax::flag_al::flag_dz::flag_as::flag_ao::flag_ad::flag_ai::flag_aq::flag_ag::flag_ar::flag_bb::flag_bd::flag_bh::flag_bs::flag_az::flag_at::flag_au::flag_aw::flag_am::flag_by::flag_be::flag_bz::flag_bj::flag_bm::flag_bt::flag_ba::flag_bo::flag_bw::flag_cm::flag_kh::flag_bi::flag_bf::flag_bg::flag_bn::flag_vg::flag_io::flag_br::flag_ca::flag_ic::flag_cv::flag_bq::flag_ky::flag_cf::flag_td::flag_cl::flag_cn::flag_ci::flag_cr::flag_ck::flag_cd::flag_cg::flag_km::flag_co::flag_cc::flag_cx::flag_hr::flag_cu::flag_cw::flag_cy::flag_cz::flag_dj::flag_dk::flag_dm::flag_do::flag_fk::flag_eu::flag_et::flag_ee::flag_er::flag_gq::flag_sv::flag_eg::flag_ec::flag_fo::flag_fj::flag_fi::flag_fr::flag_gf::flag_pf::flag_tf::flag_ga::flag_gm::flag_gu::flag_gp::flag_gl::flag_gd::flag_gr::flag_gi::flag_gh::flag_de::flag_ge::flag_gt::flag_gg::flag_gn::flag_gw::flag_gy::flag_ht::flag_hn::flag_hk::flag_hu::flag_it::flag_il::flag_ie:""")
         time.sleep(1.75)
 
-@Cheddlatron.command(description=f"Bypass automod with given message. \nUsage: {config_get('prefix')}bypass <word to bypass> [server id] [channel id]", help="raid")
+@Repent.command(description=f"Bypass automod with given message. \nUsage: {config_get('prefix')}bypass <word to bypass> [server id] [channel id]", help="raid")
 async def bypass(ctx, word: str, server_id: int=None, channel_id: int=None):
     if server_id is None:
         server_id = ctx.guild.id
@@ -3017,7 +3017,7 @@ async def bypass(ctx, word: str, server_id: int=None, channel_id: int=None):
             bypassed_parts.append(''.join([letter + '⁥' for letter in part]))
     bypassed_word = '<'.join(bypassed_parts)
     original_channel = ctx.channel
-    server = Cheddlatron.get_guild(server_id)
+    server = Repent.get_guild(server_id)
     if server:
         channel = server.get_channel(channel_id)
         if channel:
@@ -3028,7 +3028,7 @@ async def bypass(ctx, word: str, server_id: int=None, channel_id: int=None):
     else:
         await ctx.send(bypassed_word)
 
-@Cheddlatron.command(description=f"Deletes every role in a server. \nUsage: {config_get('prefix')}delroles", help="raid")
+@Repent.command(description=f"Deletes every role in a server. \nUsage: {config_get('prefix')}delroles", help="raid")
 async def delroles(ctx):
     roles = ctx.guild.roles
     for role in roles:
@@ -3041,8 +3041,8 @@ async def delroles(ctx):
                 print(f"{Fore.LIGHTRED_EX}[ERROR]: {Fore.WHITE}Error deleting role {role.name}: {role_error}")
                 await send_webhook("Role Deletion Error", f"Error deleting role {role.name}: {str(role_error)}. Please check the logs for more details.", config_get('error_webhook_url'))
 
-@Cheddlatron.command(description=f"Spams a server full of roles. \nUsage: {config_get('prefix')}spamroles [role name] [amount of roles]", help="raid")
-async def spamroles(ctx, name: str="Cheddlatron",amount: int=10):
+@Repent.command(description=f"Spams a server full of roles. \nUsage: {config_get('prefix')}spamroles [role name] [amount of roles]", help="raid")
+async def spamroles(ctx, name: str="Repent",amount: int=10):
     global stopper
     async def makerole(name):
         if stopper == True:
@@ -3050,7 +3050,7 @@ async def spamroles(ctx, name: str="Cheddlatron",amount: int=10):
         await ctx.guild.create_role(name=name)
     await asyncio.gather(*(asyncio.create_task(makerole(name)) for i in range(amount)))
 
-@Cheddlatron.command(description=f"Spams polls containing large amounts of junk text. \nUsage: {config_get('prefix')}pollraid [number of polls to spam]", help="raid")
+@Repent.command(description=f"Spams polls containing large amounts of junk text. \nUsage: {config_get('prefix')}pollraid [number of polls to spam]", help="raid")
 async def pollraid(ctx, times=10):
     global stopper
     url = f"https://discord.com/api/v9/channels/{ctx.channel.id}/messages"
@@ -3078,10 +3078,10 @@ async def pollraid(ctx, times=10):
 #RAID COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #DUMPING COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Creates a folder for dumped emojis from a specified server. \nUsage: {config_get('prefix')}emojidump [server id]", help="dumping")
+@Repent.command(description=f"Creates a folder for dumped emojis from a specified server. \nUsage: {config_get('prefix')}emojidump [server id]", help="dumping")
 async def emojidump(ctx, server_id: int=None):  
     try:
-        server = Cheddlatron.get_guild(server_id)
+        server = Repent.get_guild(server_id)
         if not server:
             await ctx.send("Server not found.")
             return
@@ -3110,18 +3110,18 @@ async def download_emoji(session, emoji_url, emoji_filename):
             async with aiofiles.open(emoji_filename, 'wb') as f:
                 await f.write(await response.read())
 
-@Cheddlatron.command(aliases=['dmdump'], description=f"Creates an HTML document of a dumped DM/channel. \nUsage: {config_get('prefix')}chatdump [channel id]", help="dumping")
+@Repent.command(aliases=['dmdump'], description=f"Creates an HTML document of a dumped DM/channel. \nUsage: {config_get('prefix')}chatdump [channel id]", help="dumping")
 async def chatdump(ctx, channel_id: int = None):
     dump_type = None
     target_name = None
     chans = requesters.get('https://discord.com/api/v9/users/@me/channels', headers={"Authorization": config_get('token'), "X-Super-Properties": getxsuper()}).json()
     if channel_id is None:
         channel_id = ctx.channel.id
-    channel = Cheddlatron.get_channel(int(channel_id))
+    channel = Repent.get_channel(int(channel_id))
     if not channel:
         for chan in chans:
             if str(chan['id']) == str(channel_id):
-                channel = Cheddlatron.get_user(int(chan['recipients'][0]['id']))
+                channel = Repent.get_user(int(chan['recipients'][0]['id']))
                 dump_type = "DM"
                 target_name = chan['recipients'][0]['username']
                 break
@@ -3397,7 +3397,7 @@ async def process_message(message, bot):
 
 
 #ACCOUNT COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Steals another discord users profile. \nUsage: {config_get('prefix')}stealprofile <@user>", help="account")
+@Repent.command(description=f"Steals another discord users profile. \nUsage: {config_get('prefix')}stealprofile <@user>", help="account")
 async def stealprofile(ctx, user: discord.User):
     headers = {"Authorization": config_get('token'), "x-super-properties": getxsuper()}
     response = requesters.get(f"https://discord.com/api/v9/users/{user.id}/profile", headers=headers).json()
@@ -3450,7 +3450,7 @@ async def stealprofile(ctx, user: discord.User):
     cmdname = "stealprofile"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Exports a file containing your entire discord profile. \nUsage: {config_get('prefix')}exportprofile <profile name>", help="account")
+@Repent.command(description=f"Exports a file containing your entire discord profile. \nUsage: {config_get('prefix')}exportprofile <profile name>", help="account")
 async def exportprofile(ctx, *, name: str):  
     headers = {"Authorization": config_get('token'), "x-super-properties": getxsuper()}
     response =  requesters.get("https://discord.com/api/v9/users/@me" , headers=headers)
@@ -3502,7 +3502,7 @@ async def exportprofile(ctx, *, name: str):
     cmdname = "exportprofile"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Imports a discord profile saved with exportprofile. \nUsage: {config_get('prefix')}importprofile <profile name>", help="account")
+@Repent.command(description=f"Imports a discord profile saved with exportprofile. \nUsage: {config_get('prefix')}importprofile <profile name>", help="account")
 async def importprofile(ctx, *, name: str):
     headers = {"Authorization": config_get('token'), "x-super-properties": getxsuper()}
     decordata_response = requesters.get("https://discord.com/api/v9/users/@me/collectibles-purchases", headers=headers)
@@ -3592,7 +3592,7 @@ async def importprofile(ctx, *, name: str):
         print(f"{Fore.LIGHTRED_EX}[ERROR] {Fore.WHITE}An error occurred while updating the user profile: {e}")
         await send_webhook("Profile Update Error", f"An error occurred while updating the user profile: {str(e)}. Please check the logs for more details.", config_get('error_webhook_url'))
 
-@Cheddlatron.command(description=f"Lists all saved profiles. \nUsage: {config_get('prefix')}listprofiles", help="account")
+@Repent.command(description=f"Lists all saved profiles. \nUsage: {config_get('prefix')}listprofiles", help="account")
 async def listprofiles(ctx):
     directory = "Data/Profiles/"
     profile_files = glob.glob(os.path.join(directory, "*.profile"))
@@ -3601,7 +3601,7 @@ async def listprofiles(ctx):
     all_profiles = '\n'.join(profile_files)
     await ctx.send(f"```Saved Discord Profiles\n\n{all_profiles}```")
 
-@Cheddlatron.command(description=f"Deletes a saved profile. \nUsage: {config_get('prefix')}delprofile <name of profile>", help="account")
+@Repent.command(description=f"Deletes a saved profile. \nUsage: {config_get('prefix')}delprofile <name of profile>", help="account")
 async def delprofile(ctx, name):
     directory = "Data/Profiles/"
     namee = f"{name}.profile"
@@ -3617,7 +3617,7 @@ async def delprofile(ctx, name):
         cmdname = "ERROR"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Animates your Discord nickname. \nUsage: {config_get('prefix')}animnick <nickname>\n\nThis is also used as a two way toggle, to turn this off, do the command without any args.", help="account")
+@Repent.command(description=f"Animates your Discord nickname. \nUsage: {config_get('prefix')}animnick <nickname>\n\nThis is also used as a two way toggle, to turn this off, do the command without any args.", help="account")
 async def animnick(ctx, *, text=None):    
     with open('Data\Settings\Configs\Settings.json', 'r') as file:
         settings_data = json.load(file)
@@ -3649,38 +3649,38 @@ async def animnick(ctx, *, text=None):
                 await ctx.message.author.edit(nick=name)
                 await asyncio.sleep(2.5)
 
-@Cheddlatron.command(description=f"Changes status on Discord to playing a game. \nUsage: {config_get('prefix')}playing <message>", help="account")
+@Repent.command(description=f"Changes status on Discord to playing a game. \nUsage: {config_get('prefix')}playing <message>", help="account")
 async def playing(ctx, *, message):    
     game = discord.Game(name=message)
-    await Cheddlatron.change_presence(activity=game)
+    await Repent.change_presence(activity=game)
 
-@Cheddlatron.command(description=f"Changes status on Discord to streaming. \nUsage: {config_get('prefix')}streaming <message>", help="account")
+@Repent.command(description=f"Changes status on Discord to streaming. \nUsage: {config_get('prefix')}streaming <message>", help="account")
 async def streaming(ctx, *, message):    
     stream = discord.Streaming(name=message, url="https://www.twitch.tv/leekbeats",)
-    await Cheddlatron.change_presence(activity=stream)
+    await Repent.change_presence(activity=stream)
 
-@Cheddlatron.command(description=f"Changes status on Discord to listening to music. \nUsage: {config_get('prefix')}listening <message>", help="account")
+@Repent.command(description=f"Changes status on Discord to listening to music. \nUsage: {config_get('prefix')}listening <message>", help="account")
 async def listening(ctx, *, message):    
-    await Cheddlatron.change_presence(
+    await Repent.change_presence(
         activity=discord.Activity(type=discord.ActivityType.listening, name=message))
 
-@Cheddlatron.command(description=f"Changes status on Discord to watching something. \nUsage: {config_get('prefix')}watching <message>", help="account")
+@Repent.command(description=f"Changes status on Discord to watching something. \nUsage: {config_get('prefix')}watching <message>", help="account")
 async def watching(ctx, *, message):    
-    await Cheddlatron.change_presence(
+    await Repent.change_presence(
         activity=discord.Activity(type=discord.ActivityType.watching, name=message))
 
-@Cheddlatron.command(description=f"Changes status on Discord to competing in something. \nUsage: {config_get('prefix')}competing <message>", help="account")
+@Repent.command(description=f"Changes status on Discord to competing in something. \nUsage: {config_get('prefix')}competing <message>", help="account")
 async def competing(ctx, *, message):    
-    await Cheddlatron.change_presence(
+    await Repent.change_presence(
         activity=discord.Activity(type=discord.ActivityType.competing, name=message))
 
-@Cheddlatron.command(description=f"Sends a random anime pfp. \nUsage: {config_get('prefix')}animepfpgen", help="account")
+@Repent.command(description=f"Sends a random anime pfp. \nUsage: {config_get('prefix')}animepfpgen", help="account")
 async def animepfpgen(ctx):    
     r = requesters.get("https://nekos.life/api/v2/img/avatar")
     res = r.json()
     await ctx.send(res['url'])
 
-@Cheddlatron.command(description=f"Changes your hypesquad. \nUsage: {config_get('prefix')}hypesquad [hypesquad]", help="account")
+@Repent.command(description=f"Changes your hypesquad. \nUsage: {config_get('prefix')}hypesquad [hypesquad]", help="account")
 async def hypesquad(ctx, house: str="None"):    
     headers = {
       'Authorization': config_get('token'),
@@ -3702,7 +3702,7 @@ async def hypesquad(ctx, house: str="None"):
         print(f"{Fore.LIGHTRED_EX}[ERROR]: {Fore.WHITE}{e}"+Fore.RESET)
         await send_webhook("HypeSquad Change Error", f"Failed to change HypeSquad due to: {str(e)}.", config_get('error_webhook_url'))
 
-@Cheddlatron.command(description=f"Makes your nickname invisible. \nUsage: {config_get('prefix')}invisiblenickname", help="account")
+@Repent.command(description=f"Makes your nickname invisible. \nUsage: {config_get('prefix')}invisiblenickname", help="account")
 async def invisiblenickname(ctx):    
     try:
         name = "‎‎‎‎‎‎‎‏‏‎឵឵឵‎"
@@ -3711,7 +3711,7 @@ async def invisiblenickname(ctx):
         print(f"{Fore.LIGHTRED_EX}[Error]: {Fore.WHITE}{e}")
         await send_webhook("Nickname Invisible Error", f"Failed to set invisible nickname due to: {str(e)}.", config_get('error_webhook_url'))
 
-@Cheddlatron.command(description=f"Makes your nickname junk text. \nUsage: {config_get('prefix')}junknickname", help="account")
+@Repent.command(description=f"Makes your nickname junk text. \nUsage: {config_get('prefix')}junknickname", help="account")
 async def junknickname(ctx):    
     try:
         name = "﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽"
@@ -3720,7 +3720,7 @@ async def junknickname(ctx):
         print(f"{Fore.LIGHTRED_EX}[Error]: {Fore.WHITE}{e}")
         await send_webhook("Nickname Junk Error", f"Failed to set junk nickname due to: {str(e)}.", config_get('error_webhook_url'))
 
-@Cheddlatron.command(description=f"Makes your nickname blocks. \nUsage: {config_get('prefix')}blocknickname", help="account")
+@Repent.command(description=f"Makes your nickname blocks. \nUsage: {config_get('prefix')}blocknickname", help="account")
 async def blocknickname(ctx):    
     try:
         name = "█████████████████████████████"
@@ -3729,7 +3729,7 @@ async def blocknickname(ctx):
         print(f"{Fore.LIGHTRED_EX}[Error]: {Fore.WHITE}{e}")
         await send_webhook("Nickname Blocks Error", f"Failed to set block nickname due to: {str(e)}.", config_get('error_webhook_url'))
 
-@Cheddlatron.command(description=f"Changes your nickname to a barcode. \nUsage: {config_get('prefix')}barcodenickname", help="account")
+@Repent.command(description=f"Changes your nickname to a barcode. \nUsage: {config_get('prefix')}barcodenickname", help="account")
 async def barcodenickname(ctx):   
     try:
         name = "█║▌│║▌║▌│█│▌║│█║█║ "
@@ -3738,7 +3738,7 @@ async def barcodenickname(ctx):
         print(f"{Fore.LIGHTRED_EX}[Error]: {Fore.WHITE}{e}")
         await send_webhook("Barcode Nickname Error", f"Failed to set barcode nickname due to: {str(e)}.", config_get('error_webhook_url'))
 
-@Cheddlatron.command(description=f"Backups all discord servers you are in to a txt file. \nUsage: {config_get('prefix')}backupservers", help="account")
+@Repent.command(description=f"Backups all discord servers you are in to a txt file. \nUsage: {config_get('prefix')}backupservers", help="account")
 async def backupservers(ctx):    
     token = config_get('token')  
     if os.path.exists('Data/Backups/Servers.txt'):
@@ -3747,7 +3747,7 @@ async def backupservers(ctx):
     headers = {"authorization": token}
     payload = {"max_age": "0", "max_uses": "0", "temporary": False}
 
-    for server in Cheddlatron.guilds:
+    for server in Repent.guilds:
         await asyncio.sleep(1)
         default_channel = server.system_channel or server.text_channels[0]
         invite = requesters.post(f"https://discord.com/api/v9/channels/{default_channel.id}/invites", json_data=payload, headers=headers)
@@ -3808,7 +3808,7 @@ async def backupservers(ctx):
     notif(body)
     await panelmaker(ctx, header, body, cmdname)
 
-@Cheddlatron.command(description=f"Joins all the servers in the txt file created by the backupservers cmd. \nUsage: {config_get('prefix')}recoverservers", help="account")
+@Repent.command(description=f"Joins all the servers in the txt file created by the backupservers cmd. \nUsage: {config_get('prefix')}recoverservers", help="account")
 async def recoverservers(ctx):
     token = config_get('token')
     servers = open('Data/Backups/Servers.txt', 'r', encoding='utf-8')
@@ -3826,7 +3826,7 @@ async def recoverservers(ctx):
         resp = requesters.post(url=url, headers=headers)
         time.sleep(5)
 
-@Cheddlatron.command(description=f"Creates a txt with all your Discord friends in it. \nUsage: {config_get('prefix')}backupfriends", help="account")
+@Repent.command(description=f"Creates a txt with all your Discord friends in it. \nUsage: {config_get('prefix')}backupfriends", help="account")
 async def backupfriends(ctx):    
     token = config_get('token')  
     headers = {'authorization': token}
@@ -3847,14 +3847,14 @@ async def backupfriends(ctx):
 
 
 #UTILITY COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Stops commands that run in a loop such as {config_get('prefix')}spam. \nUsage: {config_get('prefix')}stop")
+@Repent.command(description=f"Stops commands that run in a loop such as {config_get('prefix')}spam. \nUsage: {config_get('prefix')}stop")
 async def stop(ctx):
     global stopper
     stopper = True
     await asyncio.sleep(0.5)
     stopper = False
 
-@Cheddlatron.command(description=f"Disables all emails from discord. \nUsage: {config_get('prefix')}noemails", help="utility")
+@Repent.command(description=f"Disables all emails from discord. \nUsage: {config_get('prefix')}noemails", help="utility")
 async def noemails(ctx):
     payload = {"settings":{"categories":{"tips":False,"recommendations_and_events":False,"updates_and_announcements":False,"communication": False, "social": False, "family_center_digest":False}}}
     r = requesters.patch('https://discord.com/api/v9/users/@me/email-settings', headers={'authorization':config_get('token')}, json_data=payload)
@@ -3868,7 +3868,7 @@ async def noemails(ctx):
         body = f"Error code: {r.status_code}"
         cmdname = "noemails"
 
-@Cheddlatron.command(description=f"Sends a Discord link so someone can add you. \nUsage: {config_get('prefix')}friendlink", help="utility")
+@Repent.command(description=f"Sends a Discord link so someone can add you. \nUsage: {config_get('prefix')}friendlink", help="utility")
 async def friendlink(ctx):    
     headers ={'Authorization': config_get('token'),
               "content-type": "application/json"}
@@ -3877,11 +3877,11 @@ async def friendlink(ctx):
     code = t['code']
     await ctx.send(f"https://discord.gg/{code}")
 
-@Cheddlatron.command(description=f"Converts an image to gif for saving. \nUsage: {config_get('prefix')}pictogif (link to image)", help="utility")
+@Repent.command(description=f"Converts an image to gif for saving. \nUsage: {config_get('prefix')}pictogif (link to image)", help="utility")
 async def pictogif(ctx, link):    
     await ctx.send(f"{link}?.gif")
 
-@Cheddlatron.command(description=f"Sends the current uptime of the bot. \nUsage: {config_get('prefix')}uptime", help="utility")
+@Repent.command(description=f"Sends the current uptime of the bot. \nUsage: {config_get('prefix')}uptime", help="utility")
 async def uptime(ctx):
     uptime = str(timedelta(seconds=int(round(time.time()-start_time))))   
     heading = "Uptime"
@@ -3889,7 +3889,7 @@ async def uptime(ctx):
     cmdname = "Uptime"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Downloads everyone's PFP from a server. \nUsage: {config_get('prefix')}downloadallpfp", help="utility")
+@Repent.command(description=f"Downloads everyone's PFP from a server. \nUsage: {config_get('prefix')}downloadallpfp", help="utility")
 async def downloadallpfp(ctx):   
     logging.getLogger('discord.gateway').setLevel(logging.ERROR) 
     guild1 = ctx.guild.name
@@ -3911,7 +3911,7 @@ async def downloadallpfp(ctx):
     except Exception as f:
         print(f)
 
-@Cheddlatron.command(description=f"Gets the link of everyone's PFP from a server. \nUsage: {config_get('prefix')}getallpfp", help="utility")
+@Repent.command(description=f"Gets the link of everyone's PFP from a server. \nUsage: {config_get('prefix')}getallpfp", help="utility")
 async def getallpfp(ctx):  
     logging.getLogger('discord.gateway').setLevel(logging.ERROR)  
     guild1 = ctx.guild.name
@@ -3925,7 +3925,7 @@ async def getallpfp(ctx):
         print(E)
         pass
 
-@Cheddlatron.command(description=f"Shows info on games that are on Steam. \nUsage: {config_get('prefix')}gameinfo <game>", help="utility")
+@Repent.command(description=f"Shows info on games that are on Steam. \nUsage: {config_get('prefix')}gameinfo <game>", help="utility")
 async def gameinfo(ctx, *, game):    
     r = requesters.get(urlify(f"https://api.popcat.xyz/steam?q={game}"))
     r = r.json()
@@ -3945,13 +3945,13 @@ async def gameinfo(ctx, *, game):
         cmdname = "Game Info"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Translate text to a different language. \nUsage: {config_get('prefix')}translate <language you want to translate to> <text you want to translate>", help="utility")
+@Repent.command(description=f"Translate text to a different language. \nUsage: {config_get('prefix')}translate <language you want to translate to> <text you want to translate>", help="utility")
 async def translate(ctx, lang, *, text):    
     r = requesters.get(urlify(f"https://api.popcat.xyz/translate?to={lang}&text={text}"))
     res = r.json()
     await ctx.send(f"{res['translated']}")
 
-@Cheddlatron.command(description=f"Searches for a YouTube video. \nUsage: {config_get('prefix')}ytsearch <query>", help="utility")
+@Repent.command(description=f"Searches for a YouTube video. \nUsage: {config_get('prefix')}ytsearch <query>", help="utility")
 async def ytsearch(ctx, *, query):    
     results = YoutubeSearch(query, max_results=1).to_json()
     char1 = results[20]
@@ -3968,7 +3968,7 @@ async def ytsearch(ctx, *, query):
     suffix = char1 + char2 + char3 + char4 + char5 + char6 + char7 + char8 + char9 + char10 + char11
     await ctx.send(f"https://www.youtube.com/watch?v={suffix}")
 
-@Cheddlatron.command(description=f"Searches for and plays a YouTube video. \nUsage: {config_get('prefix')}ytplay <query>", help="utility")
+@Repent.command(description=f"Searches for and plays a YouTube video. \nUsage: {config_get('prefix')}ytplay <query>", help="utility")
 async def ytplay(ctx, *, query):    
     results = YoutubeSearch(query, max_results=1).to_json()
     char1 = results[20]
@@ -3985,7 +3985,7 @@ async def ytplay(ctx, *, query):
     suffix = char1 + char2 + char3 + char4 + char5 + char6 + char7 + char8 + char9 + char10 + char11
     webbrowser.open(f"https://www.youtube.com/watch?v={suffix}")
 
-@Cheddlatron.command(description=f"Reads all notifications. \nUsage: {config_get('prefix')}read", help="utility")
+@Repent.command(description=f"Reads all notifications. \nUsage: {config_get('prefix')}read", help="utility")
 async def read(ctx):    
     guildr = requesters.get('https://canary.discord.com/api/v9/users/@me/guilds', headers={'authorization': config_get('token')}).json()
     for guild in guildr:
@@ -4005,17 +4005,17 @@ async def read(ctx):
         ack = requesters.post('https://canary.discord.com/api/v9/read-states/ack-bulk', headers={'authorization': config_get('token')}, json_data={'read_states':readstatelist})
         await asyncio.sleep(0.7)
 
-@Cheddlatron.command(description=f"Creates a TinyURL for a URL. \nUsage: {config_get('prefix')}tinyurl <url>", help="utility")
+@Repent.command(description=f"Creates a TinyURL for a URL. \nUsage: {config_get('prefix')}tinyurl <url>", help="utility")
 async def tinyurl(ctx, url):    
     r = requesters.get(f'https://tinyurl.com/api-create.php?url={url}').text
     await ctx.send(r)
 
-@Cheddlatron.command(description=f"Creates a custom QR code. \nUsage: {config_get('prefix')}customqr <url>", help="utility")
+@Repent.command(description=f"Creates a custom QR code. \nUsage: {config_get('prefix')}customqr <url>", help="utility")
 async def customqr(ctx, link):  
     url = f'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={link}'  
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Changes your wallpaper to an image you attach. \nUsage: {config_get('prefix')}wallpaper <link/image embed>", help="utility")
+@Repent.command(description=f"Changes your wallpaper to an image you attach. \nUsage: {config_get('prefix')}wallpaper <link/image embed>", help="utility")
 async def wallpaper(ctx, wallpaper):    
     url = wallpaper
     r = requesters.get(url)
@@ -4027,7 +4027,7 @@ async def wallpaper(ctx, wallpaper):
     ctypes.windll.user32.SystemParametersInfoW(20, 0, PATH, 3)
     os.remove(name)
 
-@Cheddlatron.command(description=f"Displays latency of local Reddit Google and Discord API. \nUsage: {config_get('prefix')}ping", help="utility")
+@Repent.command(description=f"Displays latency of local Reddit Google and Discord API. \nUsage: {config_get('prefix')}ping", help="utility")
 async def ping(ctx):    
     try:
         reddit_response = requested.get('https://www.reddit.com', timeout=10)
@@ -4040,21 +4040,21 @@ async def ping(ctx):
         reddit_latency = 'Failed to ping Reddit.'
         google_latency = 'Failed to ping Google.'
         discord_latency = 'Failed to ping Discord.'
-    local_latency = round(Cheddlatron.latency * 1000) 
+    local_latency = round(Repent.latency * 1000) 
     heading = "Ping Results"
     body = f"Local Ping: {local_latency}ms\nReddit Ping: {reddit_latency}ms\nGoogle Ping: {google_latency}ms\nDiscord Ping: {discord_latency}ms"
     cmdname = "Ping"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Shows a link with another hidden link used as the embed. \nUsage: {config_get('prefix')}fakelink <link you want to see> <link with the embed>", help="utility")
+@Repent.command(description=f"Shows a link with another hidden link used as the embed. \nUsage: {config_get('prefix')}fakelink <link you want to see> <link with the embed>", help="utility")
 async def fakelink(ctx, link1, link2):    
     await ctx.send(f"{link1} ‎||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||‎‎||‎||‎‎||‎‎||‎‎||‎‎||||||||||||||||||||||{link2}")
 
-@Cheddlatron.command(description=f"Sends an empty message but has a link embed. \nUsage: {config_get('prefix')}invislink <link with the embed>", help="utility")
+@Repent.command(description=f"Sends an empty message but has a link embed. \nUsage: {config_get('prefix')}invislink <link with the embed>", help="utility")
 async def invislink(ctx, link2):    
     await ctx.send(f"‏‏‎‎||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||‎‎||‎||‎‎||‎‎||‎‎||‎‎||||||||||||||||||||||{link2}")
 
-@Cheddlatron.command(description=f"Cycles between custom statuses to disable it just run the command again. \nUsage: {config_get('prefix')}cyclestatus <status 1> <status 2>\n\nThis is also used as a two way toggle, to turn this off, do the command without any args.", help="utility")
+@Repent.command(description=f"Cycles between custom statuses to disable it just run the command again. \nUsage: {config_get('prefix')}cyclestatus <status 1> <status 2>\n\nThis is also used as a two way toggle, to turn this off, do the command without any args.", help="utility")
 async def cyclestatus(ctx, status1=None, status2=None):    
     with open('Data\Settings\Configs\Settings.json', 'r') as file:
         settings_data = json.load(file)
@@ -4082,7 +4082,7 @@ async def cyclestatus(ctx, status1=None, status2=None):
         await panelmaker(ctx, heading, body, cmdname)
         threading.Thread(target=cycle_statuses_thread(status1, status2)).start()
 
-@Cheddlatron.command(description=f"Searches UrbanDictionary for a word or phrase. \nUsage: {config_get('prefix')}urban <phrase/word>", help="utility")
+@Repent.command(description=f"Searches UrbanDictionary for a word or phrase. \nUsage: {config_get('prefix')}urban <phrase/word>", help="utility")
 async def urban(ctx, *, word):    
     try:
         webthingy = urllib.request.urlopen("https://www.urbandictionary.com/define.php?term=" + word)
@@ -4098,28 +4098,28 @@ async def urban(ctx, *, word):
         cmdname = "Urban"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(aliases=["restart"], description=f"Restarts the selfbot. \nUsage: {config_get('prefix')}restart", help="utility")
+@Repent.command(aliases=["restart"], description=f"Restarts the selfbot. \nUsage: {config_get('prefix')}restart", help="utility")
 async def reboot(ctx):
     try:
         os_name = platform.system()
         if os_name == 'Windows':
-            os.startfile("Cheddlatron.exe")
+            os.startfile("Repent.exe")
             os._exit(1)
         elif os_name in ['Darwin', 'Linux']:
-            os.system("./Cheddlatron.bin")
+            os.system("./Repent.bin")
         else:
             raise NotImplementedError("Unsupported operating system")
         os._exit(1)
     except (FileNotFoundError, NotImplementedError):
-        os.system("python Cheddlatron.py")
+        os.system("python Repent.py")
         os._exit(1)
     except Exception as e:
-        await ctx.send(f"Failed to restart Cheddlatron: {e}")
+        await ctx.send(f"Failed to restart Repent: {e}")
         os._exit(1)
 
-@Cheddlatron.command(aliases=["selfpurge", "purgeself", "selfclear", "clearself"], description=f"Purges a specified amount of messages sent by you in a channel or DM. \nUsage: {config_get('prefix')}purgemsg [number of messages]", help="utility")
+@Repent.command(aliases=["selfpurge", "purgeself", "selfclear", "clearself"], description=f"Purges a specified amount of messages sent by you in a channel or DM. \nUsage: {config_get('prefix')}purgemsg [number of messages]", help="utility")
 async def purgemsg(ctx, amount: int=10):    
-    async for message in ctx.channel.history(limit=amount).filter(lambda m: m.author.id == Cheddlatron.user.id).map(lambda m: m):
+    async for message in ctx.channel.history(limit=amount).filter(lambda m: m.author.id == Repent.user.id).map(lambda m: m):
         try:
             await message.delete()
             await asyncio.sleep(1)
@@ -4131,7 +4131,7 @@ async def purgemsg(ctx, amount: int=10):
     cmdname = "purgemsg"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Changes your nitro sniper logging webhook. \nUsage: {config_get('prefix')}nitrowebhook <webhook url>", help="utility")
+@Repent.command(description=f"Changes your nitro sniper logging webhook. \nUsage: {config_get('prefix')}nitrowebhook <webhook url>", help="utility")
 async def nitrowebhook(ctx, url):    
     config_edit('nitro_webhook_url', url)
     heading = "Nitro Webhook"
@@ -4139,7 +4139,7 @@ async def nitrowebhook(ctx, url):
     cmdname = "nitrowebhook"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Changes your giveaway sniper logging webhook. \nUsage: {config_get('prefix')}giveawaywebhook <webhook url>", help="utility")
+@Repent.command(description=f"Changes your giveaway sniper logging webhook. \nUsage: {config_get('prefix')}giveawaywebhook <webhook url>", help="utility")
 async def giveawaywebhook(ctx, url):    
     config_edit('giveaway_webhook_url', url)
     heading = "Giveaway Webhook"
@@ -4147,7 +4147,7 @@ async def giveawaywebhook(ctx, url):
     cmdname = "giveawaywebhook"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Changes your ping logging webhook. \nUsage: {config_get('prefix')}pinglogwebhook <webhook url>", help="utility")
+@Repent.command(description=f"Changes your ping logging webhook. \nUsage: {config_get('prefix')}pinglogwebhook <webhook url>", help="utility")
 async def pinglogwebhook(ctx, url):    
     config_edit('pinglogger_webhook_url', url)
     heading = "Pinglogger Webhook"
@@ -4155,16 +4155,16 @@ async def pinglogwebhook(ctx, url):
     cmdname = "pinglogwebhook"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Changes your prefix. \nUsage: {config_get('prefix')}changeprefix <prefix>", help="utility")
+@Repent.command(description=f"Changes your prefix. \nUsage: {config_get('prefix')}changeprefix <prefix>", help="utility")
 async def changeprefix(ctx, prefix):    
     config_edit('prefix', prefix)
     heading = "Prefix"
     body = f"Your prefix has been changed to {prefix}"
     cmdname = "changeprefix"
     await panelmaker(ctx, heading, body, cmdname)
-    Cheddlatron.command_prefix = config_get('prefix')
+    Repent.command_prefix = config_get('prefix')
 
-@Cheddlatron.command(aliases=["constheme", "ctheme"], description=f"Changes the theme of the bot. \nUsage: {config_get('prefix')}changetheme [theme]", help="utility")
+@Repent.command(aliases=["constheme", "ctheme"], description=f"Changes the theme of the bot. \nUsage: {config_get('prefix')}changetheme [theme]", help="utility")
 async def changetheme(ctx, file=None):    
     theme_dir = "Data//Themes//"
     matched_files = glob.glob(f"{theme_dir}{file}*")
@@ -4174,7 +4174,7 @@ async def changetheme(ctx, file=None):
             clear_console()
             terminalui()
             heading = "Change Theme"
-            body = f"Theme changed to 'Cheddlatron'"
+            body = f"Theme changed to 'Repent'"
             cmdname = "changetheme"
             await panelmaker(ctx, heading, body, cmdname)             
         elif not matched_files:
@@ -4194,7 +4194,7 @@ async def changetheme(ctx, file=None):
         print(f"{Fore.LIGHTRED_EX}[ERROR]: {Fore.WHITE}{str(e)}"+Fore.RESET)
         await send_webhook("Change Theme Error", f"Failed to change theme due to: {str(e)}.", config_get('error_webhook_url'))
 
-@Cheddlatron.command(aliases=["lst", "lsthemes"], description=f"Lists the themes in the themes folder. \nUsage: {config_get('prefix')}listthemes", help="utility")
+@Repent.command(aliases=["lst", "lsthemes"], description=f"Lists the themes in the themes folder. \nUsage: {config_get('prefix')}listthemes", help="utility")
 async def listthemes(ctx):
     directory = 'Data//Themes'
     try:
@@ -4211,7 +4211,7 @@ async def listthemes(ctx):
         print(f"{Fore.LIGHTRED_EX}[ERROR]: {Fore.WHITE}{str(e)}"+Fore.RESET)
         await send_webhook("List Themes Error", f"Failed to list themes due to: {str(e)}.", config_get('error_webhook_url'))
 
-@Cheddlatron.command(aliases=["lsc", "lscustomcmds"], description=f"Lists the custom commands in the customcmds folder. \nUsage: {config_get('prefix')}listcustomcmds", help="utility")
+@Repent.command(aliases=["lsc", "lscustomcmds"], description=f"Lists the custom commands in the customcmds folder. \nUsage: {config_get('prefix')}listcustomcmds", help="utility")
 async def listcustomcmds(ctx):
     directory = 'Data//CustomCmds'
     try:
@@ -4229,7 +4229,7 @@ async def listcustomcmds(ctx):
         cmdname = "listcustomcmds"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(aliases=["ethemes", "edittheme", "editthemes"], description=f"Changes web embed theme. \nUsage: {config_get('prefix')}etheme <theme>", help="utility")
+@Repent.command(aliases=["ethemes", "edittheme", "editthemes"], description=f"Changes web embed theme. \nUsage: {config_get('prefix')}etheme <theme>", help="utility")
 async def etheme(ctx, *, theme_name: str):
     config_path = "config.json"
     try:
@@ -4245,7 +4245,7 @@ async def etheme(ctx, *, theme_name: str):
     cmdname = "etheme"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(aliases=["lset", "listethems"], description=f"Lists the embed themes in the ethemes folder. \nUsage: {config_get('prefix')}listethemes", help="utility")
+@Repent.command(aliases=["lset", "listethems"], description=f"Lists the embed themes in the ethemes folder. \nUsage: {config_get('prefix')}listethemes", help="utility")
 async def listethemes(ctx):
     directory = 'Data/Settings/Configs/Ethemes'
     try:
@@ -4278,7 +4278,7 @@ def format_duration(seconds):
 def format_unix_timestamp(timestamp):
     return datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
-@Cheddlatron.command(aliases=['remind'], description=f"Sets a reminder. \nUsage: {config_get('prefix')}reminder <time (10s, 10m, 10h, 10d)> <reminder message>", help="utility")
+@Repent.command(aliases=['remind'], description=f"Sets a reminder. \nUsage: {config_get('prefix')}reminder <time (10s, 10m, 10h, 10d)> <reminder message>", help="utility")
 async def reminder(ctx, time: str, *, reminder: str):
     if ctx.guild is not None:
         try:
@@ -4338,7 +4338,7 @@ async def reminder(ctx, time: str, *, reminder: str):
     if response.status_code == 200:
         print("User ping sent to the webhook.")
 
-@Cheddlatron.command(description=f"Toggles Discord Rich Presence on and off. \nUsage: {config_get('prefix')}rpc [config name]", help="utility")
+@Repent.command(description=f"Toggles Discord Rich Presence on and off. \nUsage: {config_get('prefix')}rpc [config name]", help="utility")
 async def rpc(ctx, name=None):
     if name is None or name is None and config_get('rpc') == "":
         config_edit('rpc', "")
@@ -4362,7 +4362,7 @@ async def rpc(ctx, name=None):
             cmdname = "rpc"
             await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Creates a config file for RPC. \nUsage: {config_get('prefix')}cfgrpc <name> <Title> <Description> <Large Image> \n<Small Image> <Large Image Text> <Small Image Text> <Status> <State> <Subtext> <Timer: (True/False)> <Watch_Url> [Button Label 1] [Button Url 1] [Button Label 2] [Button Url 2]", help="utility")
+@Repent.command(description=f"Creates a config file for RPC. \nUsage: {config_get('prefix')}cfgrpc <name> <Title> <Description> <Large Image> \n<Small Image> <Large Image Text> <Small Image Text> <Status> <State> <Subtext> <Timer: (True/False)> <Watch_Url> [Button Label 1] [Button Url 1] [Button Label 2] [Button Url 2]", help="utility")
 async def cfgrpc(ctx, name: str, title: str, description: str, largeimg: str, smallimg: str, largeimgtext: str, smallimgtext: str, status: str, state: str, subtext: str, timer: bool, watchurl: str, buttonlabel1: str=None, buttonurl1: str=None, buttonlabel2: str=None, buttonurl2: str=None):
     if name == "":
         heading = "Error"
@@ -4406,7 +4406,7 @@ async def cfgrpc(ctx, name: str, title: str, description: str, largeimg: str, sm
         cmdname = "cfgrpc"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Creates a config for console rpc. \nUsage: {config_get('prefix')}consolerpc <name> <Title> <Description> <Subtext>\n<Large Image> <Small Image> <Large Image Text>\n<Small Image Text> <Status> <Timer: (True/False)> <Platform>", help="utility")
+@Repent.command(description=f"Creates a config for console rpc. \nUsage: {config_get('prefix')}consolerpc <name> <Title> <Description> <Subtext>\n<Large Image> <Small Image> <Large Image Text>\n<Small Image Text> <Status> <Timer: (True/False)> <Platform>", help="utility")
 async def consolerpc(ctx, name: str, title: str, description: str, subtext: str, largeimg: str, smallimg: str, largeimgtext: str, smallimgtext: str, status: str, timer: bool, platform: str):
     if platform[0].lower() != "x" and platform[0].lower() != "p":
         heading = "Invalid Platform"
@@ -4435,7 +4435,7 @@ async def consolerpc(ctx, name: str, title: str, description: str, subtext: str,
     
 
 
-@Cheddlatron.command(description=f"Creates a config for spotify rpc. \nUsage: {config_get('prefix')}scfgrpc <name> <SongTitle> <ArtistName> <AlbumName> <Image> <Song Length (number)> <status>\n<Buttons (True/False)> <albumid>", help="utility")
+@Repent.command(description=f"Creates a config for spotify rpc. \nUsage: {config_get('prefix')}scfgrpc <name> <SongTitle> <ArtistName> <AlbumName> <Image> <Song Length (number)> <status>\n<Buttons (True/False)> <albumid>", help="utility")
 async def scfgrpc(ctx, name: str,songtitle: str, artistname: str, albumname: str, image: str, songlength: int, status: str, buttons: bool, albumid: str):
     rpcdata = {
         "SongTitle": songtitle,
@@ -4454,7 +4454,7 @@ async def scfgrpc(ctx, name: str,songtitle: str, artistname: str, albumname: str
         cmdname = "scfgrpc"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Toggles pinglogger on and off. \nUsage: {config_get('prefix')}pinglogger", help="utility")
+@Repent.command(description=f"Toggles pinglogger on and off. \nUsage: {config_get('prefix')}pinglogger", help="utility")
 async def pinglogger(ctx):    
     if config_get('pinglogger') == True:
         config_edit('pinglogger', False)
@@ -4469,7 +4469,7 @@ async def pinglogger(ctx):
         cmdname = "pinglogger"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Toggles giveaway sniper on and off. \nUsage: {config_get('prefix')}gsniper", help="utility")
+@Repent.command(description=f"Toggles giveaway sniper on and off. \nUsage: {config_get('prefix')}gsniper", help="utility")
 async def gsniper(ctx):    
     if config_get('giveaway_sniper') == True:
         config_edit('giveaway_sniper', False)
@@ -4484,7 +4484,7 @@ async def gsniper(ctx):
         cmdname = "gsniper"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Toggles nitro sniper on and off. \nUsage: {config_get('prefix')}nsniper", help="utility")
+@Repent.command(description=f"Toggles nitro sniper on and off. \nUsage: {config_get('prefix')}nsniper", help="utility")
 async def nsniper(ctx):    
     if config_get('nitro_sniper') == True:
         config_edit('nitro_sniper', False)
@@ -4499,7 +4499,7 @@ async def nsniper(ctx):
         cmdname = "nsniper"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Toggles AFK Mode on and off. \nUsage: {config_get('prefix')}afkmode", help="utility")
+@Repent.command(description=f"Toggles AFK Mode on and off. \nUsage: {config_get('prefix')}afkmode", help="utility")
 async def afkmode(ctx):    
     if config_get('afkmode') == True:
         config_edit('afkmode', False)
@@ -4514,7 +4514,7 @@ async def afkmode(ctx):
         cmdname = "afkmode"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Toggles webhook notifications on and off. \nUsage: {config_get('prefix')}webhooknotifs", help="utility")
+@Repent.command(description=f"Toggles webhook notifications on and off. \nUsage: {config_get('prefix')}webhooknotifs", help="utility")
 async def webhooknotifs(ctx):    
     if config_get('webhooknotifs') == True:
         config_edit('webhooknotifs', False)
@@ -4529,7 +4529,7 @@ async def webhooknotifs(ctx):
         cmdname = "webhooknotifs"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Switches your embed mode between web embeds and indent embeds. \nUsage: {config_get('prefix')}embedmode <embed mode (web/indent)>", help="utility")
+@Repent.command(description=f"Switches your embed mode between web embeds and indent embeds. \nUsage: {config_get('prefix')}embedmode <embed mode (web/indent)>", help="utility")
 async def embedmode(ctx, mode): 
     if mode.lower() != "web" and mode.lower() != "indent" and mode.lower() !="app":
         heading = "ERROR"
@@ -4543,7 +4543,7 @@ async def embedmode(ctx, mode):
         cmdname = "embedmode"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Changes the message to be sent whilst AFK Mode is active. \nUsage: {config_get('prefix')}afkmsg <message>", help="utility")
+@Repent.command(description=f"Changes the message to be sent whilst AFK Mode is active. \nUsage: {config_get('prefix')}afkmsg <message>", help="utility")
 async def afkmsg(ctx, *, msg):
     config_edit('afkmsg', msg)
     heading = "AFK Msg"
@@ -4551,7 +4551,7 @@ async def afkmsg(ctx, *, msg):
     cmdname = "afkmsg"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Logs a users DMs to you. \nUsage: {config_get('prefix')}dmlog <@user>", help="utility")
+@Repent.command(description=f"Logs a users DMs to you. \nUsage: {config_get('prefix')}dmlog <@user>", help="utility")
 async def dmlog(ctx, user: discord.User):
     setting_edit('dmlogid', user.id)
     if user.id in setting_get('dmlogid'):
@@ -4565,11 +4565,11 @@ async def dmlog(ctx, user: discord.User):
         cmdname = "dmlog"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Removes a paywall from a website. \nUsage: {config_get('prefix')}removepaywall <url>", help="utility")
+@Repent.command(description=f"Removes a paywall from a website. \nUsage: {config_get('prefix')}removepaywall <url>", help="utility")
 async def removepaywall(ctx, url):    
     webbrowser.open(f"https://12ft.io/proxy?ref=&q={url}")
 
-@Cheddlatron.command(aliases = ["cls", "clear"], description=f"Clears the console. \nUsage: {config_get('prefix')}clearcons", help="utility")
+@Repent.command(aliases = ["cls", "clear"], description=f"Clears the console. \nUsage: {config_get('prefix')}clearcons", help="utility")
 async def clearcons(ctx):    
     clear_console()
     terminalui()
@@ -4578,18 +4578,18 @@ async def clearcons(ctx):
     cmdname = "clearcons"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Sends a temp email link. \nUsage: {config_get('prefix')}tempmail", help="utility")
+@Repent.command(description=f"Sends a temp email link. \nUsage: {config_get('prefix')}tempmail", help="utility")
 async def tempmail(ctx):    
     await ctx.send(f'https://www.tempinbox.xyz/mailbox/{random.randint(0, 8)}@tempinbox.xyz')
 
-@Cheddlatron.command(description=f"Generates a random name. \nUsage: {config_get('prefix')}genname", help="utility")
+@Repent.command(description=f"Generates a random name. \nUsage: {config_get('prefix')}genname", help="utility")
 async def genname(ctx):    
     first, second = random.choices(ctx.guild.members, k=2)
     first = first.display_name[len(first.display_name) // 2:]
     second = second.display_name[:len(second.display_name) // 2]
     await ctx.send(discord.utils.escape_mentions(second + first))
 
-@Cheddlatron.command(description=f"Displays info about a user. \nUsage: {config_get('prefix')}whois <@user>", help="utility")
+@Repent.command(description=f"Displays info about a user. \nUsage: {config_get('prefix')}whois <@user>", help="utility")
 async def whois(ctx, member: Union[discord.Member, discord.User] = None):   
     async def get_mutual_guilds(member, guild):
         try:
@@ -4598,7 +4598,7 @@ async def whois(ctx, member: Union[discord.Member, discord.User] = None):
         except discord.NotFound:
             pass
     mutual_guilds = []
-    tasks = [get_mutual_guilds(member, guild) for guild in Cheddlatron.guilds]
+    tasks = [get_mutual_guilds(member, guild) for guild in Repent.guilds]
     results = await asyncio.gather(*tasks)
     mutual_guilds.extend(filter(None, results))
     mutual_servers = '\n'.join(mutual_guilds) if mutual_guilds else "None"
@@ -4615,15 +4615,15 @@ async def whois(ctx, member: Union[discord.Member, discord.User] = None):
     cmdname = "whois"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Sends a user's PFP. \nUsage: {config_get('prefix')}av <@user>", help="utility")
-async def av(ctx, *, user: discord.User = Cheddlatron.user):
+@Repent.command(description=f"Sends a user's PFP. \nUsage: {config_get('prefix')}av <@user>", help="utility")
+async def av(ctx, *, user: discord.User = Repent.user):
     format = "gif"
     if not user.avatar.is_animated():
         format = "png"
     avatar = user.avatar.replace(format=format if format != "gif" else None)
     await apiimg(ctx, avatar)
 
-@Cheddlatron.command(description=f"Turns text into ASCII art. \nUsage: {config_get('prefix')}ascii <text>", help="utility")
+@Repent.command(description=f"Turns text into ASCII art. \nUsage: {config_get('prefix')}ascii <text>", help="utility")
 async def ascii(ctx, *text):        
         try:
             f = pyfiglet.Figlet(font='standard')
@@ -4635,11 +4635,11 @@ async def ascii(ctx, *text):
             return
         await ctx.send(f"```{r}```")
 
-@Cheddlatron.command(description=f"Sends a blank message. \nUsage: {config_get('prefix')}emptymsg", help="utility")
+@Repent.command(description=f"Sends a blank message. \nUsage: {config_get('prefix')}emptymsg", help="utility")
 async def emptymsg(ctx):     
     await ctx.send(chr(173))
 
-@Cheddlatron.command(description=f"Displays bitcoin prices. \nUsage: {config_get('prefix')}btc", help="utility")
+@Repent.command(description=f"Displays bitcoin prices. \nUsage: {config_get('prefix')}btc", help="utility")
 async def btc(ctx):     
     r = requesters.get('https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,EUR,GBP')
     r = r.json()
@@ -4651,7 +4651,7 @@ async def btc(ctx):
     cmdname = "btc"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Displays etherium prices. \nUsage: {config_get('prefix')}eth", help="utility")
+@Repent.command(description=f"Displays etherium prices. \nUsage: {config_get('prefix')}eth", help="utility")
 async def eth(ctx):     
     r = requesters.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,EUR,GBP')
     r = r.json()
@@ -4663,7 +4663,7 @@ async def eth(ctx):
     cmdname = "eth"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Displays litecoin prices. \nUsage: {config_get('prefix')}ltc", help="utility")
+@Repent.command(description=f"Displays litecoin prices. \nUsage: {config_get('prefix')}ltc", help="utility")
 async def ltc(ctx):     
     r = requesters.get('https://min-api.cryptocompare.com/data/price?fsym=LTC&tsyms=USD,EUR,GBP')
     r = r.json()
@@ -4675,7 +4675,7 @@ async def ltc(ctx):
     cmdname = "ltc"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Displays dogecoin prices. \nUsage: {config_get('prefix')}dogecoin", help="utility")
+@Repent.command(description=f"Displays dogecoin prices. \nUsage: {config_get('prefix')}dogecoin", help="utility")
 async def dogecoin(ctx):     
     r = requesters.get('https://min-api.cryptocompare.com/data/price?fsym=DOGE&tsyms=USD,EUR,GBP')
     r = r.json()
@@ -4687,12 +4687,12 @@ async def dogecoin(ctx):
     cmdname = "dogecoin"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Sends a server's PFP. \nUsage: {config_get('prefix')}serverpfp", help="utility")
+@Repent.command(description=f"Sends a server's PFP. \nUsage: {config_get('prefix')}serverpfp", help="utility")
 async def serverpfp(ctx):     
     await ctx.send(ctx.guild.icon.replace(format="png", size=1024))
 
-@Cheddlatron.command(description=f"Creates a poll. \nUsage: {config_get('prefix')}poll <question>", help="utility")
-async def poll(ctx, *, question: str="Cheddlatron"):    
+@Repent.command(description=f"Creates a poll. \nUsage: {config_get('prefix')}poll <question>", help="utility")
+async def poll(ctx, *, question: str="Repent"):    
     heading = "Poll"
     body = question
     cmdname = "poll"
@@ -4703,7 +4703,7 @@ async def poll(ctx, *, question: str="Cheddlatron"):
     for choice in options:
         await message.add_reaction(emoji=choice)
 
-@Cheddlatron.command(description=f"Creates a discord embedded poll with multiple options. \nUsage: {config_get('prefix')}multipoll <question> <duartion (1-336 (hours))> \n<option> <emoji> (up to 10 options)", help="utility")
+@Repent.command(description=f"Creates a discord embedded poll with multiple options. \nUsage: {config_get('prefix')}multipoll <question> <duartion (1-336 (hours))> \n<option> <emoji> (up to 10 options)", help="utility")
 async def multipoll(ctx, question, duration, *options_and_emojis: str): 
     if len(options_and_emojis) < 2 or len(options_and_emojis) % 2 != 0 or len(options_and_emojis) > 20:
         heading = "ERROR"
@@ -4752,8 +4752,8 @@ async def multipoll(ctx, question, duration, *options_and_emojis: str):
     print(req.status_code)
     print(req.text)
 
-@Cheddlatron.command(description=f"Created an embedded discord poll with yes or no answers. \nUsage: {config_get('prefix')}dpoll [length of poll in hours] [question]", help="utility")
-async def dpoll(ctx, duration: typing.Optional[int]=24, *,question: str="Cheddlatron"):
+@Repent.command(description=f"Created an embedded discord poll with yes or no answers. \nUsage: {config_get('prefix')}dpoll [length of poll in hours] [question]", help="utility")
+async def dpoll(ctx, duration: typing.Optional[int]=24, *,question: str="Repent"):
     url = f"https://discord.com/api/v9/channels/{ctx.channel.id}/messages"
     headers = {
         "authorization": config_get('token'),
@@ -4773,7 +4773,7 @@ async def dpoll(ctx, duration: typing.Optional[int]=24, *,question: str="Cheddla
 
     requesters.post(url=url, headers=headers, json_data=json_data)
 
-@Cheddlatron.command(description=f"Enables Dev Tools on Discord app. \nUsage: {config_get('prefix')}devtools", help="utility")
+@Repent.command(description=f"Enables Dev Tools on Discord app. \nUsage: {config_get('prefix')}devtools", help="utility")
 async def devtools(ctx):
     os_name = platform.system()
 
@@ -4807,7 +4807,7 @@ async def devtools(ctx):
     except Exception as e:
         await ctx.send(f"Error: {str(e)}")
 
-@Cheddlatron.command(aliases=["guildinfo"], description=f"Displays info about a server. \nUsage: {config_get('prefix')}serverinfo", help="utility")
+@Repent.command(aliases=["guildinfo"], description=f"Displays info about a server. \nUsage: {config_get('prefix')}serverinfo", help="utility")
 async def serverinfo(ctx):    
     owner = str(ctx.guild.owner)[:-2] if ctx.guild.owner else "Could Not Determine Owner"
     date_format = "%a, %d %b %Y %I:%M %p"
@@ -4816,7 +4816,7 @@ async def serverinfo(ctx):
     cmdname = "serverinfo"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Displays info about a server. \nUsage: {config_get('prefix')}getroles", help="utility")
+@Repent.command(description=f"Displays info about a server. \nUsage: {config_get('prefix')}getroles", help="utility")
 async def getroles(ctx):    
     roles = list(ctx.guild.roles)
     roles.reverse()
@@ -4830,51 +4830,51 @@ async def getroles(ctx):
     body = roleStr
     await ctx.send(f"```{heading}\n\n{body}```")
 
-@Cheddlatron.command(description=f"Shuts down the bot. \nUsage: {config_get('prefix')}shutdown", help="utility")
+@Repent.command(description=f"Shuts down the bot. \nUsage: {config_get('prefix')}shutdown", help="utility")
 async def shutdown(ctx):    
     os._exit(0)
 
-@Cheddlatron.command(description=f"Cleans the last few embeds sent by the bot before the deltimer occurs. \nUsage: {config_get('prefix')}cleanup", help="utility")
+@Repent.command(description=f"Cleans the last few embeds sent by the bot before the deltimer occurs. \nUsage: {config_get('prefix')}cleanup", help="utility")
 async def cleanup(ctx):   
     messages = await ctx.channel.history(limit=15).flatten()
     count_deleted = 0
     for message in messages:
         if count_deleted >= 7:
             break
-        if message.author == Cheddlatron.user and ">" in message.content:
+        if message.author == Repent.user and ">" in message.content:
             await message.delete()
             count_deleted += 1
     clean_message = await ctx.send("**All clean!**")
     await asyncio.sleep(3)
     await clean_message.delete()
 
-@Cheddlatron.command(description=f"Adds 2 numbers together. \nUsage: {config_get('prefix')}add <number1> <number2>", help="utility")
+@Repent.command(description=f"Adds 2 numbers together. \nUsage: {config_get('prefix')}add <number1> <number2>", help="utility")
 async def add(ctx,a:float,b:float):    
     await ctx.send(f"```{a}+{b}={a+b}```")
 
-@Cheddlatron.command(description=f"Subtracts a number from another. \nUsage: {config_get('prefix')}subtract <number1> <number2>", help="utility")
+@Repent.command(description=f"Subtracts a number from another. \nUsage: {config_get('prefix')}subtract <number1> <number2>", help="utility")
 async def subtract(ctx,a:float,b:float):    
     await ctx.send(f"```{a}-{b}={a-b}```")
 
-@Cheddlatron.command(description=f"Multiplies 2 numbers together. \nUsage: {config_get('prefix')}multiply <number1> <number2>", help="utility")
+@Repent.command(description=f"Multiplies 2 numbers together. \nUsage: {config_get('prefix')}multiply <number1> <number2>", help="utility")
 async def multiply(ctx,a:float,b:float):    
     await ctx.send(f"```{a}x{b}={a*b}```")
 
-@Cheddlatron.command(description=f"Divides a number by the other. \nUsage: {config_get('prefix')}divide <number1> <number2>", help="utility")
+@Repent.command(description=f"Divides a number by the other. \nUsage: {config_get('prefix')}divide <number1> <number2>", help="utility")
 async def divide(ctx,a:float,b:float):    
     await ctx.send(f"```{a}÷{b}={a/b}```")
 
-@Cheddlatron.command(description=f"Converts a fraction to a decimal. \nUsage: {config_get('prefix')}fractodec <numerator> <denominator>", help="utility")
+@Repent.command(description=f"Converts a fraction to a decimal. \nUsage: {config_get('prefix')}fractodec <numerator> <denominator>", help="utility")
 async def fractodec(ctx, numerator: int, denominator: int):   
     res = numerator / denominator
     await ctx.send(f"```{numerator} Over {denominator}={res}```")
 
-@Cheddlatron.command(description=f"Converts a decimal to a fraction. \nUsage: {config_get('prefix')}dectofrac <decimal>", help="utility")
+@Repent.command(description=f"Converts a decimal to a fraction. \nUsage: {config_get('prefix')}dectofrac <decimal>", help="utility")
 async def dectofrac(ctx, n: float):    
     res = Fraction(n)
     await ctx.send(f"```{n} as a fraction is {res}```")
 
-@Cheddlatron.command(description=f"Steals another discord users rich presence. \nUsage: {config_get('prefix')}stealactivity <@user>", help="utility")
+@Repent.command(description=f"Steals another discord users rich presence. \nUsage: {config_get('prefix')}stealactivity <@user>", help="utility")
 async def stealactivity(ctx, member: discord.User):
     global fetchedactivity
     req = requesters.get(f"https://discord.com/api/v9/users/{member.id}/profile?with_mutual_guilds=true", headers={"Authorization": config_get('token'), "x-super-properties": getxsuper()}).json()
@@ -4885,7 +4885,7 @@ async def stealactivity(ctx, member: discord.User):
         await panelmaker(ctx, heading, body, cmdname)
         return
     guildid = req["mutual_guilds"][0]["id"]
-    guild = await Cheddlatron.fetch_guild(int(guildid))
+    guild = await Repent.fetch_guild(int(guildid))
     member = await guild.query_members(limit=1, user_ids=[f'{member.id}'], presences=True, cache=False)
     if fetchedactivity == "[]":
         heading = "Error"
@@ -4893,7 +4893,7 @@ async def stealactivity(ctx, member: discord.User):
         cmdname = "ERROR"
         await panelmaker(ctx, heading, body, cmdname)
         return
-    ws = Cheddlatron._get_websocket()
+    ws = Repent._get_websocket()
     req = requesters.get("https://discord.com/api/v9/users/@me/settings-proto/1", headers={"Authorization": config_get('token'), "x-super-properties": getxsuper()}).json()
     settings = base64.b64decode(req['settings']).decode('utf-8', errors='ignore')
     if "invisible" in settings:
@@ -4912,7 +4912,7 @@ async def stealactivity(ctx, member: discord.User):
     cmdname = "stealactivity"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Sends a users activity json. \nUsage: {config_get('prefix')}getactivity <@user>", help="utility")
+@Repent.command(description=f"Sends a users activity json. \nUsage: {config_get('prefix')}getactivity <@user>", help="utility")
 async def getactivity(ctx, user: discord.User):
     global fetchedactivity
     req = requesters.get(f"https://discord.com/api/v9/users/{user.id}/profile?with_mutual_guilds=true", headers={"Authorization": config_get('token'), "x-super-properties": getxsuper()}).json()
@@ -4923,7 +4923,7 @@ async def getactivity(ctx, user: discord.User):
         await panelmaker(ctx, heading, body, cmdname)
         return
     guildid = req["mutual_guilds"][0]["id"]
-    guild = await Cheddlatron.fetch_guild(int(guildid))
+    guild = await Repent.fetch_guild(int(guildid))
     await guild.query_members(limit=1, user_ids=[f'{user.id}'], presences=True, cache=False)
     if fetchedactivity == "[]":
         heading = "Error"
@@ -4958,7 +4958,7 @@ async def getactivity(ctx, user: discord.User):
             await ctx.send(f"```{fetchedactivity}```")
         fetchedactivity = ""
 
-@Cheddlatron.command(description=f"Spam Rings a user. \nUsage: {config_get('prefix')}spamring <@user>")
+@Repent.command(description=f"Spam Rings a user. \nUsage: {config_get('prefix')}spamring <@user>")
 async def spamring(ctx, user: discord.User):
     chanid = ctx.channel.id
     payload = {"recipients": [f"{user.id}"]}
@@ -4966,7 +4966,7 @@ async def spamring(ctx, user: discord.User):
         requesters.post(f"https://discord.com/api/v9/channels/{chanid}/call/ring", headers={'Authorization': config_get('token'), "x-super-properties": getxsuper()}, json_data=payload)
 
 
-@Cheddlatron.command(description=f"Clones a server. \nUsage: {config_get('prefix')}cloneserver", help="utility")
+@Repent.command(description=f"Clones a server. \nUsage: {config_get('prefix')}cloneserver", help="utility")
 async def cloneserver(ctx):
     try:
         source_guild = ctx.guild
@@ -4981,14 +4981,14 @@ async def cloneserver(ctx):
         new_guild_data = await make_server(name=source_guild_name, icon=icon_bytes.read()) if icon_bytes else await make_server(name=source_guild_name)
 
         if isinstance(new_guild_data, dict):
-            new_guild = Cheddlatron.get_guild(int(new_guild_data['id']))
+            new_guild = Repent.get_guild(int(new_guild_data['id']))
         else:
             new_guild = new_guild_data
         
         if not new_guild:
             try:
                 await asyncio.sleep(2)
-                new_guild = Cheddlatron.get_guild(int(new_guild_data['id'])) if isinstance(new_guild_data, dict) else new_guild
+                new_guild = Repent.get_guild(int(new_guild_data['id'])) if isinstance(new_guild_data, dict) else new_guild
             except Exception as e:
                 print(f"{Fore.LIGHTRED_EX}[ERROR]: {Fore.WHITE}Failed to fetch the newly created guild and cannot continue, please try again.")
                 return
@@ -4996,11 +4996,11 @@ async def cloneserver(ctx):
         channels = [channel.id for channel in new_guild.channels]
         for channel in channels:
             try:
-                chan = Cheddlatron.get_channel(channel)
+                chan = Repent.get_channel(channel)
                 await chan.delete()
             except:
                 try:
-                    chan = Cheddlatron.get_channel(channel)
+                    chan = Repent.get_channel(channel)
                     await chan.delete()
                 except:
                     print(f"{Fore.LIGHTRED_EX}[ERROR]: {Fore.WHITE}Unable to delete default channels in cloned server, you will have to do this manually.")
@@ -5067,17 +5067,17 @@ async def cloneserver(ctx):
         cmdname = "ERROR"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Add a custom alias for a command. \nUsage: {config_get('prefix')}alias <command name> <alias>", help="utility")
+@Repent.command(description=f"Add a custom alias for a command. \nUsage: {config_get('prefix')}alias <command name> <alias>", help="utility")
 async def alias(ctx, command_name: str, alias: str):
         heading, body, cmdname = check_and_add_alias(command_name, alias)
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Deletes a custom alias. \nUsage: {config_get('prefix')}delalias <alias>", help="utility")
+@Repent.command(description=f"Deletes a custom alias. \nUsage: {config_get('prefix')}delalias <alias>", help="utility")
 async def delalias(ctx, alias):
     heading, body, cmdname = check_and_remove_alias(alias)
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Lists all custom aliases. \nUsage: {config_get('prefix')}listaliases", help="utility")
+@Repent.command(description=f"Lists all custom aliases. \nUsage: {config_get('prefix')}listaliases", help="utility")
 async def listaliases(ctx):
     with open("Data//Settings//Configs//aliases.json", "r") as file:
         aliases = json.load(file)
@@ -5095,7 +5095,7 @@ async def listaliases(ctx):
         
         await ctx.send(f"```{result.strip()}```", delete_after=int(config_get('delete_timer')))
 
-@Cheddlatron.command(description=f"Adds a discord bot to the list of bots to be giveaway sniped. \nUsage: {config_get('prefix')}gwbot <id of bot>", help="utility")
+@Repent.command(description=f"Adds a discord bot to the list of bots to be giveaway sniped. \nUsage: {config_get('prefix')}gwbot <id of bot>", help="utility")
 async def gwbot(ctx, id):
     with open('config.json', 'r') as file:
         data = json.load(file)
@@ -5114,7 +5114,7 @@ async def gwbot(ctx, id):
     with open('config.json', 'w') as file:
         json.dump(data, file, indent=4)
 
-@Cheddlatron.command(description=f"Blacklists a server from the giveaway bot. \nUsage: {config_get('prefix')}gwblacklist <server id>", help="utility")
+@Repent.command(description=f"Blacklists a server from the giveaway bot. \nUsage: {config_get('prefix')}gwblacklist <server id>", help="utility")
 async def gwblacklist(ctx, id):
     with open('config.json', 'r') as file:
         data = json.load(file)
@@ -5133,7 +5133,7 @@ async def gwblacklist(ctx, id):
     with open('config.json', 'w') as file:
         json.dump(data, file, indent=4)
         
-@Cheddlatron.command(description=f"Changes the delay of the giveaway sniper. \nUsage: {config_get('prefix')}gdelay <delay in seconds>", help="utility")
+@Repent.command(description=f"Changes the delay of the giveaway sniper. \nUsage: {config_get('prefix')}gdelay <delay in seconds>", help="utility")
 async def gdelay(ctx, delay):
     config_edit("giveaway_delay", delay)
     heading = "Delay Updated"
@@ -5141,7 +5141,7 @@ async def gdelay(ctx, delay):
     cmdname = "gdelay"
     await panelmaker(ctx, heading, body, cmdname)
     
-@Cheddlatron.command(description=f"Changes the device the bot is set as \nUsage: {config_get('prefix')}device <device>\nDevices: desktop, mobile, web, console", help="utility")
+@Repent.command(description=f"Changes the device the bot is set as \nUsage: {config_get('prefix')}device <device>\nDevices: desktop, mobile, web, console", help="utility")
 async def device(ctx, device):
     devices = ["console", "web", "desktop", "mobile"]
     if device.lower() in devices:
@@ -5153,15 +5153,15 @@ async def device(ctx, device):
         try:
             os_name = platform.system()
             if os_name == 'Windows':
-                os.startfile("Cheddlatron.exe")
+                os.startfile("Repent.exe")
                 os._exit(1)
             elif os_name in ['Darwin', 'Linux']:
-                os.system("./Cheddlatron.bin")
+                os.system("./Repent.bin")
             else:
                 raise NotImplementedError("Unsupported operating system")
             os._exit(1)
         except (FileNotFoundError, NotImplementedError):
-            os.system("python Cheddlatron.py")
+            os.system("python Repent.py")
             os._exit(1)
         except Exception as e:
             pass
@@ -5171,7 +5171,7 @@ async def device(ctx, device):
         cmdname = "device"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Blacklists a server from the nitro sniper. \nUsage: {config_get('prefix')}nitroblacklist [server id]", help="utility")
+@Repent.command(description=f"Blacklists a server from the nitro sniper. \nUsage: {config_get('prefix')}nitroblacklist [server id]", help="utility")
 async def nitroblacklist(ctx, id=None):
     if id == None:
         id = ctx.guild.id
@@ -5192,7 +5192,7 @@ async def nitroblacklist(ctx, id=None):
     with open('config.json', 'w') as file:
         json.dump(data, file, indent=4)
 
-@Cheddlatron.command(description=f"Shuts down the PC immediately. \nUsage: {config_get('prefix')}shutdownpc", help="utility")
+@Repent.command(description=f"Shuts down the PC immediately. \nUsage: {config_get('prefix')}shutdownpc", help="utility")
 async def shutdownpc(ctx):
     os.system('shutdown /s /t 0')
     heading = "Shutdown Initiated!"
@@ -5200,7 +5200,7 @@ async def shutdownpc(ctx):
     cmdname = "shutdown"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Puts the PC into hibernation immediately. (This requires Hibernation enabled on your PC) \nUsage: {config_get('prefix')}hibernatepc", help="utility")
+@Repent.command(description=f"Puts the PC into hibernation immediately. (This requires Hibernation enabled on your PC) \nUsage: {config_get('prefix')}hibernatepc", help="utility")
 async def hibernatepc(ctx):
     os.system('shutdown /h')
     heading = "Hibernation Initiated!"
@@ -5208,7 +5208,7 @@ async def hibernatepc(ctx):
     cmdname = "hibernate"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Puts the PC to sleep immediately. \nUsage: {config_get('prefix')}sleeppc", help="utility")
+@Repent.command(description=f"Puts the PC to sleep immediately. \nUsage: {config_get('prefix')}sleeppc", help="utility")
 async def sleeppc(ctx):
     os.system('rundll32.exe powrprof.dll,SetSuspendState 0,1,0')
     heading = "Sleep Mode Activated!"
@@ -5216,7 +5216,7 @@ async def sleeppc(ctx):
     cmdname = "sleep"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Locks the PC immediately. \nUsage: {config_get('prefix')}lockpc", help="utility")
+@Repent.command(description=f"Locks the PC immediately. \nUsage: {config_get('prefix')}lockpc", help="utility")
 async def lockpc(ctx):
     os.system('rundll32.exe user32.dll,LockWorkStation')
     heading = "PC Lock Initiated!"
@@ -5224,7 +5224,7 @@ async def lockpc(ctx):
     cmdname = "lock"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Restarts the PC immediately. \nUsage: {config_get('prefix')}restartpc", help="utility")
+@Repent.command(description=f"Restarts the PC immediately. \nUsage: {config_get('prefix')}restartpc", help="utility")
 async def restartpc(ctx):
     os.system('shutdown /r /t 0')
     heading = "Restart Initiated!"
@@ -5232,7 +5232,7 @@ async def restartpc(ctx):
     cmdname = "restart"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description = f"Gets someones Xbox UID from their username. \nUsage: {config_get('prefix')}xuid <username>", help="utility")
+@Repent.command(description = f"Gets someones Xbox UID from their username. \nUsage: {config_get('prefix')}xuid <username>", help="utility")
 async def xuid(ctx, *,username):
     username = urlify(username)
     resp = requesters.get(f"http://192.9.186.202:3113/profile/gt/{username}")
@@ -5251,7 +5251,7 @@ async def xuid(ctx, *,username):
             cmdname = "xuid"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Creates a backup of your favourite gifs. \nUsage {config_get('prefix')}backupgifs", help="utility")
+@Repent.command(description=f"Creates a backup of your favourite gifs. \nUsage {config_get('prefix')}backupgifs", help="utility")
 async def backupgifs(ctx):
     url = "https://discord.com/api/v9/users/@me/settings-proto/2"
     headers = {
@@ -5273,7 +5273,7 @@ async def backupgifs(ctx):
     cmdname = "backupgifs"
     await panelmaker(ctx,heading,body,cmdname)
 
-@Cheddlatron.command(description=f"Imports your favourite gifs to your account using backed-up gifs from the backupgifs cmd. \nUsage: {config_get('prefix')}importgifs")
+@Repent.command(description=f"Imports your favourite gifs to your account using backed-up gifs from the backupgifs cmd. \nUsage: {config_get('prefix')}importgifs")
 async def importgifs(ctx):
     def getsettings():
         url = "https://discord.com/api/v9/users/@me/settings-proto/2"
@@ -5334,7 +5334,7 @@ async def importgifs(ctx):
 
 
 #HACKING COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Clears someones console. \nUsage: {config_get('prefix')}injectclear [@user]", help="hacking")
+@Repent.command(description=f"Clears someones console. \nUsage: {config_get('prefix')}injectclear [@user]", help="hacking")
 async def injectclear(ctx, user: discord.User = None):
     if user is not None:
         user_mention = user.mention
@@ -5343,7 +5343,7 @@ async def injectclear(ctx, user: discord.User = None):
     code = f'{user_mention} \033c'
     await ctx.send(f'{code}', delete_after=0)
 
-@Cheddlatron.command(description=f"Scrolls someones console up. \nUsage: {config_get('prefix')}injectscrollup [@user] [amount to scroll up by]", help="hacking")
+@Repent.command(description=f"Scrolls someones console up. \nUsage: {config_get('prefix')}injectscrollup [@user] [amount to scroll up by]", help="hacking")
 async def injectscrollup(ctx, user: typing.Optional[discord.User] = None, amount=50):
     if user is not None:
         user_mention = user.mention
@@ -5352,7 +5352,7 @@ async def injectscrollup(ctx, user: typing.Optional[discord.User] = None, amount
     code = f'{user_mention} \033[{amount}S'
     await ctx.send(f'{code}', delete_after=0)
 
-@Cheddlatron.command(description=f"Scrolls someones console down. \nUsage: {config_get('prefix')}injectscrolldown [@user] [amount to scroll down by]", help="hacking")
+@Repent.command(description=f"Scrolls someones console down. \nUsage: {config_get('prefix')}injectscrolldown [@user] [amount to scroll down by]", help="hacking")
 async def injectscrolldown(ctx, user: typing.Optional[discord.User] = None, amount=50):
     if user is not None:
         user_mention = user.mention
@@ -5361,7 +5361,7 @@ async def injectscrolldown(ctx, user: typing.Optional[discord.User] = None, amou
     code = f'{user_mention} \033[{amount}T'
     await ctx.send(f'{code}', delete_after=0)
 
-@Cheddlatron.command(description=f"Turns someones console fully white. \nUsage: {config_get('prefix')}injectchaos [@user]", help="hacking")
+@Repent.command(description=f"Turns someones console fully white. \nUsage: {config_get('prefix')}injectchaos [@user]", help="hacking")
 async def injectchaos(ctx, user: discord.User = None):
     if user is not None:
         user_mention = user.mention
@@ -5370,8 +5370,8 @@ async def injectchaos(ctx, user: discord.User = None):
     code = f'''{user_mention} \x1b[7m\x1b[2J\x1b[15;D\x1b[0m'''
     await ctx.send(f'{code}', delete_after=0)
 
-@Cheddlatron.command(description=f"Prints invisible text in someones console. \nUsage: {config_get('prefix')}injectinvistext [@user] [invis text]", help="hacking")
-async def injectinvistext(ctx, user: typing.Optional[discord.User] = None, *, message="Cheddlatron"):
+@Repent.command(description=f"Prints invisible text in someones console. \nUsage: {config_get('prefix')}injectinvistext [@user] [invis text]", help="hacking")
+async def injectinvistext(ctx, user: typing.Optional[discord.User] = None, *, message="Repent"):
     if user is not None:
         user_mention = user.mention
     else:
@@ -5379,7 +5379,7 @@ async def injectinvistext(ctx, user: typing.Optional[discord.User] = None, *, me
     code = f'{user_mention} \033[30m{message}'
     await ctx.send(f'{code}', delete_after=0)
 
-@Cheddlatron.command(description=f"Triggers a windows alert sound from their console. \nUsage: {config_get('prefix')}injectalert [@user] [number of alerts]", help="hacking")
+@Repent.command(description=f"Triggers a windows alert sound from their console. \nUsage: {config_get('prefix')}injectalert [@user] [number of alerts]", help="hacking")
 async def injectalert(ctx, user: typing.Optional[discord.User] = None, amount=1):
     if user is not None:
         user_mention = user.mention
@@ -5389,18 +5389,18 @@ async def injectalert(ctx, user: typing.Optional[discord.User] = None, amount=1)
     for i in range(0, int(amount)):
         await ctx.send(f'{code}', delete_after=0)
 
-@Cheddlatron.command(description=f"Changes someones console title bar text. \nUsage: {config_get('prefix')}injecttitle [@user] [title text]", help="hacking")
+@Repent.command(description=f"Changes someones console title bar text. \nUsage: {config_get('prefix')}injecttitle [@user] [title text]", help="hacking")
 async def injecttitle(ctx, user: typing.Optional[discord.User] = None, *, title=None):
     if user is not None:
         user_mention = user.mention
     else:
         user_mention = ""
     if title == None:
-        title = "Cheddlatron"
+        title = "Repent"
     code = f'{user_mention} \033]0;{title}\007'
     await ctx.send(f'{code}', delete_after=0)
 
-@Cheddlatron.command(description=f"Cuts someones console in half. \nUsage: {config_get('prefix')}injectcut [@user]", help="hacking")
+@Repent.command(description=f"Cuts someones console in half. \nUsage: {config_get('prefix')}injectcut [@user]", help="hacking")
 async def injectcut(ctx, user: discord.User = None):
     if user is not None:
         user_mention = user.mention
@@ -5409,7 +5409,7 @@ async def injectcut(ctx, user: discord.User = None):
     code = f'{user_mention} \033[S' * 20 + '\033[T' * 20  
     await ctx.send(f'{code}', delete_after=0)
 
-@Cheddlatron.command(description=f"Takes over someones console by clearing it changing their title and displaying ascii art. \nUsage: {config_get('prefix')}injecttakeover [@user]", help="hacking")
+@Repent.command(description=f"Takes over someones console by clearing it changing their title and displaying ascii art. \nUsage: {config_get('prefix')}injecttakeover [@user]", help="hacking")
 async def injecttakeover(ctx, user: discord.User = None):
     headers = {'Authorization': config_get('token')}
     nitro = requesters.get("https://discord.com/api/v9/users/@me", headers=headers)
@@ -5439,13 +5439,13 @@ async def injecttakeover(ctx, user: discord.User = None):
 [93m [93m [93m [93m [93m [93m [93m [93m [93m [91m+[91m+[91m+[91m+[91m+[91m+[91m+[91m+[91m+[93m [93m [93m [93m [93m [93m [93m [93m [93m [93m
 [93m [93m [93m [93m [93m [93m [93m [93m [93m [93m [93m [93m [91m+[91m+[91m+[93m [93m [93m [93m [93m [93m [93m [93m [93m [93m [93m [93m [93m
 
-[43;31;1;4m#CheddlatronOnTop[0m"""
+[43;31;1;4m#RepentOnTop[0m"""
     else:
-        ascii1 = f"{user_mention} [43;31;1;4m#CheddlatronOnTop[0m"
+        ascii1 = f"{user_mention} [43;31;1;4m#RepentOnTop[0m"
     await ctx.send(f'{code}', delete_after=0)
     await ctx.send(f'{ascii1}', delete_after=0)
 
-@Cheddlatron.command(description=f"Generates a new token for the given token. \nUsage: {config_get('prefix')}alttoken <token>", help="hacking")
+@Repent.command(description=f"Generates a new token for the given token. \nUsage: {config_get('prefix')}alttoken <token>", help="hacking")
 async def alttoken(ctx, account_token):
     keypair = rsa.generate_private_key(
                 public_exponent=65537,
@@ -5546,7 +5546,7 @@ async def alttoken(ctx, account_token):
             pass
     await main()
 
-@Cheddlatron.command(description=f"Changes the main token to another specified token within Tokens.json config. \nUsage: {config_get('prefix')}changetoken <token number (e.g 1 2 3)>", help="utility")
+@Repent.command(description=f"Changes the main token to another specified token within Tokens.json config. \nUsage: {config_get('prefix')}changetoken <token number (e.g 1 2 3)>", help="utility")
 async def changetoken(ctx, token_number: int):
     token_key = f"Token{token_number}"
 
@@ -5571,17 +5571,17 @@ async def changetoken(ctx, token_number: int):
         json.dump(config, file, indent=4)
     try:
         heading = f"Token Swapped!"
-        body = f"Token '{token_key}' has been swapped and Cheddlatron is now attempting to restart."
+        body = f"Token '{token_key}' has been swapped and Repent is now attempting to restart."
         cmdname = "changetoken"
         await panelmaker(ctx, heading, body, cmdname)
-        os.startfile("Cheddlatron.exe")
+        os.startfile("Repent.exe")
     except FileNotFoundError:
-        os.system("python Cheddlatron.py")
+        os.system("python Repent.py")
         os._exit(1)
     except Exception as e:
-        await ctx.send(f"Failed to restart Cheddlatron.exe: {e}")
+        await ctx.send(f"Failed to restart Repent.exe: {e}")
 
-@Cheddlatron.command(description=f"Sends half a user's Discord token. \nUsage: {config_get('prefix')}halftoken [@user]", help="hacking")
+@Repent.command(description=f"Sends half a user's Discord token. \nUsage: {config_get('prefix')}halftoken [@user]", help="hacking")
 async def halftoken(ctx, member: discord.User = None):    
     if member == None:
         member = ctx.message.author
@@ -5591,12 +5591,12 @@ async def halftoken(ctx, member: discord.User = None):
     cmdname = "halftoken"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Generates and sends a random nitro code. \nUsage: {config_get('prefix')}fakenitro [redirect link]", help="hacking")
-async def fakenitro(ctx, link = "https://discord.gg/cheddlatron"):    
+@Repent.command(description=f"Generates and sends a random nitro code. \nUsage: {config_get('prefix')}fakenitro [redirect link]", help="hacking")
+async def fakenitro(ctx, link = "https://discord.gg/repent"):    
     code = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
     await ctx.send(f"[discord.gift/{code}]({link})")
 
-@Cheddlatron.command(description=f"Grabs info about a specified token. \nUsage: {config_get('prefix')}checktoken <token>", help="hacking") 
+@Repent.command(description=f"Grabs info about a specified token. \nUsage: {config_get('prefix')}checktoken <token>", help="hacking") 
 async def checktoken(ctx, token):    
     try:
         headers = {
@@ -5634,7 +5634,7 @@ async def checktoken(ctx, token):
         cmdname = "checktoken"
         await panelmaker(ctx, heading, body, cmdname)
         
-@Cheddlatron.command(description=f"Deletes any webhook. \nUsage: {config_get('prefix')}delwebhook <webhook url>", help="hacking")
+@Repent.command(description=f"Deletes any webhook. \nUsage: {config_get('prefix')}delwebhook <webhook url>", help="hacking")
 async def delwebhook(ctx, url):    
     try:
         requesters.delete(url)
@@ -5650,7 +5650,7 @@ async def delwebhook(ctx, url):
         await panelmaker(ctx, heading, body, cmdname)
         await send_webhook("Delete Webhook Error", f"Failed to delete the webhook due to: {str(e)}. Please check the logs for more details.", config_get('error_webhook_url'))
 
-@Cheddlatron.command(description=f"Gives info on an IP. \nUsage: {config_get('prefix')}ipinfo <IP>", help="hacking")
+@Repent.command(description=f"Gives info on an IP. \nUsage: {config_get('prefix')}ipinfo <IP>", help="hacking")
 async def ipinfo(ctx, ip):    
     r = requesters.get(f'https://ipinfo.io/{ip}/json')
     r = r.json()
@@ -5667,7 +5667,7 @@ async def ipinfo(ctx, ip):
 
 
 #SPOTIFY COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Plays a song in spotify. \nUsage: {config_get('prefix')}play <song>", help="spotify")
+@Repent.command(description=f"Plays a song in spotify. \nUsage: {config_get('prefix')}play <song>", help="spotify")
 async def play(ctx, *, song):
     await spotify_access()
     spotifytoken = await spotify_access()
@@ -5680,73 +5680,73 @@ async def play(ctx, *, song):
     payloadlen = len(str(payload))
     requesters.put(f"https://api.spotify.com/v1/me/player/play?device_id={spot_device}", headers={'authorization': spotifytoken, 'content-type': 'application/json', 'content-length': str(payloadlen)}, json_data=payload)
 
-@Cheddlatron.command(description=f"Pauses your spotify. \nUsage: {config_get('prefix')}pause", help="spotify")
+@Repent.command(description=f"Pauses your spotify. \nUsage: {config_get('prefix')}pause", help="spotify")
 async def pause(ctx):    
     spotifytoken = await spotify_access()
     spot_device = json.loads(requesters.get('https://api.spotify.com/v1/me/player/', headers={'authorization': spotifytoken}).text)['device']['id']
     requesters.put(f"https://api.spotify.com/v1/me/player/pause?device_id={spot_device}", headers={'authorization': spotifytoken})
 
-@Cheddlatron.command(description=f"Resumes your spotify. \nUsage: {config_get('prefix')}resume", help="spotify")
+@Repent.command(description=f"Resumes your spotify. \nUsage: {config_get('prefix')}resume", help="spotify")
 async def resume(ctx):    
     spotifytoken = await spotify_access()
     spot_device = json.loads(requesters.get('https://api.spotify.com/v1/me/player/', headers={'authorization': spotifytoken}).text)['device']['id']
     requesters.put(f"https://api.spotify.com/v1/me/player/play?device_id={spot_device}", headers={'authorization': spotifytoken})
 
-@Cheddlatron.command(description=f"Skips to the next song in spotify. \nUsage: {config_get('prefix')}skip", help="spotify")
+@Repent.command(description=f"Skips to the next song in spotify. \nUsage: {config_get('prefix')}skip", help="spotify")
 async def skip(ctx):    
     spotifytoken = await spotify_access()
     spot_device = json.loads(requesters.get('https://api.spotify.com/v1/me/player/', headers={'authorization': spotifytoken}).text)['device']['id']
     requesters.post(f"https://api.spotify.com/v1/me/player/next?device_id={spot_device}", headers={'authorization': spotifytoken})
 
-@Cheddlatron.command(description=f"Plays the previous song in spotify. \nUsage: {config_get('prefix')}previous", help="spotify")
+@Repent.command(description=f"Plays the previous song in spotify. \nUsage: {config_get('prefix')}previous", help="spotify")
 async def previous(ctx):    
     spotifytoken = await spotify_access()
     spot_device = json.loads(requesters.get('https://api.spotify.com/v1/me/player/', headers={'authorization': spotifytoken}).text)['device']['id']
     requesters.post(f"https://api.spotify.com/v1/me/player/previous?device_id={spot_device}", headers={'authorization': spotifytoken})
 
-@Cheddlatron.command(description=f"Shuffles a playlist in spotify. \nUsage: {config_get('prefix')}shuffle", help="spotify")
+@Repent.command(description=f"Shuffles a playlist in spotify. \nUsage: {config_get('prefix')}shuffle", help="spotify")
 async def shuffle(ctx):    
     spotifytoken = await spotify_access()
     spot_device = json.loads(requesters.get('https://api.spotify.com/v1/me/player/', headers={'authorization': spotifytoken}).text)['device']['id']
     requesters.put(f"https://api.spotify.com/v1/me/player/shuffle?state=true&device_id={spot_device}", headers={'authorization': spotifytoken})
 
-@Cheddlatron.command(description=f"Unshuffles a playlist in spotify. \nUsage: {config_get('prefix')}unshuffle", help="spotify")
+@Repent.command(description=f"Unshuffles a playlist in spotify. \nUsage: {config_get('prefix')}unshuffle", help="spotify")
 async def unshuffle(ctx):    
     spotifytoken = await spotify_access()
     spot_device = json.loads(requesters.get('https://api.spotify.com/v1/me/player/', headers={'authorization': spotifytoken}).text)['device']['id']
     requesters.put(f"https://api.spotify.com/v1/me/player/shuffle?state=false&device_id={spot_device}", headers={'authorization': spotifytoken})
 
-@Cheddlatron.command(description=f"Adjusts the volume in spotify. \nUsage: {config_get('prefix')}volume <volume (1-100)>", help="spotify")
+@Repent.command(description=f"Adjusts the volume in spotify. \nUsage: {config_get('prefix')}volume <volume (1-100)>", help="spotify")
 async def volume(ctx, volume):    
     spotifytoken = await spotify_access()
     spot_device = json.loads(requesters.get('https://api.spotify.com/v1/me/player/', headers={'authorization': spotifytoken}).text)['device']['id']
     requesters.put(f"https://api.spotify.com/v1/me/player/volume?volume_percent={volume}&device_id={spot_device}", headers={'authorization': spotifytoken})
 
-@Cheddlatron.command(description=f"Loops the current song in spotify. \nUsage: {config_get('prefix')}loop", help="spotify")
+@Repent.command(description=f"Loops the current song in spotify. \nUsage: {config_get('prefix')}loop", help="spotify")
 async def loop(ctx):    
     spotifytoken = await spotify_access()
     spot_device = json.loads(requesters.get('https://api.spotify.com/v1/me/player/', headers={'authorization': spotifytoken}).text)['device']['id']
     requesters.put(f"https://api.spotify.com/v1/me/player/repeat?state=context&device_id={spot_device}", headers={'authorization': spotifytoken})
 
-@Cheddlatron.command(description=f"Repeats the current song in spotify once. \nUsage: {config_get('prefix')}looponce", help="spotify")
+@Repent.command(description=f"Repeats the current song in spotify once. \nUsage: {config_get('prefix')}looponce", help="spotify")
 async def looponce(ctx):    
     spotifytoken = await spotify_access()
     spot_device = json.loads(requesters.get('https://api.spotify.com/v1/me/player/', headers={'authorization': spotifytoken}).text)['device']['id']
     requesters.put(f"https://api.spotify.com/v1/me/player/repeat?state=track&device_id={spot_device}", headers={'authorization': spotifytoken})
 
-@Cheddlatron.command(description=f"Stops looping the current song in spotify. \nUsage: {config_get('prefix')}stoploop", help="spotify")
+@Repent.command(description=f"Stops looping the current song in spotify. \nUsage: {config_get('prefix')}stoploop", help="spotify")
 async def stoploop(ctx):    
     spotifytoken = await spotify_access()
     spot_device = json.loads(requesters.get('https://api.spotify.com/v1/me/player/', headers={'authorization': spotifytoken}).text)['device']['id']
     requesters.put(f"https://api.spotify.com/v1/me/player/repeat?state=off&device_id={spot_device}", headers={'authorization': spotifytoken})
 
-@Cheddlatron.command(description=f"Sends a listen along link so the people can listen along with your spotify. \nUsage: {config_get('prefix')}listenalong", help="spotify")
+@Repent.command(description=f"Sends a listen along link so the people can listen along with your spotify. \nUsage: {config_get('prefix')}listenalong", help="spotify")
 async def listenalong(ctx):
-    myload = {"content":"","nonce":"","tts":False,"activity":{"type":3,"session_id":seshid,"party_id":f"spotify:{Cheddlatron.user.id}"}}
+    myload = {"content":"","nonce":"","tts":False,"activity":{"type":3,"session_id":seshid,"party_id":f"spotify:{Repent.user.id}"}}
     headpls = {'authorization': config_get('token'), 'Content-Type': 'application/json'}
     r = requested.post(f'https://ptb.discord.com/api/v9/channels/{ctx.channel.id}/messages', headers=headpls, data=json.dumps(myload))
 
-@Cheddlatron.command(description = f"Displays what song is currently playing on your spotify. \nUsage: {config_get('prefix')}nowplaying", help = "spotify")
+@Repent.command(description = f"Displays what song is currently playing on your spotify. \nUsage: {config_get('prefix')}nowplaying", help = "spotify")
 async def nowplaying(ctx):
     spotifytoken  = await spotify_access()
     r = json.loads(requesters.get(f'https://api.spotify.com/v1/me/player', headers={'authorization': spotifytoken}).text)
@@ -5763,11 +5763,11 @@ async def nowplaying(ctx):
 
 
 #FUN COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Shows a users reviews on Review DB. \nUsage: {config_get('prefix')}reviews [@user]", help="utility")
+@Repent.command(description=f"Shows a users reviews on Review DB. \nUsage: {config_get('prefix')}reviews [@user]", help="utility")
 async def reviews(ctx, user: discord.User=None):
     body = ""
     if not user:
-        user = Cheddlatron.user
+        user = Repent.user
     revreq = requesters.get(f'https://manti.vendicated.dev/api/reviewdb/users/{user.id}/reviews?flags=0&offset=0').json()
     username = requesters.get(f'https://canary.discord.com/api/v9/users/{user.id}/profile', headers={'authorization':config_get('token')}).json()['user']['global_name']
     heading = f"User Reviews for {username} ({revreq['reviewCount']} total)"
@@ -5783,7 +5783,7 @@ async def reviews(ctx, user: discord.User=None):
         return
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Writes a review on a users profile. \nUsage: {config_get('prefix')}review <@user> <review>", help="utility")
+@Repent.command(description=f"Writes a review on a users profile. \nUsage: {config_get('prefix')}review <@user> <review>", help="utility")
 async def review(ctx, user: discord.User, *, review):
     try:
         payload = {
@@ -5811,7 +5811,7 @@ async def review(ctx, user: discord.User, *, review):
         cmdname = "ERROR"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Deletes a review you have on a user. \nUsage: {config_get('prefix')}delreview <@user>", help="utility")
+@Repent.command(description=f"Deletes a review you have on a user. \nUsage: {config_get('prefix')}delreview <@user>", help="utility")
 async def delreview(ctx, user: discord.User):
         payload = {
             "authorize": True,
@@ -5825,7 +5825,7 @@ async def delreview(ctx, user: discord.User):
         revreq = requesters.get(f'https://manti.vendicated.dev/api/reviewdb/users/{user.id}/reviews?flags=0&offset=0').json()
         for review in revreq['reviews']:
             if review['id'] != 0:
-                if review['sender']['discordID'] == str(Cheddlatron.user.id):
+                if review['sender']['discordID'] == str(Repent.user.id):
                         payload = {"reviewid": review['id']}
                         resp = requesters.delete(f"https://manti.vendicated.dev/api/reviewdb/users/{review['id']}/reviews", headers={'Authorization': dbtoken}, json_data=payload).json()
                         if resp["success"] == True:
@@ -5845,7 +5845,7 @@ async def delreview(ctx, user: discord.User):
         cmdname = "delreview"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Shows who discord believes your favourite friends to be based on their affinity algorithm. \nUsage: {config_get('prefix')}favouritefriends", help="fun")
+@Repent.command(description=f"Shows who discord believes your favourite friends to be based on their affinity algorithm. \nUsage: {config_get('prefix')}favouritefriends", help="fun")
 async def favouritefriends(ctx):
     r = json.loads(requesters.get('https://discord.com/api/v9/users/@me/affinities/users', headers={'authorization': config_get('token'), 'x-super-properties': getxsuper()}).text)['user_affinities']
     if r == []:
@@ -5859,12 +5859,12 @@ async def favouritefriends(ctx):
         req = requesters.get(f"https://discord.com/api/v9/users/{r[i]['user_id']}/profile", headers={'authorization': config_get('token'), 'x-super-properties': getxsuper()}).json()
         name = req['user']['global_name']
         top10.append(name)
-    heading = f"{Cheddlatron.user.name}'s Favourite Friends"
+    heading = f"{Repent.user.name}'s Favourite Friends"
     body = '\n'.join(top10)
     cmdname = "favouritefriends"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Shows what guilds discord believes to be your favourite based on their affinity algorithm. \nUsage: {config_get('prefix')}favouriteguilds", help="fun")
+@Repent.command(description=f"Shows what guilds discord believes to be your favourite based on their affinity algorithm. \nUsage: {config_get('prefix')}favouriteguilds", help="fun")
 async def favouriteguilds(ctx):
     r = json.loads(requesters.get('https://discord.com/api/v9/users/@me/affinities/guilds', headers={'authorization': config_get('token')}).text)
     if r['guild_affinities'] == []:
@@ -5881,13 +5881,13 @@ async def favouriteguilds(ctx):
     for i in range(0,10):
         guild = r['guild_affinities'][i]['guild_id']
         top10.append(f"{i+1}. {myguilds[guild]}")
-    heading = f"{Cheddlatron.user.name}'s Favourite Guilds"
+    heading = f"{Repent.user.name}'s Favourite Guilds"
     body = '\n'.join(top10)
     cmdname = "favouriteguilds"
     await panelmaker(ctx, heading, body, cmdname)
 
 
-@Cheddlatron.command(description=f"Sends text in a vaporwave font. \nUsage: {config_get('prefix')}vaporwave <text>", help="fun")
+@Repent.command(description=f"Sends text in a vaporwave font. \nUsage: {config_get('prefix')}vaporwave <text>", help="fun")
 async def vaporwave(ctx, *, text):     
     special_font_chars = {
         'a': 'ａ', 'b': 'ｂ', 'c': 'ｃ', 'd': 'ｄ', 'e': 'ｅ',
@@ -5912,12 +5912,12 @@ async def vaporwave(ctx, *, text):
     translated_text = ''.join([special_font_chars.get(char, char) for char in text])
     await ctx.send(translated_text)
 
-@Cheddlatron.command(description=f"Spoilers every character in a sentence. \nUsage: {config_get('prefix')}spoiler <text>", help="fun")
+@Repent.command(description=f"Spoilers every character in a sentence. \nUsage: {config_get('prefix')}spoiler <text>", help="fun")
 async def spoiler(ctx, *, text):     
     spoiler_text = '||'+'||||' .join(text) + '||' 
     await ctx.send(spoiler_text)
 
-@Cheddlatron.command(name="1337", description=f"Formats text into leet speak. \nUsage: {config_get('prefix')}leet <text>", help="fun") 
+@Repent.command(name="1337", description=f"Formats text into leet speak. \nUsage: {config_get('prefix')}leet <text>", help="fun") 
 async def leet(ctx, *, text):    
     leet_dict = {
     'a': '4', 'e': '3', 'l': '1', 't': '7', 'o': '0', 's': '5', 'w': '\\/\\/', 'h': '|-|',
@@ -5927,7 +5927,7 @@ async def leet(ctx, *, text):
     
     await ctx.send(leet_text)
 
-@Cheddlatron.command(description=f"Owoifys text. \nUsage: {config_get('prefix')}owoify <text>", help="fun")
+@Repent.command(description=f"Owoifys text. \nUsage: {config_get('prefix')}owoify <text>", help="fun")
 async def owoify(ctx, *, text):     
     def owoify_text(text):
         text = text.replace('r', 'w')
@@ -5945,35 +5945,35 @@ async def owoify(ctx, *, text):
     owo_text = owoify_text(text)
     await ctx.send(owo_text)
 
-@Cheddlatron.command(description=f"Italicises text. \nUsage: {config_get('prefix')}italic <text>", help="fun") 
+@Repent.command(description=f"Italicises text. \nUsage: {config_get('prefix')}italic <text>", help="fun") 
 async def italic(ctx, *, text):    
     await ctx.send(f"*{text}*")
 
-@Cheddlatron.command(description=f"Emblodens text. \nUsage: {config_get('prefix')}bold <text>", help="fun") 
+@Repent.command(description=f"Emblodens text. \nUsage: {config_get('prefix')}bold <text>", help="fun") 
 async def bold(ctx, *, text):   
     await ctx.send(f"**{text}**")
 
-@Cheddlatron.command(description=f"Makes text very large. \nUsage: {config_get('prefix')}superbold <text>", help="fun") 
+@Repent.command(description=f"Makes text very large. \nUsage: {config_get('prefix')}superbold <text>", help="fun") 
 async def superbold(ctx, *, text):   
     await ctx.send(f"# {text}")
 
-@Cheddlatron.command(description=f"Quotes text. \nUsage: {config_get('prefix')}quote <text>", help="fun") 
+@Repent.command(description=f"Quotes text. \nUsage: {config_get('prefix')}quote <text>", help="fun") 
 async def quote(ctx, *, text):    
     await ctx.send(f">>> {text}")
 
-@Cheddlatron.command(description=f"Italicises and emboldens text. \nUsage: {config_get('prefix')}italicbold <text>", help="fun") 
+@Repent.command(description=f"Italicises and emboldens text. \nUsage: {config_get('prefix')}italicbold <text>", help="fun") 
 async def italicbold(ctx, *, text):    
     await ctx.send(f"***{text}***")
 
-@Cheddlatron.command(description=f"Underlines text. \nUsage: {config_get('prefix')}underline <text>", help="fun") 
+@Repent.command(description=f"Underlines text. \nUsage: {config_get('prefix')}underline <text>", help="fun") 
 async def underline(ctx, *, text):    
     await ctx.send(f"__{text}__")
 
-@Cheddlatron.command(description=f"Creates a hyperlink. \nUsage: {config_get('prefix')}hyperlink <link> <text>", help="fun") 
+@Repent.command(description=f"Creates a hyperlink. \nUsage: {config_get('prefix')}hyperlink <link> <text>", help="fun") 
 async def hyperlink(ctx, link, *, text):    
     await ctx.send(f"[{text}]({link})")
 
-@Cheddlatron.command(description=f"Translates text to morse code. \nUsage: {config_get('prefix')}morse <text>", help="fun") 
+@Repent.command(description=f"Translates text to morse code. \nUsage: {config_get('prefix')}morse <text>", help="fun") 
 async def morse(ctx, *, text):    
     morse_dict = {
     'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
@@ -5987,7 +5987,7 @@ async def morse(ctx, *, text):
     morse_text = ' '.join([morse_dict.get(char.upper(), char) for char in text])  
     await ctx.send(morse_text)
 
-@Cheddlatron.command(description=f"Translates morse code to text. \nUsage: {config_get('prefix')}demorse <morse>", help="fun") 
+@Repent.command(description=f"Translates morse code to text. \nUsage: {config_get('prefix')}demorse <morse>", help="fun") 
 async def demorse(ctx, *, morse_text):    
     morse_dict = {
         'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
@@ -6003,12 +6003,12 @@ async def demorse(ctx, *, morse_text):
     text = ''.join([reverse_morse_dict.get(char, char) for char in morse_text.split()])   
     await ctx.send(text)
 
-@Cheddlatron.command(description=f"Translates text to hexidecimal. \nUsage: {config_get('prefix')}hex <text>", help="fun") 
+@Repent.command(description=f"Translates text to hexidecimal. \nUsage: {config_get('prefix')}hex <text>", help="fun") 
 async def hex(ctx, *, text):    
     hex_text = text.encode('utf-8').hex()
     await ctx.send(f'0x{hex_text}')
 
-@Cheddlatron.command(description=f"Translates hexidecimal to text. \nUsage: {config_get('prefix')}dehex <hex>", help="fun") 
+@Repent.command(description=f"Translates hexidecimal to text. \nUsage: {config_get('prefix')}dehex <hex>", help="fun") 
 async def dehex(ctx, *, hex_text):    
     try:
         hex_text = hex_text.lstrip('0x')
@@ -6020,17 +6020,17 @@ async def dehex(ctx, *, hex_text):
         cmdname = "dehex"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Puts an emoji in place of spaces. \nUsage: {config_get('prefix')}emojispace <emoji> <text>", help="fun") 
+@Repent.command(description=f"Puts an emoji in place of spaces. \nUsage: {config_get('prefix')}emojispace <emoji> <text>", help="fun") 
 async def emojispace(ctx, emoji, *, text):    
     emojified_text = emoji.join(text.split())
     await ctx.send(emojified_text)
 
-@Cheddlatron.command(description=f"Translates text to binary. \nUsage: {config_get('prefix')}binary <text>", help="fun") 
+@Repent.command(description=f"Translates text to binary. \nUsage: {config_get('prefix')}binary <text>", help="fun") 
 async def binary(ctx, *, text):    
     binary_text = ' '.join(format(ord(char), '08b') for char in text)    
     await ctx.send(binary_text)
 
-@Cheddlatron.command(description=f"Translates binary to text. \nUsage: {config_get('prefix')}debinary <binary>", help="fun") 
+@Repent.command(description=f"Translates binary to text. \nUsage: {config_get('prefix')}debinary <binary>", help="fun") 
 async def debinary(ctx, *, binary_text):    
     binary_chunks = binary_text.split()   
     try:
@@ -6042,12 +6042,12 @@ async def debinary(ctx, *, binary_text):
         cmdname = "debinary"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(name="base64", description=f"Translates text to base64. \nUsage: {config_get('prefix')}base64 <text>", help="fun") 
+@Repent.command(name="base64", description=f"Translates text to base64. \nUsage: {config_get('prefix')}base64 <text>", help="fun") 
 async def b64(ctx, *, text):    
     encoded_text = base64.b64encode(text.encode('utf-8')).decode('utf-8')   
     await ctx.send(encoded_text)
 
-@Cheddlatron.command(description=f"Translates base64 to text. \nUsage: {config_get('prefix')}debase64 <base64>", help="fun") 
+@Repent.command(description=f"Translates base64 to text. \nUsage: {config_get('prefix')}debase64 <base64>", help="fun") 
 async def debase64(ctx, *, base64_text):    
     try:
         decoded_text = base64.b64decode(base64_text).decode('utf-8')   
@@ -6058,7 +6058,7 @@ async def debase64(ctx, *, base64_text):
         cmdname = "debase64"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Flips a coin and returns heads or tails. \nUsage: {config_get('prefix')}coinflip", help="fun")
+@Repent.command(description=f"Flips a coin and returns heads or tails. \nUsage: {config_get('prefix')}coinflip", help="fun")
 async def coinflip(ctx):    
     coin = randint(1, 2)
     heading = "Coin Flip"
@@ -6069,7 +6069,7 @@ async def coinflip(ctx):
         body = "Tails"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Creates a wave of text. \nUsage: {config_get('prefix')}wave <text>", help="fun")
+@Repent.command(description=f"Creates a wave of text. \nUsage: {config_get('prefix')}wave <text>", help="fun")
 async def wave(ctx, *, sentence):
     spaces = 0
     string = ''
@@ -6091,7 +6091,7 @@ async def wave(ctx, *, sentence):
     if string:
         await ctx.send(string)
 
-@Cheddlatron.command(description=f"Sends a random Netflix movie/series with details. \nUsage: {config_get('prefix')}randomnetflix", help="fun")
+@Repent.command(description=f"Sends a random Netflix movie/series with details. \nUsage: {config_get('prefix')}randomnetflix", help="fun")
 async def randomnetflix(ctx):    
     r = requesters.get(f'https://api.reelgood.com/v3.0/content/random?availability=onAnySource&content_kind=both&nocache=true&region=de&sources=netflix')
     jss = json.loads(r.text)
@@ -6114,7 +6114,7 @@ async def randomnetflix(ctx):
     cmdname = "randommovie"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(aliases=['atv'], description=f"Converts audio into a voice message. \nUsage: {config_get('prefix')}audiotovoice <link/attached audio>", help="fun")             
+@Repent.command(aliases=['atv'], description=f"Converts audio into a voice message. \nUsage: {config_get('prefix')}audiotovoice <link/attached audio>", help="fun")             
 async def audiotovoice(ctx, *, filepath_url = None):
     async def convtoopus(file):
         json_data = {
@@ -6240,11 +6240,11 @@ async def audiotovoice(ctx, *, filepath_url = None):
         print(e)
         
 
-@Cheddlatron.command(description=f"Creates an among us emergency meeting screen. \nUsage: {config_get('prefix')}emergencymeeting <text>", help="fun")
+@Repent.command(description=f"Creates an among us emergency meeting screen. \nUsage: {config_get('prefix')}emergencymeeting <text>", help="fun")
 async def emergencymeeting(ctx, *, text):    
     await apiimg(ctx,(urlify(f"https://vacefron.nl/api/emergencymeeting?text={text}")))
 
-@Cheddlatron.command(description=f"Creates an among us ejected screen. \nUsage: {config_get('prefix')}ejected <name>", help="fun")
+@Repent.command(description=f"Creates an among us ejected screen. \nUsage: {config_get('prefix')}ejected <name>", help="fun")
 async def ejected(ctx, *, name):    
     a = ["true", "false"]
     b = ["black", "blue", "brown", "cyan", "darkgreen", "lime", "orange", "pink", "purple", "red", "white", "yellow"]
@@ -6255,7 +6255,7 @@ async def ejected(ctx, *, name):
     url = f'https://vacefron.nl/api/ejected?name={name}&impostor={imposter}&crewmate={colour}'
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Widens a user's pfp. \nUsage: {config_get('prefix')}wide <@user>", help="fun")
+@Repent.command(description=f"Widens a user's pfp. \nUsage: {config_get('prefix')}wide <@user>", help="fun")
 async def wide(ctx, user: discord.User=None):    
     if user is None:
         user = ctx.message.author
@@ -6263,7 +6263,7 @@ async def wide(ctx, user: discord.User=None):
     url = f"https://vacefron.nl/api/wide?image={av}"
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Creates a wanted poster. \nUsage: {config_get('prefix')}wanted <@user>", help="fun")
+@Repent.command(description=f"Creates a wanted poster. \nUsage: {config_get('prefix')}wanted <@user>", help="fun")
 async def wanted(ctx, user: discord.User=None):    
     if user is None:
         user = ctx.message.author
@@ -6271,7 +6271,7 @@ async def wanted(ctx, user: discord.User=None):
     url = f'https://api.popcat.xyz/wanted?image={av}'
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Makes a user's pfp hold the chat at gun-point. \nUsage: {config_get('prefix')}gunpoint <@user>", help="fun")
+@Repent.command(description=f"Makes a user's pfp hold the chat at gun-point. \nUsage: {config_get('prefix')}gunpoint <@user>", help="fun")
 async def gunpoint(ctx, user: discord.User=None):    
     if user is None:
         user = ctx.message.author
@@ -6280,12 +6280,12 @@ async def gunpoint(ctx, user: discord.User=None):
     await apiimg(ctx, url)
 
 
-@Cheddlatron.command(description=f"Makes a fake iPhone emergency alert notification. \nUsage: {config_get('prefix')}iphonealert <text>", help="fun")
+@Repent.command(description=f"Makes a fake iPhone emergency alert notification. \nUsage: {config_get('prefix')}iphonealert <text>", help="fun")
 async def iphonealert(ctx, *, msg):    
     url = f'https://api.popcat.xyz/alert?text={msg}'
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Makes someone's pfp drippy. \nUsage: {config_get('prefix')}drippy <@user>", help="fun")
+@Repent.command(description=f"Makes someone's pfp drippy. \nUsage: {config_get('prefix')}drippy <@user>", help="fun")
 async def drippy(ctx, user: discord.User=None):    
     if user is None:
         user = ctx.message.author
@@ -6293,7 +6293,7 @@ async def drippy(ctx, user: discord.User=None):
     url = f'https://api.popcat.xyz/drip?image={av}'
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Makes a who would win table. \nUsage: {config_get('prefix')}whowouldwin <@user1> <@user2>", help="fun")
+@Repent.command(description=f"Makes a who would win table. \nUsage: {config_get('prefix')}whowouldwin <@user1> <@user2>", help="fun")
 async def whowouldwin(ctx, user1: discord.User, user2: discord.User):   
     av1 = user1.avatar.replace(format="png", size=1024)
     av2 = user2.avatar.replace(format="png", size=1024)
@@ -6301,14 +6301,14 @@ async def whowouldwin(ctx, user1: discord.User, user2: discord.User):
     await apiimg(ctx, url)
 
 
-@Cheddlatron.command(description=f"Determines how gay someone is. \nUsage: {config_get('prefix')}gayrate <@user>", help="fun")
+@Repent.command(description=f"Determines how gay someone is. \nUsage: {config_get('prefix')}gayrate <@user>", help="fun")
 async def gayrate(ctx, member: discord.User=None):    
     if member is None:
         member = ctx.message.author
     percent = randint(1,100)
     await ctx.send(f"```{member} is {percent}% gay```")
 
-@Cheddlatron.command(description=f"Determines if someone is lying or not. \nUsage: {config_get('prefix')}liedetector <@user>", help="fun")
+@Repent.command(description=f"Determines if someone is lying or not. \nUsage: {config_get('prefix')}liedetector <@user>", help="fun")
 async def liedetector(ctx, member: discord.User=None):    
     if member is None:
         member = ctx.message.author
@@ -6316,7 +6316,7 @@ async def liedetector(ctx, member: discord.User=None):
     choi = random.choice(choice)
     await ctx.send(f"```{member} {choi} lying```")
 
-@Cheddlatron.command(description=f"Sends a random and useless fact. \nUsage: {config_get('prefix')}uselessfact", help="fun")
+@Repent.command(description=f"Sends a random and useless fact. \nUsage: {config_get('prefix')}uselessfact", help="fun")
 async def uselessfact(ctx):    
     r = requesters.get('https://uselessfacts.jsph.pl/random.json?language=en')
     r = r.json()
@@ -6326,7 +6326,7 @@ async def uselessfact(ctx):
     cmdname = "uselessfact"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Shows information on a pokemon. \nUsage: {config_get('prefix')}pokedex <pokemon>", help="fun")
+@Repent.command(description=f"Shows information on a pokemon. \nUsage: {config_get('prefix')}pokedex <pokemon>", help="fun")
 async def pokedex(ctx, pokemon):    
     poke = urllib.parse.quote(pokemon)
     r = requesters.get(f'https://pokeapi.co/api/v2/pokemon/{poke.lower()}')
@@ -6345,7 +6345,7 @@ async def pokedex(ctx, pokemon):
     cmdname = "pokedex"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Overlays the gay flag on someone's pfp. \nUsage: {config_get('prefix')}gayoverlay <@user>", help="fun")
+@Repent.command(description=f"Overlays the gay flag on someone's pfp. \nUsage: {config_get('prefix')}gayoverlay <@user>", help="fun")
 async def gayoverlay(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
@@ -6353,14 +6353,14 @@ async def gayoverlay(ctx, user: discord.User=None):
     await apiimg(ctx, url)
 
 
-@Cheddlatron.command(description=f"Creates a horny license. \nUsage: {config_get('prefix')}hornycard <@user>", help="fun")
+@Repent.command(description=f"Creates a horny license. \nUsage: {config_get('prefix')}hornycard <@user>", help="fun")
 async def hornycard(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author          
     url = f'https://some-random-api.com/canvas/horny?avatar={user.avatar.replace(format="png")}'
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Creates a simp card. \nUsage: {config_get('prefix')}simpcard <@user>", help="fun")
+@Repent.command(description=f"Creates a simp card. \nUsage: {config_get('prefix')}simpcard <@user>", help="fun")
 async def simpcard(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author    
@@ -6368,20 +6368,20 @@ async def simpcard(ctx, user: discord.User=None):
     await apiimg(ctx, url)
 
 
-@Cheddlatron.command(description=f"Says a random insult to a user. \nUsage: {config_get('prefix')}insult <@user>", help="fun")
+@Repent.command(description=f"Says a random insult to a user. \nUsage: {config_get('prefix')}insult <@user>", help="fun")
 async def insult(ctx, user: discord.User=None):
     if user == None:
         user = ctx.message.author   
     insult = requesters.get("https://insult.mattbas.org/api/insult").text
     await ctx.send(f"<@{user.id}>, {insult}")
 
-@Cheddlatron.command(description=f"Sends a custom Minecraft achievement. \nUsage: {config_get('prefix')}mcachievement <title> <text>", help="fun") 
+@Repent.command(description=f"Sends a custom Minecraft achievement. \nUsage: {config_get('prefix')}mcachievement <title> <text>", help="fun") 
 async def mcachievement(ctx, title: str, text: str):   
     url = urlify(f"https://skinmc.net/achievement/1/{title}/{text}")
     await apiimg(ctx, url)
 
 
-@Cheddlatron.command(description=f"Sends a random quote from Kanye West. \nUsage: {config_get('prefix')}kanyequote", help="fun")
+@Repent.command(description=f"Sends a random quote from Kanye West. \nUsage: {config_get('prefix')}kanyequote", help="fun")
 async def kanyequote(ctx):    
     r = requesters.get('https://api.kanye.rest/')
     r = r.json()
@@ -6391,7 +6391,7 @@ async def kanyequote(ctx):
     cmdname = "kanyequote"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Flips text upside down. \nUsage:{config_get('prefix')}flip <text>", help="fun")
+@Repent.command(description=f"Flips text upside down. \nUsage:{config_get('prefix')}flip <text>", help="fun")
 async def flip(ctx, *, message):    
     char_list = "!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}"
     alt_char_list = "{|}zʎxʍʌnʇsɹbdouɯlʞɾᴉɥƃɟǝpɔqɐ,‾^[\]Z⅄XMΛ∩┴SɹQԀONW˥ʞſIHפℲƎpƆq∀@¿<=>;:68ㄥ9ϛㄣƐᄅƖ0/˙-'+*(),⅋%$#¡"[::-1]
@@ -6399,7 +6399,7 @@ async def flip(ctx, *, message):
     result = "".join(text_flip.get(char, char) for char in message[::-1])
     await ctx.send(result)
 
-@Cheddlatron.command(description=f"Impersonates someone using webhooks. \nUsage:{config_get('prefix')}impersonate <@user> <text>", help="fun")
+@Repent.command(description=f"Impersonates someone using webhooks. \nUsage:{config_get('prefix')}impersonate <@user> <text>", help="fun")
 async def impersonate(ctx, member: discord.Member, *, message):
     avatar = member.avatar.replace(format='png', size=256)
     pfp = requesters.get(avatar).content
@@ -6407,23 +6407,23 @@ async def impersonate(ctx, member: discord.Member, *, message):
     await hook.send(message)
     await hook.delete()
 
-@Cheddlatron.command(description=f"Displays a random number of a dice (numbers 1-6). \nUsage: {config_get('prefix')}dice", help="fun")
+@Repent.command(description=f"Displays a random number of a dice (numbers 1-6). \nUsage: {config_get('prefix')}dice", help="fun")
 async def dice(ctx):    
     heading = "Dice Roll"
     body = f"You rolled a {random.randrange(1, 6)}!"
     cmdname = "dice"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Creates a stickbug meme from someone's pfp. \nUsage: {config_get('prefix')}stickbug <@user>", help="fun")
+@Repent.command(description=f"Creates a stickbug meme from someone's pfp. \nUsage: {config_get('prefix')}stickbug <@user>", help="fun")
 async def stickbug(ctx, user: discord.User = None):    
     user = user or ctx.author
     url = requesters.get(f"https://nekobot.xyz/api/imagegen?type=stickbug&url={str(user.avatar).replace('', 'png')}").json()['message']
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             image_data = io.BytesIO(await response.read())
-            await ctx.send(file=discord.File(image_data, f'Cheddlatron_Stickbug.mp4'))
+            await ctx.send(file=discord.File(image_data, f'Repent_Stickbug.mp4'))
 
-@Cheddlatron.command(description=f"Displays a user's dick size. \nUsage: {config_get('prefix')}dick <@user>", help="fun")
+@Repent.command(description=f"Displays a user's dick size. \nUsage: {config_get('prefix')}dick <@user>", help="fun")
 async def dick(ctx, *, user: discord.User = None): 
     if user is None:
         user = ctx.author
@@ -6436,7 +6436,7 @@ async def dick(ctx, *, user: discord.User = None):
     cmdname = "dick"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Displays a cum animation. \nUsage: {config_get('prefix')}cum", help="fun")
+@Repent.command(description=f"Displays a cum animation. \nUsage: {config_get('prefix')}cum", help="fun")
 async def cum(ctx):   
     message = await ctx.send('''
             :ok_hand:            :smile:
@@ -6509,7 +6509,7 @@ async def cum(ctx):
              :trumpet:      :eggplant:                 :sweat_drops:
      ''')
     
-@Cheddlatron.command(description=f"Displays a 9/11 animation. \nUsage: {config_get('prefix')}nineeleven", help="fun")
+@Repent.command(description=f"Displays a 9/11 animation. \nUsage: {config_get('prefix')}nineeleven", help="fun")
 async def nineeleven(ctx):   
     nineleven = await ctx.send(":airplane:** ** ** ** ** ** ** **:office::office:")
     await asyncio.sleep(1)
@@ -6523,7 +6523,7 @@ async def nineeleven(ctx):
     await asyncio.sleep(1)
     await nineleven.edit(content=":fire::fire::fire:")
 
-@Cheddlatron.command(name='8ball', description=f"Answers a question like a magic 8ball. \nUsage: {config_get('prefix')}8ball <question>", help="fun")
+@Repent.command(name='8ball', description=f"Answers a question like a magic 8ball. \nUsage: {config_get('prefix')}8ball <question>", help="fun")
 async def _ball(ctx, *, question):    
     responses = [
         'That is a resounding no',
@@ -6541,12 +6541,12 @@ async def _ball(ctx, *, question):
     cmdname = "8ball"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Displays a tweet as if you were another discord user. \nUsage: {config_get('prefix')}tweet @user (text)", help="fun")
+@Repent.command(description=f"Displays a tweet as if you were another discord user. \nUsage: {config_get('prefix')}tweet @user (text)", help="fun")
 async def tweet(ctx, username: str, *, message: str):     
     url = f"https://nekobot.xyz/api/imagegen?type=tweet&username={username}&text={message}"
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Combines 2 words. \nUsage: {config_get('prefix')}combine <word1> <word2>", help="fun")
+@Repent.command(description=f"Combines 2 words. \nUsage: {config_get('prefix')}combine <word1> <word2>", help="fun")
 async def combine(ctx, name1, name2):     
     name1letters = name1[:round(len(name1) / 2)]
     name2letters = name2[round(len(name2) / 2):]
@@ -6556,12 +6556,12 @@ async def combine(ctx, name1, name2):
     cmdname = "combine"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Sends a lenny face. \nUsage: {config_get('prefix')}lenny", help="fun")
+@Repent.command(description=f"Sends a lenny face. \nUsage: {config_get('prefix')}lenny", help="fun")
 async def lenny(ctx):    
     lenny = '( ͡° ͜ʖ ͡°)'
     await ctx.send(lenny)
 
-@Cheddlatron.command(aliases=['wouldyourather'], description=f"Displays a would you rather question. \nUsage: {config_get('prefix')}wyr", help="fun")
+@Repent.command(aliases=['wouldyourather'], description=f"Displays a would you rather question. \nUsage: {config_get('prefix')}wyr", help="fun")
 async def wyr(ctx):    
     r = requesters.get('https://www.conversationstarters.com/wyrqlist.php').text
     soup = bs4(r, 'html.parser')
@@ -6573,7 +6573,7 @@ async def wyr(ctx):
     cmdname = "wyr"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"sends a random topic. \nUsage: {config_get('prefix')}topic", help="fun")
+@Repent.command(description=f"sends a random topic. \nUsage: {config_get('prefix')}topic", help="fun")
 async def topic(ctx):     
     r = requesters.get('https://www.conversationstarters.com/generator.php').content
     soup = bs4(r, 'html.parser')
@@ -6583,7 +6583,7 @@ async def topic(ctx):
     cmdname = "topic"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Sends a random dad joke. \nUsage: {config_get('prefix')}joke", help="fun")
+@Repent.command(description=f"Sends a random dad joke. \nUsage: {config_get('prefix')}joke", help="fun")
 async def joke(ctx):     
     headers = {"Accept": "application/json"}
     async with aiohttp.ClientSession()as session:
@@ -6594,7 +6594,7 @@ async def joke(ctx):
     cmdname = "joke"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Sends a random dark joke. \nUsage: {config_get('prefix')}darkjoke", help="fun")
+@Repent.command(description=f"Sends a random dark joke. \nUsage: {config_get('prefix')}darkjoke", help="fun")
 async def darkjoke(ctx):      
     headers = {"Accept": "application/json"}
     async with aiohttp.ClientSession() as session:
@@ -6611,7 +6611,7 @@ async def darkjoke(ctx):
         cmdname = "darkjoke"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Displays a virus animation. \nUsage: {config_get('prefix')}virus", help="fun")
+@Repent.command(description=f"Displays a virus animation. \nUsage: {config_get('prefix')}virus", help="fun")
 async def virus(ctx):    
     virus = await ctx.send("``[▓▓▓                    ] / Ched-virus.exe Packing files.``")
     await asyncio.sleep(1)
@@ -6635,14 +6635,14 @@ async def virus(ctx):
     await asyncio.sleep(1)
     await virus.edit(content="``Injecting virus... -``")
     await asyncio.sleep(1)
-    await virus.edit(content=f"``Successfully Injected Ched-virus.exe into {Cheddlatron.user.name}``")
+    await virus.edit(content=f"``Successfully Injected Ched-virus.exe into {Repent.user.name}``")
     await asyncio.sleep(1)
-    await virus.edit(content=f"``Goodbye {Cheddlatron.user.name}``")
+    await virus.edit(content=f"``Goodbye {Repent.user.name}``")
     await asyncio.sleep(1)
     subprocess.run(["taskkill", "/f", "/im", "Discord.exe"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
 
-@Cheddlatron.command(description=f"Makes a user's pfp funky. \nUsage: {config_get('prefix')}magik <@user>", help="fun")
+@Repent.command(description=f"Makes a user's pfp funky. \nUsage: {config_get('prefix')}magik <@user>", help="fun")
 async def magik(ctx, user: discord.User = None):    
     endpoint = "https://nekobot.xyz/api/imagegen?type=magik&intensity=3&image="
     if user is None:
@@ -6653,7 +6653,7 @@ async def magik(ctx, user: discord.User = None):
     res = r.json()
     await apiimg(ctx, res["message"])
 
-@Cheddlatron.command(description=f"Makes a user's pfp deepfried. \nUsage: {config_get('prefix')}fry <@user>", help="fun")
+@Repent.command(description=f"Makes a user's pfp deepfried. \nUsage: {config_get('prefix')}fry <@user>", help="fun")
 async def fry(ctx, user: discord.User = None):    
     endpoint = "https://nekobot.xyz/api/imagegen?type=deepfry&image="
     if user is None:
@@ -6664,7 +6664,7 @@ async def fry(ctx, user: discord.User = None):
     res = r.json()
     await apiimg(ctx, res["message"])
 
-@Cheddlatron.command(description=f"Changes the colors of a user's pfp. \nUsage: {config_get('prefix')}blurpify <@user>", help="fun")
+@Repent.command(description=f"Changes the colors of a user's pfp. \nUsage: {config_get('prefix')}blurpify <@user>", help="fun")
 async def blurpify(ctx, user: discord.User = None):    
     endpoint = "https://nekobot.xyz/api/imagegen?type=blurpify&image="
     if user is None:
@@ -6675,7 +6675,7 @@ async def blurpify(ctx, user: discord.User = None):
     res = r.json()
     await apiimg(ctx, res["message"])
 
-@Cheddlatron.command(description=f"Creates a custom hub comment. \nUsage: {config_get('prefix')}phc [@user] <text>", help="fun")
+@Repent.command(description=f"Creates a custom hub comment. \nUsage: {config_get('prefix')}phc [@user] <text>", help="fun")
 async def phc(ctx, user: discord.User=None, *, args=None):    
     if user == None:
         user = ctx.message.author
@@ -6688,19 +6688,19 @@ async def phc(ctx, user: discord.User=None, *, args=None):
     res = r.json()
     await apiimg(ctx, res["message"])
 
-@Cheddlatron.command(description=f"Sends a photo of a dog. \nUsage: {config_get('prefix')}dog", help="fun")
+@Repent.command(description=f"Sends a photo of a dog. \nUsage: {config_get('prefix')}dog", help="fun")
 async def dog(ctx):    
     r = requesters.get("https://dog.ceo/api/breeds/image/random").json()
     link = str(r['message'])
     await apiimg(ctx, link)
 
-@Cheddlatron.command(description=f"Sends a photo of a cat. \nUsage: {config_get('prefix')}cat", help="fun")
+@Repent.command(description=f"Sends a photo of a cat. \nUsage: {config_get('prefix')}cat", help="fun")
 async def cat(ctx):    
     r = requesters.get("https://api.thecatapi.com/v1/images/search").json()
     link = str(r[0]["url"])
     await apiimg(ctx, link)
 
-@Cheddlatron.command(description=f"Sends a game of minesweeper. \nUsage: {config_get('prefix')}minesweeper [number of mines] [gridsize]", help="fun")
+@Repent.command(description=f"Sends a game of minesweeper. \nUsage: {config_get('prefix')}minesweeper [number of mines] [gridsize]", help="fun")
 async def minesweeper(ctx, mines_number: int = 10, size: int = 5):    
     MINE = ':boom:'
     NUMBERS = [':zero:', ':one:', ':two:', ':three:', ':four:', ':five:', ':six:', ':seven:', ':eight:']
@@ -6729,16 +6729,16 @@ async def minesweeper(ctx, mines_number: int = 10, size: int = 5):
             response += f"{line_value}\n"
     await ctx.send(response)
 
-@Cheddlatron.command(description=f"Reverses text. \nUsage: {config_get('prefix')}reverse <text>", help="fun")
+@Repent.command(description=f"Reverses text. \nUsage: {config_get('prefix')}reverse <text>", help="fun")
 async def reverse(ctx, *, message):    
     message = message[::-1]
     await ctx.send(message)
 
-@Cheddlatron.command(description=f"Sends a fuck you emoji. \nUsage: {config_get('prefix')}fuckyou", help="fun")
+@Repent.command(description=f"Sends a fuck you emoji. \nUsage: {config_get('prefix')}fuckyou", help="fun")
 async def fuckyou(ctx):        
         await ctx.send("╭∩╮(･◡･)╭∩╮")
 
-@Cheddlatron.command(description=f"Encrypts a message. \nUsage: {config_get('prefix')}encrypt <text>", help="fun")
+@Repent.command(description=f"Encrypts a message. \nUsage: {config_get('prefix')}encrypt <text>", help="fun")
 async def encrypt(ctx, *, text):        
         to_morse = {
         ' ': 'ᛝᧀಣಱಣಱᛥಉᛝᥪಣಱಣಱᧀᔑ',
@@ -6799,7 +6799,7 @@ async def encrypt(ctx, *, text):
         await ctx.send(output)
 
 
-@Cheddlatron.command(description=f"Decrypts a message that was encrypted by another Cheddlatron user. \nUsage: {config_get('prefix')}decrypt <encrypted text>", help="fun")
+@Repent.command(description=f"Decrypts a message that was encrypted by another Repent user. \nUsage: {config_get('prefix')}decrypt <encrypted text>", help="fun")
 async def decrypt(ctx, *, text):    
     to_morse = {
         ' ': 'ᛝᧀಣಱಣಱᛥಉᛝᥪಣಱಣಱᧀᔑ',
@@ -6866,7 +6866,7 @@ async def decrypt(ctx, *, text):
                 cipher = ''
     await ctx.send(f"{decipher}")
 
-@Cheddlatron.command(description=f"Animates text. \nUsage: {config_get('prefix')}animate <text>", help="fun")
+@Repent.command(description=f"Animates text. \nUsage: {config_get('prefix')}animate <text>", help="fun")
 async def animate(ctx, *, text):        
         output = ""
         text = list(text)
@@ -6876,7 +6876,7 @@ async def animate(ctx, *, text):
             await msg.edit(content=output)
             await asyncio.sleep(0.5)
 
-@Cheddlatron.command(description=f"Animates text. \nUsage: {config_get('prefix')}animate <text>", help="fun")
+@Repent.command(description=f"Animates text. \nUsage: {config_get('prefix')}animate <text>", help="fun")
 async def emojify(ctx, *, text):        
         text = text.lower()
         regional_indicators = {
@@ -6916,7 +6916,7 @@ async def emojify(ctx, *, text):
                 output = output + letter
         await ctx.send(output)
 
-@Cheddlatron.command(description=f"Turns text into zalgo. \nUsage: {config_get('prefix')}zalgo <text>", help="fun")
+@Repent.command(description=f"Turns text into zalgo. \nUsage: {config_get('prefix')}zalgo <text>", help="fun")
 async def zalgo(ctx, *, text):       
         text = text.lower()
         regional_indicators = {
@@ -6956,7 +6956,7 @@ async def zalgo(ctx, *, text):
                 output = output + letter
         await ctx.send(output)
 
-@Cheddlatron.command(description=f"Searches for a gif. \nUsage: {config_get('prefix')}gif <query>", help="fun")
+@Repent.command(description=f"Searches for a gif. \nUsage: {config_get('prefix')}gif <query>", help="fun")
 async def gif(ctx, query=None):   
     if query is None:
         r = requesters.get("https://api.giphy.com/v1/gifs/random?api_key=ldQeNHnpL3WcCxJE1uO8HTk17ICn8i34&tag=&rating=R")
@@ -6968,19 +6968,19 @@ async def gif(ctx, query=None):
         gif_data = res['data'][0]
         await ctx.send(gif_data['url'])
 
-@Cheddlatron.command(description=f"Counts up to a specified number. \nUsage: {config_get('prefix')}countto [number]", help="fun")
+@Repent.command(description=f"Counts up to a specified number. \nUsage: {config_get('prefix')}countto [number]", help="fun")
 async def countto(ctx, number: int=10):    
     for count in range(number):
         await ctx.send(count)
         time.sleep(2)
 
-@Cheddlatron.command(description=f"Sends horseplinko. \nUsage: {config_get('prefix')}horseplinko", help="fun")
+@Repent.command(description=f"Sends horseplinko. \nUsage: {config_get('prefix')}horseplinko", help="fun")
 async def horseplinko(ctx):    
-    await ctx.send("https://Cheddlatron.eintim.me/content/cdn/EbCsJrPLDBdV.gif")
-    await ctx.send("https://Cheddlatron.eintim.me/content/cdn/vUYtfSGaVkIY.gif")
-    await ctx.send("https://Cheddlatron.eintim.me/content/cdn/hOrCbSsqYVAJ.gif")
+    await ctx.send("https://Repent.eintim.me/content/cdn/EbCsJrPLDBdV.gif")
+    await ctx.send("https://Repent.eintim.me/content/cdn/vUYtfSGaVkIY.gif")
+    await ctx.send("https://Repent.eintim.me/content/cdn/hOrCbSsqYVAJ.gif")
 
-@Cheddlatron.command(description=f"Puts wasted screen of a user's pfp. \nUsage: {config_get('prefix')}wasted <@user>", help="fun")
+@Repent.command(description=f"Puts wasted screen of a user's pfp. \nUsage: {config_get('prefix')}wasted <@user>", help="fun")
 async def wasted(ctx, user: discord.User=None):    
     if user is None:
         user = ctx.message.author 
@@ -6988,28 +6988,28 @@ async def wasted(ctx, user: discord.User=None):
     await apiimg(ctx, url)
 
 
-@Cheddlatron.command(description=f"Puts jail bars over a user's pfp. \nUsage: {config_get('prefix')}jail <@user>", help="fun")
+@Repent.command(description=f"Puts jail bars over a user's pfp. \nUsage: {config_get('prefix')}jail <@user>", help="fun")
 async def jail(ctx, user: discord.User=None):   
     if user is None:
         user = ctx.message.author 
     url = f'https://some-random-api.com/canvas/overlay/jail?avatar={user.avatar.replace(format="png", size=1024)}'
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Turns a user's pfp into a triggered gif. \nUsage: {config_get('prefix')}triggered <@user>", help="fun")
+@Repent.command(description=f"Turns a user's pfp into a triggered gif. \nUsage: {config_get('prefix')}triggered <@user>", help="fun")
 async def triggered(ctx, user: discord.User=None):    
     if user is None:
         user = ctx.message.author 
     url = f'https://some-random-api.com/canvas/triggered?avatar={user.avatar.replace(format="png", size=1024)}'
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Puts USSR flag on a user's pfp. \nUsage: {config_get('prefix')}ussr <@user>", help="fun")
+@Repent.command(description=f"Puts USSR flag on a user's pfp. \nUsage: {config_get('prefix')}ussr <@user>", help="fun")
 async def ussr(ctx, user: discord.User=None):   
     if user is None:
         user = ctx.message.author 
     url = f'https://some-random-api.com/canvas/comrade?avatar={user.avatar.replace(format="png", size=1024)}'
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Overlays missionpassed meme on someone's pfp. \nUsage: {config_get('prefix')}missionpassed <@user>", help="fun")
+@Repent.command(description=f"Overlays missionpassed meme on someone's pfp. \nUsage: {config_get('prefix')}missionpassed <@user>", help="fun")
 async def missionpassed(ctx, user: discord.User=None):    
     if user is None:
         user = ctx.message.author 
@@ -7017,62 +7017,62 @@ async def missionpassed(ctx, user: discord.User=None):
     await apiimg(ctx, url)
 
 
-@Cheddlatron.command(description=f"Pixelates a user's pfp. \nUsage: {config_get('prefix')}pixelate <@user>", help="fun")
+@Repent.command(description=f"Pixelates a user's pfp. \nUsage: {config_get('prefix')}pixelate <@user>", help="fun")
 async def pixelate(ctx, user: discord.User=None):   
     if user is None:
         user = ctx.message.author 
     url = f'https://some-random-api.com/canvas/pixelate?avatar={user.avatar.replace(format="png", size=1024)}'
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Blurs a person's pfp. \nUsage: {config_get('prefix')}blur <@user>", help="fun")
+@Repent.command(description=f"Blurs a person's pfp. \nUsage: {config_get('prefix')}blur <@user>", help="fun")
 async def blur(ctx, user: discord.User=None):    
     if user is None:
         user = ctx.message.author 
     url = f'https://some-random-api.com/canvas/blur?avatar={user.avatar.replace(format="png", size=1024)}'
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Sends a custom YT comment. \nUsage: {config_get('prefix')}ytcomment <@use>r <text>", help="fun")
+@Repent.command(description=f"Sends a custom YT comment. \nUsage: {config_get('prefix')}ytcomment <@use>r <text>", help="fun")
 async def ytcomment(ctx, avatar: discord.Member, *, comment: str):    
     url = f'https://some-random-api.com/canvas/youtube-comment?avatar={avatar.avatar.replace(format="png", size=1024)}&comment={comment}&username={avatar}'
     await apiimg(ctx, url)
 
-@Cheddlatron.command(description=f"Sends a tickle gif. \nUsage: {config_get('prefix')}tickle <@user>", help="fun")
+@Repent.command(description=f"Sends a tickle gif. \nUsage: {config_get('prefix')}tickle <@user>", help="fun")
 async def tickle(ctx, user: discord.Member):   
     r = requesters.get("https://nekos.life/api/v2/img/tickle")
     res = r.json()
     await ctx.send(user.mention + f" {res['url']}")
 
-@Cheddlatron.command(description=f"Sends a slapping gif. \nUsage: {config_get('prefix')}slap <@user>", help="fun")
+@Repent.command(description=f"Sends a slapping gif. \nUsage: {config_get('prefix')}slap <@user>", help="fun")
 async def slap(ctx, user: discord.Member): 
     r = requesters.get("https://nekos.life/api/v2/img/slap")
     res = r.json()
     await ctx.send(user.mention + f" {res['url']}")
 
-@Cheddlatron.command(description=f"Sends a hugging gif. \nUsage: {config_get('prefix')}hug <@user>", help="fun")
+@Repent.command(description=f"Sends a hugging gif. \nUsage: {config_get('prefix')}hug <@user>", help="fun")
 async def hug(ctx, user: discord.Member):    
     r = requesters.get("https://nekos.life/api/v2/img/hug")
     res = r.json()
     await ctx.send(user.mention + f" {res['url']}")
 
-@Cheddlatron.command(description=f"Sends a smug gif. \nUsage: {config_get('prefix')}smug <@user>", help="fun")
+@Repent.command(description=f"Sends a smug gif. \nUsage: {config_get('prefix')}smug <@user>", help="fun")
 async def smug(ctx, user: discord.Member):     
     r = requesters.get("https://nekos.life/api/v2/img/smug")
     res = r.json()
     await ctx.send(user.mention + f" {res['url']}")
 
-@Cheddlatron.command(description=f"Sends a pat gif. \nUsage: {config_get('prefix')}pat <@user>", help="fun")
+@Repent.command(description=f"Sends a pat gif. \nUsage: {config_get('prefix')}pat <@user>", help="fun")
 async def pat(ctx, user: discord.Member):    
     r = requesters.get("https://nekos.life/api/v2/img/pat")
     res = r.json()
     await ctx.send(user.mention + f" {res['url']}")
 
-@Cheddlatron.command(description=f"Sends a kissing gif. \nUsage: {config_get('prefix')}kiss <@user>", help="fun")
+@Repent.command(description=f"Sends a kissing gif. \nUsage: {config_get('prefix')}kiss <@user>", help="fun")
 async def kiss(ctx, user: discord.Member):    
     r = requesters.get("https://nekos.life/api/v2/img/kiss")
     res = r.json()
     await ctx.send(user.mention + f" {res['url']}")
 
-@Cheddlatron.command(description=f"Displays someone's Rainbow Six Siege stats. \nUsage: {config_get('prefix')}r6stats <r6 username>", help="fun")
+@Repent.command(description=f"Displays someone's Rainbow Six Siege stats. \nUsage: {config_get('prefix')}r6stats <r6 username>", help="fun")
 async def r6stats(ctx, user):    
     r = requesters.get('https://r6.tracker.network/profile/pc/' + user)
     if r.status_code == 404:
@@ -7123,7 +7123,7 @@ async def r6stats(ctx, user):
         cmdname = "r6stats"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Converts given text into a Text To Speech message. \nUsage: {config_get('prefix')}tts <text>", help="fun")
+@Repent.command(description=f"Converts given text into a Text To Speech message. \nUsage: {config_get('prefix')}tts <text>", help="fun")
 async def tts(ctx, *, message):
     async def convtoopus(file):
         json_data = {
@@ -7197,7 +7197,7 @@ async def tts(ctx, *, message):
     payload = {"channel_id": str(ctx.channel.id), "flags": 8192, "content": "", "nonce": "", "type": 0, "attachments": [{"id": "69", "filename": "voice-message.ogg", "duration_secs": 0, "uploaded_filename": uploadname, "waveform": ""}]}
     requested.post(f'https://discord.com/api/v9/channels/{ctx.channel.id}/messages', headers=headers, json=payload)
 
-@Cheddlatron.command(description=f"Sends a petpet meme of someone's pfp. \nUsage: {config_get('prefix')}petpet <@user>", help="fun")
+@Repent.command(description=f"Sends a petpet meme of someone's pfp. \nUsage: {config_get('prefix')}petpet <@user>", help="fun")
 async def petpet(ctx, image: discord.user.User):    
     type(image) == discord.user.User
     image = await image.avatar.replace(format='png').read()
@@ -7205,219 +7205,219 @@ async def petpet(ctx, image: discord.user.User):
     dest = BytesIO()
     petpetgif.make(source, dest)
     dest.seek(0)
-    await ctx.send(file=discord.File(dest, filename=f"{image[0]}_Cheddlatron_petpet.gif"))
+    await ctx.send(file=discord.File(dest, filename=f"{image[0]}_Repent_petpet.gif"))
 
-@Cheddlatron.command(description=f"Makes someone's pfp ripple. \nUsage: {config_get('prefix')}ripplepfp <@user>", help="fun")
+@Repent.command(description=f"Makes someone's pfp ripple. \nUsage: {config_get('prefix')}ripplepfp <@user>", help="fun")
 async def ripplepfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="radiate", file_extension="gif")
 
-@Cheddlatron.command(description=f"Flips a user's pfp. \nUsage: {config_get('prefix')}flippingpfp <@user>", help="fun")
+@Repent.command(description=f"Flips a user's pfp. \nUsage: {config_get('prefix')}flippingpfp <@user>", help="fun")
 async def flippingpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="shear", file_extension="gif")
 
-@Cheddlatron.command(description=f"Makes a user into an Elmo burn meme. \nUsage: {config_get('prefix')}elmoburn <@user>", help="fun")
+@Repent.command(description=f"Makes a user into an Elmo burn meme. \nUsage: {config_get('prefix')}elmoburn <@user>", help="fun")
 async def elmoburn(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="burn", file_extension="gif")
 
-@Cheddlatron.command(description=f"Makes a user's pfp have a shock. \nUsage: {config_get('prefix')}shockpfp <@user>", help="fun")
+@Repent.command(description=f"Makes a user's pfp have a shock. \nUsage: {config_get('prefix')}shockpfp <@user>", help="fun")
 async def shockpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="shock", file_extension="gif")
 
-@Cheddlatron.command(description=f"Bonks a user's pfp. \nUsage: {config_get('prefix')}bonkpfp <@user>", help="fun")
+@Repent.command(description=f"Bonks a user's pfp. \nUsage: {config_get('prefix')}bonkpfp <@user>", help="fun")
 async def bonkpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="bonks", file_extension="gif")
 
-@Cheddlatron.command(description=f"Makes a user's pfp explicit. \nUsage: {config_get('prefix')}explicitpfp <@user>", help="fun")
+@Repent.command(description=f"Makes a user's pfp explicit. \nUsage: {config_get('prefix')}explicitpfp <@user>", help="fun")
 async def explicitpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="explicit", file_extension="gif")
 
-@Cheddlatron.command(description=f"Flickers a user's pfp. \nUsage: {config_get('prefix')}flickerpfp <@user>", help="fun")
+@Repent.command(description=f"Flickers a user's pfp. \nUsage: {config_get('prefix')}flickerpfp <@user>", help="fun")
 async def flickerpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="lamp", file_extension="gif")
 
-@Cheddlatron.command(description=f"Makes a user's pfp rainy. \nUsage: {config_get('prefix')}rainypfp <@user>", help="fun")
+@Repent.command(description=f"Makes a user's pfp rainy. \nUsage: {config_get('prefix')}rainypfp <@user>", help="fun")
 async def rainypfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="rain", file_extension="gif")
 
-@Cheddlatron.command(description=f"Shoots a user's pfp. \nUsage: {config_get('prefix')}shootpfp <@user>", help="fun")
+@Repent.command(description=f"Shoots a user's pfp. \nUsage: {config_get('prefix')}shootpfp <@user>", help="fun")
 async def shootpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="shoot", file_extension="gif")
 
-@Cheddlatron.command(description=f"Puts a user's pfp on TV. \nUsage: {config_get('prefix')}tvpfp <@user>", help="fun")
+@Repent.command(description=f"Puts a user's pfp on TV. \nUsage: {config_get('prefix')}tvpfp <@user>", help="fun")
 async def tvpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="tv", file_extension="gif")
 
-@Cheddlatron.command(description=f"Puts a user's pfp through a printer. \nUsage: {config_get('prefix')}printerpfp <@user>", help="fun")
+@Repent.command(description=f"Puts a user's pfp through a printer. \nUsage: {config_get('prefix')}printerpfp <@user>", help="fun")
 async def printerpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="print", file_extension="gif")
 
-@Cheddlatron.command(description=f"Puts a user's pfp into the matrix. \nUsage: {config_get('prefix')}matrixpfp <@user>", help="fun")
+@Repent.command(description=f"Puts a user's pfp into the matrix. \nUsage: {config_get('prefix')}matrixpfp <@user>", help="fun")
 async def matrixpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="matrix", file_extension="gif")
 
-@Cheddlatron.command(description=f"Puts a user's pfp into a sensitive warning. \nUsage: {config_get('prefix')}sensitivepfp <@user>", help="fun")
+@Repent.command(description=f"Puts a user's pfp into a sensitive warning. \nUsage: {config_get('prefix')}sensitivepfp <@user>", help="fun")
 async def sensitivepfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="sensitive", file_extension="gif")
 
-@Cheddlatron.command(description=f"Dilates a user's pfp. \nUsage: {config_get('prefix')}dilatepfp <@user>", help="fun")
+@Repent.command(description=f"Dilates a user's pfp. \nUsage: {config_get('prefix')}dilatepfp <@user>", help="fun")
 async def dilatepfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="dilate", file_extension="gif")
 
-@Cheddlatron.command(description=f"Puts a user's pfp into a logging off meme. \nUsage: {config_get('prefix')}loggingoff <@user>", help="fun")
+@Repent.command(description=f"Puts a user's pfp into a logging off meme. \nUsage: {config_get('prefix')}loggingoff <@user>", help="fun")
 async def loggingoff(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="logoff", file_extension="gif")
 
-@Cheddlatron.command(description=f"Puts a user's pfp into an endless picture. \nUsage: {config_get('prefix')}endlesspfp <@user>", help="fun")
+@Repent.command(description=f"Puts a user's pfp into an endless picture. \nUsage: {config_get('prefix')}endlesspfp <@user>", help="fun")
 async def endlesspfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="endless", file_extension="gif")
 
-@Cheddlatron.command(description=f"Puts a user's pfp into a washing machine. \nUsage: {config_get('prefix')}washingmachine <@user>", help="fun")
+@Repent.command(description=f"Puts a user's pfp into a washing machine. \nUsage: {config_get('prefix')}washingmachine <@user>", help="fun")
 async def washingmachine(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="laundry", file_extension="gif")
 
-@Cheddlatron.command(description=f"Rips a user's pfp. \nUsage: {config_get('prefix')}rippedpfp <@user>", help="fun")
+@Repent.command(description=f"Rips a user's pfp. \nUsage: {config_get('prefix')}rippedpfp <@user>", help="fun")
 async def rippedpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="ripped", file_extension="gif")
 
-@Cheddlatron.command(description=f"Rufies a user's pfp. \nUsage: {config_get('prefix')}rufiepfp <@user>", help="fun")
+@Repent.command(description=f"Rufies a user's pfp. \nUsage: {config_get('prefix')}rufiepfp <@user>", help="fun")
 async def rufiepfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="stretch", file_extension="gif")
 
-@Cheddlatron.command(description=f"Shreds a user's pfp. \nUsage: {config_get('prefix')}shredpfp <@user>", help="fun")
+@Repent.command(description=f"Shreds a user's pfp. \nUsage: {config_get('prefix')}shredpfp <@user>", help="fun")
 async def shredpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="shred", file_extension="gif")
 
-@Cheddlatron.command(description=f"Liquefies a user's pfp. \nUsage: {config_get('prefix')}liquifypfp <@user>", help="fun")
+@Repent.command(description=f"Liquefies a user's pfp. \nUsage: {config_get('prefix')}liquifypfp <@user>", help="fun")
 async def liquifypfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="liquefy", file_extension="gif")
 
-@Cheddlatron.command(description=f"Spins a user's pfp. \nUsage: {config_get('prefix')}spinpfp <@user>", help="fun")
+@Repent.command(description=f"Spins a user's pfp. \nUsage: {config_get('prefix')}spinpfp <@user>", help="fun")
 async def spinpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="spin", file_extension="gif")
 
-@Cheddlatron.command(description=f"Turns a user's pfp into plates. \nUsage: {config_get('prefix')}platepfp <@user>", help="fun")
+@Repent.command(description=f"Turns a user's pfp into plates. \nUsage: {config_get('prefix')}platepfp <@user>", help="fun")
 async def platepfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="plate", file_extension="gif")
 
-@Cheddlatron.command(description=f"Makes a user's pfp multicolored. \nUsage: {config_get('prefix')}rgbpfp <@user>", help="fun")
+@Repent.command(description=f"Makes a user's pfp multicolored. \nUsage: {config_get('prefix')}rgbpfp <@user>", help="fun")
 async def rgbpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="lsd", file_extension="gif")
 
-@Cheddlatron.command(description=f"Paparazzi's a user's pfp. \nUsage: {config_get('prefix')}paparazzipfp <@user>", help="fun")
+@Repent.command(description=f"Paparazzi's a user's pfp. \nUsage: {config_get('prefix')}paparazzipfp <@user>", help="fun")
 async def paparazzipfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="paparazzi", file_extension="gif")
 
-@Cheddlatron.command(description=f"Big brains a user's pfp. \nUsage: {config_get('prefix')}bigbrainpfp <@user>", help="fun")
+@Repent.command(description=f"Big brains a user's pfp. \nUsage: {config_get('prefix')}bigbrainpfp <@user>", help="fun")
 async def bigbrainpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="equations", file_extension="gif")
 
-@Cheddlatron.command(description=f"Turns a user's pfp into an advert. \nUsage: {config_get('prefix')}adpfp <@user>", help="fun")
+@Repent.command(description=f"Turns a user's pfp into an advert. \nUsage: {config_get('prefix')}adpfp <@user>", help="fun")
 async def adpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="ads", file_extension="gif")
 
-@Cheddlatron.command(description=f"Makes a user's pfp infinite. \nUsage: {config_get('prefix')}infinitepfp <@user>", help="fun")
+@Repent.command(description=f"Makes a user's pfp infinite. \nUsage: {config_get('prefix')}infinitepfp <@user>", help="fun")
 async def infinitepfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="infinity", file_extension="gif")
 
-@Cheddlatron.command(description=f"Makes a user's pfp flappy. \nUsage: {config_get('prefix')}flappypfp <@user>", help="fun")
+@Repent.command(description=f"Makes a user's pfp flappy. \nUsage: {config_get('prefix')}flappypfp <@user>", help="fun")
 async def flappypfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="ripple", file_extension="gif")
 
-@Cheddlatron.command(description=f"Makes a user's pfp into a brick wall. \nUsage: {config_get('prefix')}brickpfp <@user>", help="fun")
+@Repent.command(description=f"Makes a user's pfp into a brick wall. \nUsage: {config_get('prefix')}brickpfp <@user>", help="fun")
 async def brickpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="wall", file_extension="gif")
 
-@Cheddlatron.command(description=f"Paints a user's pfp. \nUsage: {config_get('prefix')}paintpfp <@user>", help="fun")
+@Repent.command(description=f"Paints a user's pfp. \nUsage: {config_get('prefix')}paintpfp <@user>", help="fun")
 async def paintpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="paint", file_extension="gif")
 
-@Cheddlatron.command(aliases=['toilet'], description=f"Puts a user's pfp into a toilet. \nUsage: {config_get('prefix')}toiletpfp <@user>", help="fun")
+@Repent.command(aliases=['toilet'], description=f"Puts a user's pfp into a toilet. \nUsage: {config_get('prefix')}toiletpfp <@user>", help="fun")
 async def toiletpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="flush", file_extension="gif")
 
-@Cheddlatron.command(description=f"Makes someone's pfp canny. \nUsage: {config_get('prefix')}cannypfp <@user>", help="fun")
+@Repent.command(description=f"Makes someone's pfp canny. \nUsage: {config_get('prefix')}cannypfp <@user>", help="fun")
 async def cannypfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="canny", file_extension="gif")
 
-@Cheddlatron.command(description=f"Makes someone's pfp shakey. \nUsage: {config_get('prefix')}shakeypfp <@user>", help="fun")
+@Repent.command(description=f"Makes someone's pfp shakey. \nUsage: {config_get('prefix')}shakeypfp <@user>", help="fun")
 async def shakeypfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="earthquake", file_extension="gif")
 
-@Cheddlatron.command(description=f"Makes someone's pfp wiggly. \nUsage: {config_get('prefix')}wigglepfp <@user>", help="fun")
+@Repent.command(description=f"Makes someone's pfp wiggly. \nUsage: {config_get('prefix')}wigglepfp <@user>", help="fun")
 async def wigglepfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
     await jeyyapi(ctx, user=user, endpointer="boil", file_extension="gif")
 
-@Cheddlatron.command(description=f"Glitches out someone's pfp. \nUsage: {config_get('prefix')}glitchpfp <@user>", help="fun")
+@Repent.command(description=f"Glitches out someone's pfp. \nUsage: {config_get('prefix')}glitchpfp <@user>", help="fun")
 async def glitchpfp(ctx, user: discord.User=None):
     if user is None:
         user = ctx.message.author
@@ -7462,7 +7462,7 @@ async def queryCopilot(query, ws, conversationId, clientId):
     finally:
         await ws.close()
 
-@Cheddlatron.command(aliases=['gpt4'], description=f"Talks to the GPT-4 AI. \nUsage: {config_get('prefix')}gpt <text>", help="fun")
+@Repent.command(aliases=['gpt4'], description=f"Talks to the GPT-4 AI. \nUsage: {config_get('prefix')}gpt <text>", help="fun")
 async def gpt(ctx, *, query):
     session = requested.Session()
 
@@ -7514,14 +7514,14 @@ message_history = {
     "edited": defaultdict(list)
 }
 
-@Cheddlatron.event
+@Repent.event
 async def on_message_delete(message):
     try:
         if message is None or message.author is None:
             logging.info("The message or message.author was None.")
             return
         
-        if message.author == Cheddlatron.user:
+        if message.author == Repent.user:
             logging.info("Ignoring bot's own messages.")
             return
         
@@ -7534,10 +7534,10 @@ async def on_message_delete(message):
     except Exception as e:
         logging.error(f"Error in on_message_delete: {e}")
 
-@Cheddlatron.event
+@Repent.event
 async def on_message_edit(before, after):
     try:
-        if before.author == Cheddlatron.user or before.content == after.content:
+        if before.author == Repent.user or before.content == after.content:
             return
         
         message_history["edited"][before.channel.id].append({
@@ -7552,7 +7552,7 @@ async def on_message_edit(before, after):
     except Exception as e:
         logging.error(f"Error in on_message_edit: {e}")
 
-@Cheddlatron.command(aliases=['sn', 'snipe'], description=f"Snipes a deleted message, Allows number of messages to be specified. \nUsage: {config_get('prefix')}snipemsg [Amount]", help="utility")
+@Repent.command(aliases=['sn', 'snipe'], description=f"Snipes a deleted message, Allows number of messages to be specified. \nUsage: {config_get('prefix')}snipemsg [Amount]", help="utility")
 async def snipemsg(ctx, amount = 1):
     count = 0
     if amount > 5:
@@ -7587,7 +7587,7 @@ async def snipemsg(ctx, amount = 1):
     except Exception as e:
         logging.error(f"Error in snipe command: {e}")
 
-@Cheddlatron.command(aliases=['es', 'esnipe'], description=f"Snipes an edited message, Allows number of messages to be specified. \nUsage: {config_get('prefix')}editsnipe [Amount]", help="utility")
+@Repent.command(aliases=['es', 'esnipe'], description=f"Snipes an edited message, Allows number of messages to be specified. \nUsage: {config_get('prefix')}editsnipe [Amount]", help="utility")
 async def editsnipe(ctx, amount = 1):
     count = 0
     if amount > 5:
@@ -7623,13 +7623,13 @@ async def editsnipe(ctx, amount = 1):
     except Exception as e:
         logging.error(f"Error in editsnipe command: {e}")
 
-@Cheddlatron.command(description=f"Sets the amount of pings you have in a channel. \nUsage: {config_get('prefix')}setpings [amount of pings]", help="fun")
+@Repent.command(description=f"Sets the amount of pings you have in a channel. \nUsage: {config_get('prefix')}setpings [amount of pings]", help="fun")
 async def setpings(ctx, amount: int=9999):
     channel_id = ctx.channel.id
     thing = json.loads(requesters.get(f'https://canary.discord.com/api/v9/channels/{channel_id}/messages?limit=1', headers={'authorization': config_get('token')}).text)[0]
     j = requesters.post(f'https://canary.discord.com/api/v9/channels/{channel_id}/messages/{thing["id"]}/ack', headers={'authorization': config_get('token')}, json_data={"manual":True,"mention_count":amount})
 
-@Cheddlatron.listen('on_ready')
+@Repent.listen('on_ready')
 async def on_ready3(data):
     global soundlist
     soundlist = [{'id': '1', 'emoid': None, 'gid': None, 'emoname': '🦆'}, {'id': '2', 'emoid': None, 'gid': None, 'emoname': '🔊'}, {'id': '3', 'emoid': None, 'gid': None, 'emoname': '🦗'}, {'id': '4', 'emoid': None, 'gid': None, 'emoname': '👏'}, {'id': '5', 'emoid': None, 'gid': None, 'emoname': '🎺'}, {'id': '6', 'emoid': None, 'gid': None, 'emoname': '🥁'}]
@@ -7659,7 +7659,7 @@ def soundspammer():
         else: return
 soundspambool = False
 
-@Cheddlatron.command(description=f"Spams all possible soundboard sounds. \nUsage: {config_get('prefix')}soundspam", help="fun")
+@Repent.command(description=f"Spams all possible soundboard sounds. \nUsage: {config_get('prefix')}soundspam", help="fun")
 async def soundspam(ctx):
     heading = "Soundboard Spam"
     cmdname = "soundspam"
@@ -7683,7 +7683,7 @@ async def soundspam(ctx):
     for i in range(0, 10):
         threading.Thread(target=soundspammer).start()
 
-@Cheddlatron.command(description=f"Bans any user who pings you in the server they pinged you from. \nUsage: {config_get('prefix')}userpingban", help="utility")
+@Repent.command(description=f"Bans any user who pings you in the server they pinged you from. \nUsage: {config_get('prefix')}userpingban", help="utility")
 async def userpingban(ctx, user: discord.User):
     with open('Data\Settings\Configs\Settings.json', 'r') as file:
         settings_data = json.load(file)
@@ -7708,7 +7708,7 @@ async def userpingban(ctx, user: discord.User):
         cmdname = "userpingban"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Bans a user who pings you in the server this commands was used in. \nUsage: {config_get('prefix')}serverpingban", help="utility")
+@Repent.command(description=f"Bans a user who pings you in the server this commands was used in. \nUsage: {config_get('prefix')}serverpingban", help="utility")
 async def serverpingban(ctx):
     with open('Data\Settings\Configs\Settings.json', 'r') as file:
         settings_data = json.load(file)
@@ -7737,7 +7737,7 @@ async def serverpingban(ctx):
         cmdname = "ERROR"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Kicks any user who pings you in the server this commands was used in. \nUsage: {config_get('prefix')}serverpingkick", help="utility")
+@Repent.command(description=f"Kicks any user who pings you in the server this commands was used in. \nUsage: {config_get('prefix')}serverpingkick", help="utility")
 async def serverpingkick(ctx):
     with open('Data\Settings\Configs\Settings.json', 'r') as file:
         settings_data = json.load(file)
@@ -7766,7 +7766,7 @@ async def serverpingkick(ctx):
         cmdname = "ERROR"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Kicks a user who pings you in the server they pinged you from. \nUsage: {config_get('prefix')}userpingkick", help="utility")
+@Repent.command(description=f"Kicks a user who pings you in the server they pinged you from. \nUsage: {config_get('prefix')}userpingkick", help="utility")
 async def userpingkick(ctx, user: discord.User):
     with open('Data\Settings\Configs\Settings.json', 'r') as file:
         settings_data = json.load(file)
@@ -7791,7 +7791,7 @@ async def userpingkick(ctx, user: discord.User):
         cmdname = "userpingkick"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Adds a channel to the message logging list. \nUsage: {config_get('prefix')}logchannel [channel id]", help="utility")
+@Repent.command(description=f"Adds a channel to the message logging list. \nUsage: {config_get('prefix')}logchannel [channel id]", help="utility")
 async def logchannel(ctx, id=None):
     if not isinstance(ctx.channel, discord.TextChannel) or not isinstance(ctx.channel, discord.VoiceChannel):
             heading = "Error"
@@ -7800,7 +7800,7 @@ async def logchannel(ctx, id=None):
             await panelmaker(ctx, heading, body, cmdname)
             return
     channel_id = int(id) if id else ctx.channel.id
-    channel = Cheddlatron.get_channel(channel_id)   
+    channel = Repent.get_channel(channel_id)   
     with open('Data\Settings\Configs\Settings.json', 'r') as file:
         settings_data = json.load(file)
     if 'msglogids' not in settings_data:
@@ -7824,7 +7824,7 @@ async def logchannel(ctx, id=None):
         cmdname = "logchannel"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Fetches and displays the first message sent in a channel or DM. \nUsage: {config_get('prefix')}firstmsg", panel="fun")
+@Repent.command(description=f"Fetches and displays the first message sent in a channel or DM. \nUsage: {config_get('prefix')}firstmsg", panel="fun")
 async def firstmsg(ctx):
     if isinstance(ctx.channel, discord.DMChannel):
         async for message in ctx.channel.history(limit=1, oldest_first=True):
@@ -7850,11 +7850,11 @@ def make_circle(img):
     out.putalpha(mask)
     return out
 
-@Cheddlatron.command(description=f"Creates a gigachad image with a users profile picture. \nUsage: {config_get('prefix')}gigachad [@user]", help="fun")
+@Repent.command(description=f"Creates a gigachad image with a users profile picture. \nUsage: {config_get('prefix')}gigachad [@user]", help="fun")
 async def gigachad(ctx, user: discord.User = None):
     if user is None:
         user = ctx.author
-    response = requesters.get("https://cheddlatron.com/BotAssets/Images/gigachad.png")
+    response = requesters.get("https://repent.com/BotAssets/Images/gigachad.png")
     imge = Image.open(BytesIO(response.content)).convert("RGBA")
     avatar = str(user.avatar.replace(format='png'))
     response = requesters.get(avatar)
@@ -7865,11 +7865,11 @@ async def gigachad(ctx, user: discord.User = None):
     final_image_bytes = io.BytesIO()
     imge.save(final_image_bytes, format="PNG")
     final_image_bytes.seek(0)
-    await ctx.send(file=discord.File(final_image_bytes, "Cheddlatron_Gigachad.png"))
+    await ctx.send(file=discord.File(final_image_bytes, "Repent_Gigachad.png"))
 
-@Cheddlatron.command(description=f"Creates a George Floyd image with 2 users profile pictures. \nUsage: {config_get('prefix')}derek <@user> <@user>", help="fun")
+@Repent.command(description=f"Creates a George Floyd image with 2 users profile pictures. \nUsage: {config_get('prefix')}derek <@user> <@user>", help="fun")
 async def derek(ctx, user1: discord.User, user2: discord.User):
-    response = requesters.get("https://cheddlatron.com/BotAssets/Images/derek.png")
+    response = requesters.get("https://repent.com/BotAssets/Images/derek.png")
     imge = Image.open(BytesIO(response.content)).convert("RGBA")
     for user in [user1, user2]:
         avatar = str(user.avatar.replace(format='png'))
@@ -7884,13 +7884,13 @@ async def derek(ctx, user1: discord.User, user2: discord.User):
     with BytesIO() as image_binary:
         imge.save(image_binary, 'PNG')
         image_binary.seek(0)
-        await ctx.send(file=discord.File(fp=image_binary, filename='Cheddlatron_Derek.png'))
+        await ctx.send(file=discord.File(fp=image_binary, filename='Repent_Derek.png'))
 
-@Cheddlatron.command(description=f"Creates an image of a profile picture on a nokia phone. \nUsage: {config_get('prefix')}nokia [@user]", help="fun")
+@Repent.command(description=f"Creates an image of a profile picture on a nokia phone. \nUsage: {config_get('prefix')}nokia [@user]", help="fun")
 async def nokia(ctx, user: discord.User = None):
     if user is None:
         user = ctx.author
-    response = requesters.get("https://cheddlatron.com/BotAssets/Images/nokia.png")
+    response = requesters.get("https://repent.com/BotAssets/Images/nokia.png")
     img = Image.open(BytesIO(response.content))
     avatar = str(user.avatar.replace(format='png'))
     response = requesters.get(avatar)
@@ -7900,13 +7900,13 @@ async def nokia(ctx, user: discord.User = None):
     with BytesIO() as image_binary:
         img.save(image_binary, 'PNG')
         image_binary.seek(0)
-        await ctx.send(file=discord.File(fp=image_binary, filename='Cheddlatron_Nokia.png'))
+        await ctx.send(file=discord.File(fp=image_binary, filename='Repent_Nokia.png'))
 
-@Cheddlatron.command(description=f"Creates a ps4 game cover using a profile picute. \nUsage: {config_get('prefix')}ps4cover [@user]", help="fun")
+@Repent.command(description=f"Creates a ps4 game cover using a profile picute. \nUsage: {config_get('prefix')}ps4cover [@user]", help="fun")
 async def ps4cover(ctx, user: discord.User = None):
     if user is None:
         user = ctx.author
-    response = requesters.get("https://cheddlatron.com/BotAssets/Images/ps4box.png")
+    response = requesters.get("https://repent.com/BotAssets/Images/ps4box.png")
     img = Image.open(BytesIO(response.content))
     avatar = str(user.avatar.replace(format='png'))
     response = requesters.get(avatar)
@@ -7916,9 +7916,9 @@ async def ps4cover(ctx, user: discord.User = None):
     with BytesIO() as image_binary:
         img.save(image_binary, 'PNG')
         image_binary.seek(0)
-        await ctx.send(file=discord.File(fp=image_binary, filename='Cheddlatron_PS4Cover.png'))
+        await ctx.send(file=discord.File(fp=image_binary, filename='Repent_PS4Cover.png'))
 
-@Cheddlatron.command(description=f"Speechbubbles an image and sends it as a gif. \nUsage: {config_get('prefix')}sbubble <url/attachment>", help="fun")
+@Repent.command(description=f"Speechbubbles an image and sends it as a gif. \nUsage: {config_get('prefix')}sbubble <url/attachment>", help="fun")
 async def sbubble(ctx, url: str = None):
     if url:
         response = requesters.get(url)
@@ -7935,7 +7935,7 @@ async def sbubble(ctx, url: str = None):
     response.raise_for_status()
     image_bytes = io.BytesIO(response.content)
     image = Image.open(image_bytes).convert("RGBA")
-    bubble_response = requesters.get("https://cheddlatron.com/BotAssets/Images/speech_bubble.png")
+    bubble_response = requesters.get("https://repent.com/BotAssets/Images/speech_bubble.png")
     bubble_response.raise_for_status()
     bubble_image_bytes = io.BytesIO(bubble_response.content)
     bubble_image = Image.open(bubble_image_bytes).convert("RGBA")
@@ -7949,14 +7949,14 @@ async def sbubble(ctx, url: str = None):
     output_bytes = io.BytesIO()
     image.save(output_bytes, format='PNG')
     output_bytes.seek(0)
-    await ctx.send(file=discord.File(output_bytes, filename='Cheddlatron_SBubble.gif'))
+    await ctx.send(file=discord.File(output_bytes, filename='Repent_SBubble.gif'))
 
-@Cheddlatron.command(description=f"Creates an image of a pfp doing a roman salute. \nUsage: {config_get('prefix')}salute [@user]", help="fun")
+@Repent.command(description=f"Creates an image of a pfp doing a roman salute. \nUsage: {config_get('prefix')}salute [@user]", help="fun")
 async def salute(ctx, user: discord.User = None):
     if user is None:
         user = ctx.author
     avatar = str(user.avatar.replace(format='png'))
-    response = requesters.get("https://cheddlatron.com/BotAssets/Images/salute.png")
+    response = requesters.get("https://repent.com/BotAssets/Images/salute.png")
     base_image_bytes = io.BytesIO(response.content)
     imge = Image.open(base_image_bytes)
     avatar_response = requesters.get(str(avatar))
@@ -7971,9 +7971,9 @@ async def salute(ctx, user: discord.User = None):
     output_bytes = io.BytesIO()
     imge.save(output_bytes, format='PNG')
     output_bytes.seek(0)
-    await ctx.send(file=discord.File(output_bytes, filename='Cheddlatron_Salute.png'))
+    await ctx.send(file=discord.File(output_bytes, filename='Repent_Salute.png'))
 
-@Cheddlatron.command(description=f"Generates a unique username using discords username generation system. \nUsage: {config_get('prefix')}username", help="fun")
+@Repent.command(description=f"Generates a unique username using discords username generation system. \nUsage: {config_get('prefix')}username", help="fun")
 async def username(ctx):
     headers = {"Authorization": config_get('token'), "x-super-properties": getxsuper()}
     resp = requesters.get("https://discord.com/api/v9/unique-username/username-suggestions-unauthed", headers=headers).json()
@@ -7982,7 +7982,7 @@ async def username(ctx):
     cmdname = "username"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Shows your pc specs. \nUsage: {config_get('prefix')}specs", help="fun")
+@Repent.command(description=f"Shows your pc specs. \nUsage: {config_get('prefix')}specs", help="fun")
 async def specs(ctx):
         platform_system = platform.system()
         platform_version = platform.version()
@@ -8004,122 +8004,122 @@ async def specs(ctx):
 
 
 #CODEBLOCK COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Creates a CSS codeblock. \nUsage: {config_get('prefix')}css <text>", help="codeblock")
+@Repent.command(description=f"Creates a CSS codeblock. \nUsage: {config_get('prefix')}css <text>", help="codeblock")
 async def css(ctx, *, msg):    
     await ctx.send(f"```css\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a BrainFuck codeblock. \nUsage: {config_get('prefix')}brainfuck <text>", help="codeblock")
+@Repent.command(description=f"Creates a BrainFuck codeblock. \nUsage: {config_get('prefix')}brainfuck <text>", help="codeblock")
 async def brainfuck(ctx, *, msg):    
     await ctx.send(f"```brainfuck\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a MD codeblock. \nUsage: {config_get('prefix')}md <text>", help="codeblock")
+@Repent.command(description=f"Creates a MD codeblock. \nUsage: {config_get('prefix')}md <text>", help="codeblock")
 async def md(ctx, *, msg):    
     await ctx.send(f"```md\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Fix codeblock. \nUsage: {config_get('prefix')}fix <text>", help="codeblock")
+@Repent.command(description=f"Creates a Fix codeblock. \nUsage: {config_get('prefix')}fix <text>", help="codeblock")
 async def fix(ctx, *, msg):    
     await ctx.send(f"```fix\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a GLSL codeblock. \nUsage: {config_get('prefix')}glsl <text>", help="codeblock")
+@Repent.command(description=f"Creates a GLSL codeblock. \nUsage: {config_get('prefix')}glsl <text>", help="codeblock")
 async def glsl(ctx, *, msg):    
     await ctx.send(f"```glsl\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Diff codeblock. \nUsage: {config_get('prefix')}diff <text>", help="codeblock")
+@Repent.command(description=f"Creates a Diff codeblock. \nUsage: {config_get('prefix')}diff <text>", help="codeblock")
 async def diff(ctx, *, msg):    
     await ctx.send(f"```diff\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Bash codeblock. \nUsage: {config_get('prefix')}bash <text>", help="codeblock")
+@Repent.command(description=f"Creates a Bash codeblock. \nUsage: {config_get('prefix')}bash <text>", help="codeblock")
 async def bash(ctx, *, msg):    
     await ctx.send(f"```bash\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a C# codeblock. \nUsage: {config_get('prefix')}cs <text>", help="codeblock")
+@Repent.command(description=f"Creates a C# codeblock. \nUsage: {config_get('prefix')}cs <text>", help="codeblock")
 async def cs(ctx, *, msg):    
     await ctx.send(f"```cs\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a C++ codeblock. \nUsage: {config_get('prefix')}cpp <text>", help="codeblock")
+@Repent.command(description=f"Creates a C++ codeblock. \nUsage: {config_get('prefix')}cpp <text>", help="codeblock")
 async def cpp(ctx, *, msg):    
     await ctx.send(f"```cpp\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Ini codeblock. \nUsage: {config_get('prefix')}ini <text>", help="codeblock")
+@Repent.command(description=f"Creates a Ini codeblock. \nUsage: {config_get('prefix')}ini <text>", help="codeblock")
 async def ini(ctx, *, msg):    
     await ctx.send(f"```ini\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates an AsciiDoc codeblock. \nUsage: {config_get('prefix')}asciidoc <text>", help="codeblock")
+@Repent.command(description=f"Creates an AsciiDoc codeblock. \nUsage: {config_get('prefix')}asciidoc <text>", help="codeblock")
 async def asciidoc(ctx, *, msg):   
     await ctx.send(f"```asciidoc\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates an AutoHotKey codeblock. \nUsage: {config_get('prefix')}ahk <text>", help="codeblock")
+@Repent.command(description=f"Creates an AutoHotKey codeblock. \nUsage: {config_get('prefix')}ahk <text>", help="codeblock")
 async def ahk(ctx, *, msg):    
     await ctx.send(f"```autohotkey\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Python codeblock. \nUsage: {config_get('prefix')}python <text>", help="codeblock")
+@Repent.command(description=f"Creates a Python codeblock. \nUsage: {config_get('prefix')}python <text>", help="codeblock")
 async def python(ctx, *, msg):    
     await ctx.send(f"```python\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Lua codeblock. \nUsage: {config_get('prefix')}lua <text>", help="codeblock")
+@Repent.command(description=f"Creates a Lua codeblock. \nUsage: {config_get('prefix')}lua <text>", help="codeblock")
 async def lua(ctx, *, msg):    
     await ctx.send(f"```lua\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a PHP codeblock. \nUsage: {config_get('prefix')}php <text>", help="codeblock")
+@Repent.command(description=f"Creates a PHP codeblock. \nUsage: {config_get('prefix')}php <text>", help="codeblock")
 async def php(ctx, *, msg):    
     await ctx.send(f"```php\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Rust codeblock. \nUsage: {config_get('prefix')}rust <text>", help="codeblock")
+@Repent.command(description=f"Creates a Rust codeblock. \nUsage: {config_get('prefix')}rust <text>", help="codeblock")
 async def rust(ctx, *, msg):    
     await ctx.send(f"```rust\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Java codeblock. \nUsage: {config_get('prefix')}java <text>", help="codeblock")
+@Repent.command(description=f"Creates a Java codeblock. \nUsage: {config_get('prefix')}java <text>", help="codeblock")
 async def java(ctx, *, msg):    
     await ctx.send(f"```java\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Kotlin codeblock. \nUsage: {config_get('prefix')}kotlin <text>", help="codeblock")
+@Repent.command(description=f"Creates a Kotlin codeblock. \nUsage: {config_get('prefix')}kotlin <text>", help="codeblock")
 async def kotlin(ctx, *, msg):    
     await ctx.send(f"```kotlin\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a JavaScript codeblock. \nUsage: {config_get('prefix')}js <text>", help="codeblock")
+@Repent.command(description=f"Creates a JavaScript codeblock. \nUsage: {config_get('prefix')}js <text>", help="codeblock")
 async def js(ctx, *, msg):    
     await ctx.send(f"```javascript\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a MySql codeblock. \nUsage: {config_get('prefix')}mysql <text>", help="codeblock")
+@Repent.command(description=f"Creates a MySql codeblock. \nUsage: {config_get('prefix')}mysql <text>", help="codeblock")
 async def mysql(ctx, *, msg):   
     await ctx.send(f"```MySQL\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a MarkDown codeblock. \nUsage: {config_get('prefix')}markdown <text>", help="codeblock")
+@Repent.command(description=f"Creates a MarkDown codeblock. \nUsage: {config_get('prefix')}markdown <text>", help="codeblock")
 async def markdown(ctx, *, msg):    
     await ctx.send(f"```markdown\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Ansi codeblock. \nUsage: {config_get('prefix')}ansi <text>", help="codeblock")
+@Repent.command(description=f"Creates a Ansi codeblock. \nUsage: {config_get('prefix')}ansi <text>", help="codeblock")
 async def ansi(ctx, *, msg):    
     await ctx.send(f"```ansi\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a CoffeeScript codeblock. \nUsage: {config_get('prefix')}coffeescript <text>", help="codeblock")
+@Repent.command(description=f"Creates a CoffeeScript codeblock. \nUsage: {config_get('prefix')}coffeescript <text>", help="codeblock")
 async def coffeescript(ctx, *, msg):    
     await ctx.send(f"```coffeescript\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a HTML codeblock. \nUsage: {config_get('prefix')}html <text>", help="codeblock")
+@Repent.command(description=f"Creates a HTML codeblock. \nUsage: {config_get('prefix')}html <text>", help="codeblock")
 async def html(ctx, *, msg):    
     await ctx.send(f"```html\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Ruby codeblock. \nUsage: {config_get('prefix')}ruby <text>", help="codeblock")
+@Repent.command(description=f"Creates a Ruby codeblock. \nUsage: {config_get('prefix')}ruby <text>", help="codeblock")
 async def ruby(ctx, *, msg):    
     await ctx.send(f"```ruby\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a Go-lang codeblock. \nUsage: {config_get('prefix')}go <text>", help="codeblock")
+@Repent.command(description=f"Creates a Go-lang codeblock. \nUsage: {config_get('prefix')}go <text>", help="codeblock")
 async def go(ctx, *, msg):    
     await ctx.send(f"```go\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a YAML codeblock. \nUsage: {config_get('prefix')}yaml <text>", help="codeblock")
+@Repent.command(description=f"Creates a YAML codeblock. \nUsage: {config_get('prefix')}yaml <text>", help="codeblock")
 async def yaml(ctx, *, msg):    
     await ctx.send(f"```yaml\n{msg}\n```")
 
-@Cheddlatron.command(description=f"Creates a TypeScript codeblock. \nUsage: {config_get('prefix')}typescript <text>", help="codeblock")
+@Repent.command(description=f"Creates a TypeScript codeblock. \nUsage: {config_get('prefix')}typescript <text>", help="codeblock")
 async def typescript(ctx, *, msg):    
     await ctx.send(f"```typescript\n{msg}\n```")
 #CODEBLOCK COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 #MODERATION COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Unlocks a channel so people can talk in it after it being locked. \nUsage: {config_get('prefix')}unlock", help="moderation") 
+@Repent.command(description=f"Unlocks a channel so people can talk in it after it being locked. \nUsage: {config_get('prefix')}unlock", help="moderation") 
 async def unlock(ctx):    
     roles = list(ctx.guild.roles)
     overwrites = discord.PermissionOverwrite(send_messages=True)
@@ -8130,7 +8130,7 @@ async def unlock(ctx):
     cmdname = "unlock"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Locks a channel so nobody can talk in it. \nUsage: {config_get('prefix')}lock", help="moderation") 
+@Repent.command(description=f"Locks a channel so nobody can talk in it. \nUsage: {config_get('prefix')}lock", help="moderation") 
 async def lock(ctx):    
     roles = list(ctx.guild.roles)
     overwrites = discord.PermissionOverwrite(send_messages=False)
@@ -8142,7 +8142,7 @@ async def lock(ctx):
     cmdname = "lock"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Locks all channels so nobody can send any messages anywhere. \nUsage: {config_get('prefix')}lockdown", help="moderation") 
+@Repent.command(description=f"Locks all channels so nobody can send any messages anywhere. \nUsage: {config_get('prefix')}lockdown", help="moderation") 
 async def lockdown(ctx):   
     roles = list(ctx.guild.roles)
     overwrites = discord.PermissionOverwrite(send_messages=False)   
@@ -8154,7 +8154,7 @@ async def lockdown(ctx):
     cmdname = "lockdown"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Allows people to talk in the server after a server lockdown. \nUsage: {config_get('prefix')}unlockdown", help="moderation") 
+@Repent.command(description=f"Allows people to talk in the server after a server lockdown. \nUsage: {config_get('prefix')}unlockdown", help="moderation") 
 async def unlockdown(ctx):    
     roles = list(ctx.guild.roles)
     overwrites = discord.PermissionOverwrite(send_messages=True)    
@@ -8166,7 +8166,7 @@ async def unlockdown(ctx):
     cmdname = "unlockdown"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Imports the bans from another server and bans everyone from the server the command was executed in. \nUsage: {config_get('prefix')}importbans <server id>", help="moderation")
+@Repent.command(description=f"Imports the bans from another server and bans everyone from the server the command was executed in. \nUsage: {config_get('prefix')}importbans <server id>", help="moderation")
 async def importbans(ctx, server_id: int):    
     server = ctx.bot.get_guild(server_id)
     if server is None:
@@ -8191,11 +8191,11 @@ async def importbans(ctx, server_id: int):
         except discord.HTTPException:
             print(f"{Fore.LIGHTRED_EX}[ERROR]: {Fore.WHITE}An error occurred while trying to unban user with ID {user_id}.")
     heading = "Import Bans"
-    body = f"Bans successfully imported from {Cheddlatron.get_guild(server_id).name}"
+    body = f"Bans successfully imported from {Repent.get_guild(server_id).name}"
     cmdname = "importbans"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Imports all emojis from given server into the new server where the command was used and stops when hitting the limit \nUsage: {config_get('prefix')}importemojis <server id>", help="moderation")  
+@Repent.command(description=f"Imports all emojis from given server into the new server where the command was used and stops when hitting the limit \nUsage: {config_get('prefix')}importemojis <server id>", help="moderation")  
 async def importemojis(ctx, source_server_id: int):    
     source_server = ctx.bot.get_guild(source_server_id)
     destination_server = ctx.guild  
@@ -8233,7 +8233,7 @@ async def importemojis(ctx, source_server_id: int):
         cmdname = "importemojis"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Deletes all emojis in a server. \nUsage: {config_get('prefix')}delemojis", help="moderation") 
+@Repent.command(description=f"Deletes all emojis in a server. \nUsage: {config_get('prefix')}delemojis", help="moderation") 
 async def delemojis(ctx):    
     if not ctx.guild.me.guild_permissions.manage_emojis:
         print(f"{Fore.LIGHTRED_EX}[ERROR] {Fore.WHITE}You don't have the necessary permissions to manage emojis.")
@@ -8255,7 +8255,7 @@ async def delemojis(ctx):
     cmdname = "delemoji"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Exports all bans from a server and stores them in a txt. \nUsage: {config_get('prefix')}exportbans", help="moderation")
+@Repent.command(description=f"Exports all bans from a server and stores them in a txt. \nUsage: {config_get('prefix')}exportbans", help="moderation")
 async def exportbans(ctx):    
     ban_info = ""
     bans = await ctx.guild.bans()
@@ -8274,7 +8274,7 @@ async def exportbans(ctx):
         cmdname = "exportbans"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Sends a list of all bans in chat. \nUsage: {config_get('prefix')}listbans", help="moderation")
+@Repent.command(description=f"Sends a list of all bans in chat. \nUsage: {config_get('prefix')}listbans", help="moderation")
 async def listbans(ctx):
     ban_info = ""
     bans = await ctx.guild.bans()
@@ -8309,20 +8309,20 @@ async def listbans(ctx):
         cmdname = "listbans"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Bans a user from a server with their Discord ID. \nUsage: {config_get('prefix')}idban <user id> [reason]", help="moderation")
+@Repent.command(description=f"Bans a user from a server with their Discord ID. \nUsage: {config_get('prefix')}idban <user id> [reason]", help="moderation")
 async def idban(ctx, member_id: int, *, reason=None):
     if reason is None:
-        reason = "Cheddlatron"
+        reason = "Repent"
     await ctx.guild.ban(discord.Object(id=member_id), reason=reason)
     heading = "ID Ban"
     body = f"{member_id} was banned for {reason}."
     cmdname = "idban"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Bans and then unbans a user from a server with their Discord ID. \nUsage: {config_get('prefix')}softidban <user id> [reason]", help="moderation")
+@Repent.command(description=f"Bans and then unbans a user from a server with their Discord ID. \nUsage: {config_get('prefix')}softidban <user id> [reason]", help="moderation")
 async def softidban(ctx, member_id: int, *, reason=None):
     if reason is None:
-        reason = "Cheddlatron"
+        reason = "Repent"
     await ctx.guild.ban(discord.Object(id=member_id), reason=reason)
     await ctx.guild.unban(discord.Object(id=member_id), reason=reason)
     heading = "Soft ID Ban"
@@ -8330,10 +8330,10 @@ async def softidban(ctx, member_id: int, *, reason=None):
     cmdname = "softidban"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Bans and then unbans a user from a server. \nUsage: {config_get('prefix')}softban <@user> [reason]", help="moderation")
+@Repent.command(description=f"Bans and then unbans a user from a server. \nUsage: {config_get('prefix')}softban <@user> [reason]", help="moderation")
 async def softban(ctx, user: discord.Member, *, reason=None):
     if reason is None:
-        reason = "Cheddlatron"
+        reason = "Repent"
     await user.ban(reason=reason)
     await user.unban(reason=reason)
     heading = "Soft Ban"
@@ -8341,7 +8341,7 @@ async def softban(ctx, user: discord.Member, *, reason=None):
     cmdname = "softban"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Removes a role from a user. \nUsage: {config_get('prefix')}removerole <@user> <role name>", help="moderation")
+@Repent.command(description=f"Removes a role from a user. \nUsage: {config_get('prefix')}removerole <@user> <role name>", help="moderation")
 async def removerole(ctx, member: discord.Member, *, name):
     role = get(ctx.guild.roles, name=name)
     await member.remove_roles(role)
@@ -8350,21 +8350,21 @@ async def removerole(ctx, member: discord.Member, *, name):
     cmdname = "removerole"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Creates a stage channel. \nUsage: {config_get('prefix')}makechannel <channel name>", help="moderation") 
+@Repent.command(description=f"Creates a stage channel. \nUsage: {config_get('prefix')}makechannel <channel name>", help="moderation") 
 async def makestage(ctx, *, name):    
     await ctx.guild.create_stage_channel(name)
 
-@Cheddlatron.command(description=f"Bans a user from a server. \nUsage: {config_get('prefix')}ban <@user> [reason]", help="moderation")
+@Repent.command(description=f"Bans a user from a server. \nUsage: {config_get('prefix')}ban <@user> [reason]", help="moderation")
 async def ban(ctx, user: discord.Member, *, reason=None):
     if reason is None:
-        reason = "Cheddlatron"
+        reason = "Repent"
     await user.ban(reason=reason)
     heading = "Ban"
     body = f"{user} was banned for {reason}."
     cmdname = "ban"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Creates a role. \nUsage: {config_get('prefix')}makerole <name>", help="moderation")
+@Repent.command(description=f"Creates a role. \nUsage: {config_get('prefix')}makerole <name>", help="moderation")
 async def makerole(ctx, *, role):
     await ctx.guild.create_role(name=role)
     heading = "Role Creation"
@@ -8372,7 +8372,7 @@ async def makerole(ctx, *, role):
     cmdname = "makerole"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Gives a specific user a role. \nUsage: {config_get('prefix')}giverole <@user> <role name>", help="moderation")
+@Repent.command(description=f"Gives a specific user a role. \nUsage: {config_get('prefix')}giverole <@user> <role name>", help="moderation")
 async def giverole(ctx, member: discord.Member, *, name):
     role = get(ctx.guild.roles, name=name)
     await member.add_roles(role)
@@ -8381,7 +8381,7 @@ async def giverole(ctx, member: discord.Member, *, name):
     cmdname = "giverole"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Gives all members in a server a role. \nUsage: {config_get('prefix')}roleall <role name>", help="moderation")
+@Repent.command(description=f"Gives all members in a server a role. \nUsage: {config_get('prefix')}roleall <role name>", help="moderation")
 async def roleall(ctx, *, name):
     role = get(ctx.guild.roles, name=name)
     for member in list(ctx.guild.members):
@@ -8394,7 +8394,7 @@ async def roleall(ctx, *, name):
     cmdname = "roleall"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Removes a role from all members in a server. \nUsage: {config_get('prefix')}unroleall <role name>", help="moderation")
+@Repent.command(description=f"Removes a role from all members in a server. \nUsage: {config_get('prefix')}unroleall <role name>", help="moderation")
 async def unroleall(ctx, *, name):
     role = get(ctx.guild.roles, name=name)
     for member in list(ctx.guild.members):
@@ -8407,23 +8407,23 @@ async def unroleall(ctx, *, name):
     cmdname = "unroleall"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Changes a user's nickname. \nUsage: {config_get('prefix')}nick <@user> <nickname>", help="moderation")
+@Repent.command(description=f"Changes a user's nickname. \nUsage: {config_get('prefix')}nick <@user> <nickname>", help="moderation")
 async def nick(ctx, member: discord.Member, *, nick):   
     await member.edit(nick=nick)
 
-@Cheddlatron.command(description=f"Gets rid of a user's nickname. \nUsage: {config_get('prefix')}clearnick <@user>", help="moderation")
+@Repent.command(description=f"Gets rid of a user's nickname. \nUsage: {config_get('prefix')}clearnick <@user>", help="moderation")
 async def clearnick(ctx, user: discord.Member):    
     await user.edit(nick=None)
 
-@Cheddlatron.command(description=f"Kicks a user from a server. \nUsage: {config_get('prefix')}kick <@user>", help="moderation")
+@Repent.command(description=f"Kicks a user from a server. \nUsage: {config_get('prefix')}kick <@user>", help="moderation")
 async def kick(ctx, user: discord.Member):   
-    await user.kick(reason="Cheddlatron")
+    await user.kick(reason="Repent")
     heading = "Kick"
     body = f"{user} was kicked."
     cmdname = "kick"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Mutes a user in a server. \nUsage: {config_get('prefix')}mute <@user>", help="moderation")
+@Repent.command(description=f"Mutes a user in a server. \nUsage: {config_get('prefix')}mute <@user>", help="moderation")
 async def mute(ctx, user: discord.Member):    
     role = discord.utils.get(ctx.guild.roles, name="Muted")
     if not role:
@@ -8434,7 +8434,7 @@ async def mute(ctx, user: discord.Member):
     cmdname = "mute"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Unmutes a user in a server. \nUsage: {config_get('prefix')}unmute <@user>", help="moderation")
+@Repent.command(description=f"Unmutes a user in a server. \nUsage: {config_get('prefix')}unmute <@user>", help="moderation")
 async def unmute(ctx, user: discord.Member):    
     role = discord.utils.get(ctx.guild.roles, name="Muted")
     await user.remove_roles(role)
@@ -8443,51 +8443,51 @@ async def unmute(ctx, user: discord.Member):
     cmdname = "unmute"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Makes a channel in a server. \nUsage: {config_get('prefix')}makechannel <channel name>", help="moderation")
+@Repent.command(description=f"Makes a channel in a server. \nUsage: {config_get('prefix')}makechannel <channel name>", help="moderation")
 async def makechannel(ctx, *, name):    
     await ctx.guild.create_text_channel(name)
 
-@Cheddlatron.command(description=f"Makes a voice channel in a server. \nUsage: {config_get('prefix')}makevc <channel name>", help="moderation")
+@Repent.command(description=f"Makes a voice channel in a server. \nUsage: {config_get('prefix')}makevc <channel name>", help="moderation")
 async def makevc(ctx, *, name):    
     await ctx.guild.create_voice_channel(name)
 
-@Cheddlatron.command(description=f"Makes a category in a server. \nUsage: {config_get('prefix')}makecategory <category name>", help="moderation")
+@Repent.command(description=f"Makes a category in a server. \nUsage: {config_get('prefix')}makecategory <category name>", help="moderation")
 async def makecategory(ctx, *, name):    
     await ctx.guild.create_category_channel(name)
 
-@Cheddlatron.command(description=f"Deletes a category. \nUsage: {config_get('prefix')}delcategory <#category-tag>", help="moderation")
+@Repent.command(description=f"Deletes a category. \nUsage: {config_get('prefix')}delcategory <#category-tag>", help="moderation")
 async def delcategory(ctx, channel: discord.CategoryChannel):    
     await channel.delete()
 
-@Cheddlatron.command(description=f"Renames a category. \nUsage: {config_get('prefix')}renamecategory <#category-tag> <channel name>", help="moderation")
+@Repent.command(description=f"Renames a category. \nUsage: {config_get('prefix')}renamecategory <#category-tag> <channel name>", help="moderation")
 async def renamecategory(ctx, channel: discord.CategoryChannel, *, name):    
     await channel.edit(name=name)
 
-@Cheddlatron.command(description=f"Deletes a channel in a server. \nUsage: {config_get('prefix')}delchannel <#channel-tag>", help="moderation")
+@Repent.command(description=f"Deletes a channel in a server. \nUsage: {config_get('prefix')}delchannel <#channel-tag>", help="moderation")
 async def delchannel(ctx, channel: discord.TextChannel):    
     await channel.delete()
 
-@Cheddlatron.command(description=f"Deletes a voice channel. \nUsage: {config_get('prefix')}delvc <#vc-tag>", help="moderation")
+@Repent.command(description=f"Deletes a voice channel. \nUsage: {config_get('prefix')}delvc <#vc-tag>", help="moderation")
 async def delvc(ctx, channel: discord.VoiceChannel):    
     await channel.delete()
 
-@Cheddlatron.command(description=f"Renames a voice channel. \nUsage: {config_get('prefix')}renamevc <#vc-tag> <channel name>", help="moderation")
+@Repent.command(description=f"Renames a voice channel. \nUsage: {config_get('prefix')}renamevc <#vc-tag> <channel name>", help="moderation")
 async def renamevc(ctx, channel: discord.VoiceChannel, *, name):    
     await channel.edit(name=name)
 
-@Cheddlatron.command(description=f"Renames a channel in a server. \nUsage: {config_get('prefix')}renamechannel <#channel-tag> <channel name>", help="moderation")
+@Repent.command(description=f"Renames a channel in a server. \nUsage: {config_get('prefix')}renamechannel <#channel-tag> <channel name>", help="moderation")
 async def renamechannel(ctx, channel: discord.TextChannel, *, name):    
     await channel.edit(name=name)
 
-@Cheddlatron.command(description=f"Puts slowmode on in a server. \nUsage: {config_get('prefix')}slowmode [slowmode length (seconds)]", help="moderation")
+@Repent.command(description=f"Puts slowmode on in a server. \nUsage: {config_get('prefix')}slowmode [slowmode length (seconds)]", help="moderation")
 async def slowmode(ctx, time=60):    
     await ctx.channel.edit(slowmode_delay=time)
 
-@Cheddlatron.command(description=f"Turns off slowmode in a server. \nUsage: {config_get('prefix')}removeslowmode", help="moderation")
+@Repent.command(description=f"Turns off slowmode in a server. \nUsage: {config_get('prefix')}removeslowmode", help="moderation")
 async def removeslowmode(ctx):    
     await ctx.channel.edit(slowmode_delay=0)
 
-@Cheddlatron.command(description=f"Untimes out users in a server in mass. \nUsage: {config_get('prefix')}masstimeout", help="moderation") 
+@Repent.command(description=f"Untimes out users in a server in mass. \nUsage: {config_get('prefix')}masstimeout", help="moderation") 
 async def massuntimeout(ctx): 
     users = scrape(ctx.guild.id, ctx.guild.member_count)  
     for user in users:
@@ -8505,7 +8505,7 @@ async def massuntimeout(ctx):
     cmdname = "massuntimeout"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Times out a user. \nUsage: {config_get('prefix')}timeout <@use> [timeout time (mins)]", help="moderation") 
+@Repent.command(description=f"Times out a user. \nUsage: {config_get('prefix')}timeout <@use> [timeout time (mins)]", help="moderation") 
 async def timeout(ctx, user: discord.Member, time_minutes: int=60):    
     if time_minutes > 10080:
         heading = "Error"
@@ -8529,7 +8529,7 @@ async def timeout(ctx, user: discord.Member, time_minutes: int=60):
         cmdname = "timeout"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Untimes out a user in a server. \nUsage: {config_get('prefix')}untimeout <@user>", help="moderation") 
+@Repent.command(description=f"Untimes out a user in a server. \nUsage: {config_get('prefix')}untimeout <@user>", help="moderation") 
 async def untimeout(ctx, user: discord.Member):   
     headers = {'x-super-properties': getxsuper(), 'authorization': config_get('token'), "Content-Type": "application/json"}   
     date = (datetime.utcnow().strftime('%Y-%m-%d'))
@@ -8544,17 +8544,17 @@ async def untimeout(ctx, user: discord.Member):
         cmdname = "untimeout"
         await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Unbans a user from a server using their ID. \nUsage: {config_get('prefix')}idunban <user id> [reason]", help="moderation") 
+@Repent.command(description=f"Unbans a user from a server using their ID. \nUsage: {config_get('prefix')}idunban <user id> [reason]", help="moderation") 
 async def idunban(ctx, member_id: int, *, reason=None):   
     if reason == None:
-        reason = "Cheddlatron"
+        reason = "Repent"
     await ctx.guild.unban(discord.Object(id=member_id), reason=reason)
     heading = "ID Unban"
     body = f"{member_id} was unbanned."
     cmdname = "idunban"
     await panelmaker(ctx, heading, body, cmdname)
 
-@Cheddlatron.command(description=f"Deletes and remakes a channel to wipe it of its contents. \nUsage: {config_get('prefix')}nukechannel", help="moderation")
+@Repent.command(description=f"Deletes and remakes a channel to wipe it of its contents. \nUsage: {config_get('prefix')}nukechannel", help="moderation")
 async def nukechannel(ctx):
     channel = ctx.channel
     perms = ctx.channel.overwrites
@@ -8565,7 +8565,7 @@ async def nukechannel(ctx):
 
 
 #MEME COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Creates an ancient aliens guy meme. \nUsage: {config_get('prefix')}aliensguy [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates an ancient aliens guy meme. \nUsage: {config_get('prefix')}aliensguy [text 1] [text 2]", help="meme")
 async def aliensguy(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8573,7 +8573,7 @@ async def aliensguy(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/aag/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates an 'ain't got no time for that' meme. \nUsage: {config_get('prefix')}aintgottime [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates an 'ain't got no time for that' meme. \nUsage: {config_get('prefix')}aintgottime [text 1] [text 2]", help="meme")
 async def aintgottime(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8581,7 +8581,7 @@ async def aintgottime(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/aint-got-time/{text1}/{text2}.png"))
     
-@Cheddlatron.command(description=f"Creates a seal meme. \nUsage: {config_get('prefix')}seal [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a seal meme. \nUsage: {config_get('prefix')}seal [text 1] [text 2]", help="meme")
 async def seal(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8589,7 +8589,7 @@ async def seal(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/ams/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a red penguin meme. \nUsage: {config_get('prefix')}redpenguin [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a red penguin meme. \nUsage: {config_get('prefix')}redpenguin [text 1] [text 2]", help="meme")
 async def redpenguin(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8597,7 +8597,7 @@ async def redpenguin(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/awesome/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a blue penguin meme. \nUsage: {config_get('prefix')}bluepenguin [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a blue penguin meme. \nUsage: {config_get('prefix')}bluepenguin [text 1] [text 2]", help="meme")
 async def bluepenguin(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8605,7 +8605,7 @@ async def bluepenguin(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/awkward/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a bad milk meme. \nUsage: {config_get('prefix')}badmilk [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a bad milk meme. \nUsage: {config_get('prefix')}badmilk [text 1] [text 2]", help="meme")
 async def badmilk(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8613,7 +8613,7 @@ async def badmilk(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/badchoice/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Discord mod meme. \nUsage: {config_get('prefix')}discordmod [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Discord mod meme. \nUsage: {config_get('prefix')}discordmod [text 1] [text 2]", help="meme")
 async def discordmod(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8621,7 +8621,7 @@ async def discordmod(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/bd/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a bender meme. \nUsage: {config_get('prefix')}bender [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a bender meme. \nUsage: {config_get('prefix')}bender [text 1] [text 2]", help="meme")
 async def bender(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8629,7 +8629,7 @@ async def bender(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/bender/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a farmer meme. \nUsage: {config_get('prefix')}farmer [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a farmer meme. \nUsage: {config_get('prefix')}farmer [text 1] [text 2]", help="meme")
 async def farmer(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8637,7 +8637,7 @@ async def farmer(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/bihw/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a ginger meme. \nUsage: {config_get('prefix')}ginger [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a ginger meme. \nUsage: {config_get('prefix')}ginger [text 1] [text 2]", help="meme")
 async def ginger(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8645,7 +8645,7 @@ async def ginger(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/blb/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a suitcat meme. \nUsage: {config_get('prefix')}suitcat [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a suitcat meme. \nUsage: {config_get('prefix')}suitcat [text 1] [text 2]", help="meme")
 async def suitcat(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8653,7 +8653,7 @@ async def suitcat(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/boat/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a bullshark meme. \nUsage: {config_get('prefix')}bullshark [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a bullshark meme. \nUsage: {config_get('prefix')}bullshark [text 1] [text 2]", help="meme")
 async def bullshark(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8661,7 +8661,7 @@ async def bullshark(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/bs/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Buzz Lightyear meme. \nUsage: {config_get('prefix')}buzz [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Buzz Lightyear meme. \nUsage: {config_get('prefix')}buzz [text 1] [text 2]", help="meme")
 async def buzz(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8669,7 +8669,7 @@ async def buzz(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/buzz/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a bear meme. \nUsage: {config_get('prefix')}bear [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a bear meme. \nUsage: {config_get('prefix')}bear [text 1] [text 2]", help="meme")
 async def bear(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8677,7 +8677,7 @@ async def bear(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/cb/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a comic book guy meme. \nUsage: {config_get('prefix')}comicbookguy [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a comic book guy meme. \nUsage: {config_get('prefix')}comicbookguy [text 1] [text 2]", help="meme")
 async def comicbookguy(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8685,7 +8685,7 @@ async def comicbookguy(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/cbg/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a cheems meme. \nUsage: {config_get('prefix')}cheems [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a cheems meme. \nUsage: {config_get('prefix')}cheems [text 1] [text 2]", help="meme")
 async def cheems(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8693,7 +8693,7 @@ async def cheems(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/cheems/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a chosen one meme. \nUsage: {config_get('prefix')}chosenone [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a chosen one meme. \nUsage: {config_get('prefix')}chosenone [text 1] [text 2]", help="meme")
 async def chosenone(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8701,7 +8701,7 @@ async def chosenone(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/chosen/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a change my mind meme. \nUsage: {config_get('prefix')}changemymind [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a change my mind meme. \nUsage: {config_get('prefix')}changemymind [text 1] [text 2]", help="meme")
 async def changemymind(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8709,7 +8709,7 @@ async def changemymind(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/cmm/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a crying on the floor meme. \nUsage: {config_get('prefix')}cryingonfloor [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a crying on the floor meme. \nUsage: {config_get('prefix')}cryingonfloor [text 1] [text 2]", help="meme")
 async def cryingonfloor(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8717,7 +8717,7 @@ async def cryingonfloor(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/cryingfloor/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a distracted boyfriend meme. \nUsage: {config_get('prefix')}distractedbf [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a distracted boyfriend meme. \nUsage: {config_get('prefix')}distractedbf [text 1] [text 2]", help="meme")
 async def distractedbf(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8725,7 +8725,7 @@ async def distractedbf(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/db/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a distracted girlfriend meme. \nUsage: {config_get('prefix')}distractedgf [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a distracted girlfriend meme. \nUsage: {config_get('prefix')}distractedgf [text 1] [text 2]", help="meme")
 async def distractedgf(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8733,7 +8733,7 @@ async def distractedgf(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/dg/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a disaster girl meme. \nUsage: {config_get('prefix')}disastergirl [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a disaster girl meme. \nUsage: {config_get('prefix')}disastergirl [text 1] [text 2]", help="meme")
 async def disastergirl(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8741,7 +8741,7 @@ async def disastergirl(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/disastergirl/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Doge meme. \nUsage: {config_get('prefix')}doge [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Doge meme. \nUsage: {config_get('prefix')}doge [text 1] [text 2]", help="meme")
 async def doge(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8749,7 +8749,7 @@ async def doge(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/doge/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a drunk baby meme. \nUsage: {config_get('prefix')}drunkbaby [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a drunk baby meme. \nUsage: {config_get('prefix')}drunkbaby [text 1] [text 2]", help="meme")
 async def drunkbaby(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8757,7 +8757,7 @@ async def drunkbaby(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/drunk/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Dwight meme. \nUsage: {config_get('prefix')}dwight [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Dwight meme. \nUsage: {config_get('prefix')}dwight [text 1] [text 2]", help="meme")
 async def dwight(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8765,7 +8765,7 @@ async def dwight(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/dwight/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates an elf meme. \nUsage: {config_get('prefix')}elf [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates an elf meme. \nUsage: {config_get('prefix')}elf [text 1] [text 2]", help="meme")
 async def elf(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8773,7 +8773,7 @@ async def elf(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/elf/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates an exit meme. \nUsage: {config_get('prefix')}exit [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates an exit meme. \nUsage: {config_get('prefix')}exit [text 1] [text 2]", help="meme")
 async def exit(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8781,7 +8781,7 @@ async def exit(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/exit/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a forever alone meme. \nUsage: {config_get('prefix')}foreveralone [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a forever alone meme. \nUsage: {config_get('prefix')}foreveralone [text 1] [text 2]", help="meme")
 async def foreveralone(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8789,7 +8789,7 @@ async def foreveralone(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/fa/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a facepalm meme. \nUsage: {config_get('prefix')}facepalm [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a facepalm meme. \nUsage: {config_get('prefix')}facepalm [text 1] [text 2]", help="meme")
 async def facepalm(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8797,7 +8797,7 @@ async def facepalm(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/facepalm/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a this is fine meme. \nUsage: {config_get('prefix')}thisisfine [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a this is fine meme. \nUsage: {config_get('prefix')}thisisfine [text 1] [text 2]", help="meme")
 async def thisisfine(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8805,7 +8805,7 @@ async def thisisfine(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/fine/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Futurama Fry meme. \nUsage: {config_get('prefix')}futuramafry [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Futurama Fry meme. \nUsage: {config_get('prefix')}futuramafry [text 1] [text 2]", help="meme")
 async def futuramafry(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8813,7 +8813,7 @@ async def futuramafry(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/fry/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a grinds my gears meme. \nUsage: {config_get('prefix')}grindsmygears [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a grinds my gears meme. \nUsage: {config_get('prefix')}grindsmygears [text 1] [text 2]", help="meme")
 async def grindsmygears(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8821,7 +8821,7 @@ async def grindsmygears(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/gears/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a grumpy cat meme. \nUsage: {config_get('prefix')}grumpycat [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a grumpy cat meme. \nUsage: {config_get('prefix')}grumpycat [text 1] [text 2]", help="meme")
 async def grumpycat(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8829,7 +8829,7 @@ async def grumpycat(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/grumpycat/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Hagrid meme. \nUsage: {config_get('prefix')}hagrid [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Hagrid meme. \nUsage: {config_get('prefix')}hagrid [text 1] [text 2]", help="meme")
 async def hagrid(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8837,7 +8837,7 @@ async def hagrid(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/hagrid/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Harold meme. \nUsage: {config_get('prefix')}harold [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Harold meme. \nUsage: {config_get('prefix')}harold [text 1] [text 2]", help="meme")
 async def harold(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8845,7 +8845,7 @@ async def harold(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/harold/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a headaches meme. \nUsage: {config_get('prefix')}headaches [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a headaches meme. \nUsage: {config_get('prefix')}headaches [text 1] [text 2]", help="meme")
 async def headaches(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8853,7 +8853,7 @@ async def headaches(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/headaches/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates an 'I Can Has Cat' meme. \nUsage: {config_get('prefix')}icanhascat [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates an 'I Can Has Cat' meme. \nUsage: {config_get('prefix')}icanhascat [text 1] [text 2]", help="meme")
 async def icanhascat(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8861,7 +8861,7 @@ async def icanhascat(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/icanhas/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a jetpack meme. \nUsage: {config_get('prefix')}jetpack [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a jetpack meme. \nUsage: {config_get('prefix')}jetpack [text 1] [text 2]", help="meme")
 async def jetpack(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8869,7 +8869,7 @@ async def jetpack(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/jetpack/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Joker meme. \nUsage: {config_get('prefix')}joker [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Joker meme. \nUsage: {config_get('prefix')}joker [text 1] [text 2]", help="meme")
 async def joker(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8877,7 +8877,7 @@ async def joker(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/joker/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Kermit meme. \nUsage: {config_get('prefix')}kermit [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Kermit meme. \nUsage: {config_get('prefix')}kermit [text 1] [text 2]", help="meme")
 async def kermit(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8885,7 +8885,7 @@ async def kermit(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/kermit/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a lizard meme. \nUsage: {config_get('prefix')}lizard [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a lizard meme. \nUsage: {config_get('prefix')}lizard [text 1] [text 2]", help="meme")
 async def lizard(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8893,7 +8893,7 @@ async def lizard(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/ll/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a shocked meme. \nUsage: {config_get('prefix')}shocked [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a shocked meme. \nUsage: {config_get('prefix')}shocked [text 1] [text 2]", help="meme")
 async def shocked(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8901,7 +8901,7 @@ async def shocked(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/michael-scott/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a mini Keanu meme. \nUsage: {config_get('prefix')}minikeanu [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a mini Keanu meme. \nUsage: {config_get('prefix')}minikeanu [text 1] [text 2]", help="meme")
 async def minikeanu(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8909,7 +8909,7 @@ async def minikeanu(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/mini-keanu/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a mini Keanu meme. \nUsage: {config_get('prefix')}minikeanu [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a mini Keanu meme. \nUsage: {config_get('prefix')}minikeanu [text 1] [text 2]", help="meme")
 async def takemymoney(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8917,7 +8917,7 @@ async def takemymoney(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/money/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a computer dog meme. \nUsage: {config_get('prefix')}computerdog [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a computer dog meme. \nUsage: {config_get('prefix')}computerdog [text 1] [text 2]", help="meme")
 async def computerdog(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8925,7 +8925,7 @@ async def computerdog(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/noidea/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a psycho girl meme. \nUsage: {config_get('prefix')}psychogirl [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a psycho girl meme. \nUsage: {config_get('prefix')}psychogirl [text 1] [text 2]", help="meme")
 async def psychogirl(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8933,7 +8933,7 @@ async def psychogirl(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/oag/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a why monkey meme. \nUsage: {config_get('prefix')}whymonkey [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a why monkey meme. \nUsage: {config_get('prefix')}whymonkey [text 1] [text 2]", help="meme")
 async def whymonkey(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8941,7 +8941,7 @@ async def whymonkey(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/persian/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Philosoraptor meme. \nUsage: {config_get('prefix')}philosoraptor [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Philosoraptor meme. \nUsage: {config_get('prefix')}philosoraptor [text 1] [text 2]", help="meme")
 async def philosoraptor(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8949,7 +8949,7 @@ async def philosoraptor(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/philosoraptor/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a smart man meme. \nUsage: {config_get('prefix')}smart [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a smart man meme. \nUsage: {config_get('prefix')}smart [text 1] [text 2]", help="meme")
 async def smart(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8957,7 +8957,7 @@ async def smart(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/rollsafe/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a sad Joe Biden meme. \nUsage: {config_get('prefix')}sadbiden [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a sad Joe Biden meme. \nUsage: {config_get('prefix')}sadbiden [text 1] [text 2]", help="meme")
 async def sadbiden(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8965,7 +8965,7 @@ async def sadbiden(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/sad-biden/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a sad Obama meme. \nUsage: {config_get('prefix')}sadobama [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a sad Obama meme. \nUsage: {config_get('prefix')}sadobama [text 1] [text 2]", help="meme")
 async def sadobama(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8973,7 +8973,7 @@ async def sadobama(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/sad-obama/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a sad Pepe meme. \nUsage: {config_get('prefix')}sadpepe [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a sad Pepe meme. \nUsage: {config_get('prefix')}sadpepe [text 1] [text 2]", help="meme")
 async def sadpepe(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8981,7 +8981,7 @@ async def sadpepe(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/sadfrog/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a salty meme. \nUsage: {config_get('prefix')}salty [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a salty meme. \nUsage: {config_get('prefix')}salty [text 1] [text 2]", help="meme")
 async def salty(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8989,7 +8989,7 @@ async def salty(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/saltbae/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a suspicious snake meme. \nUsage: {config_get('prefix')}sussnake [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a suspicious snake meme. \nUsage: {config_get('prefix')}sussnake [text 1] [text 2]", help="meme")
 async def willslap(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -8997,7 +8997,7 @@ async def willslap(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/slap/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a suspicious snake meme. \nUsage: {config_get('prefix')}sussnake [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a suspicious snake meme. \nUsage: {config_get('prefix')}sussnake [text 1] [text 2]", help="meme")
 async def sussnake(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9005,7 +9005,7 @@ async def sussnake(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/snek/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a happy seal meme. \nUsage: {config_get('prefix')}happyseal [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a happy seal meme. \nUsage: {config_get('prefix')}happyseal [text 1] [text 2]", help="meme")
 async def happyseal(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9013,7 +9013,7 @@ async def happyseal(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/soa/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Sparta meme. \nUsage: {config_get('prefix')}sparta [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Sparta meme. \nUsage: {config_get('prefix')}sparta [text 1] [text 2]", help="meme")
 async def sparta(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9021,7 +9021,7 @@ async def sparta(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/sparta/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Spiderman pointing meme. \nUsage: {config_get('prefix')}spiderpoint [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Spiderman pointing meme. \nUsage: {config_get('prefix')}spiderpoint [text 1] [text 2]", help="meme")
 async def spiderpoint(ctx, text1: str=None, text2: str=None):   
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9029,7 +9029,7 @@ async def spiderpoint(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/spiderman/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a stupid SpongeBob meme. \nUsage: {config_get('prefix')}stupidsponge [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a stupid SpongeBob meme. \nUsage: {config_get('prefix')}stupidsponge [text 1] [text 2]", help="meme")
 async def stupidsponge(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9037,7 +9037,7 @@ async def stupidsponge(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/spongebob/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a stonks meme. \nUsage: {config_get('prefix')}stonks [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a stonks meme. \nUsage: {config_get('prefix')}stonks [text 1] [text 2]", help="meme")
 async def stonks(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9045,7 +9045,7 @@ async def stonks(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/stonks/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a 'stop it get some help' meme. \nUsage: {config_get('prefix')}getsomehelp [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a 'stop it get some help' meme. \nUsage: {config_get('prefix')}getsomehelp [text 1] [text 2]", help="meme")
 async def getsomehelp(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9053,7 +9053,7 @@ async def getsomehelp(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/stop-it/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a success kid meme. \nUsage: {config_get('prefix')}successkid [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a success kid meme. \nUsage: {config_get('prefix')}successkid [text 1] [text 2]", help="meme")
 async def successkid(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9061,7 +9061,7 @@ async def successkid(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/success/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Donald Trump meme. \nUsage: {config_get('prefix')}trump [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Donald Trump meme. \nUsage: {config_get('prefix')}trump [text 1] [text 2]", help="meme")
 async def trump(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9069,7 +9069,7 @@ async def trump(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/trump/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Ugandaknuckles meme. \nUsage: {config_get('prefix')}ugandaknuckles [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Ugandaknuckles meme. \nUsage: {config_get('prefix')}ugandaknuckles [text 1] [text 2]", help="meme")
 async def ugandaknuckles(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9077,7 +9077,7 @@ async def ugandaknuckles(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/ugandanknuck/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates a Willy Wonka meme. \nUsage: {config_get('prefix')}wonka [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates a Willy Wonka meme. \nUsage: {config_get('prefix')}wonka [text 1] [text 2]", help="meme")
 async def wonka(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9085,7 +9085,7 @@ async def wonka(ctx, text1: str=None, text2: str=None):
         text2 = "-"
     await ctx.send(urlif(f"https://api.memegen.link/images/wonka/{text1}/{text2}.png"))
 
-@Cheddlatron.command(description=f"Creates an angry Redditor meme. \nUsage: {config_get('prefix')}angryredditor [text 1] [text 2]", help="meme")
+@Repent.command(description=f"Creates an angry Redditor meme. \nUsage: {config_get('prefix')}angryredditor [text 1] [text 2]", help="meme")
 async def angryredditor(ctx, text1: str=None, text2: str=None):    
     if text1 == None or text1 == "":
         text1 = "-"
@@ -9095,203 +9095,203 @@ async def angryredditor(ctx, text1: str=None, text2: str=None):
 #MEME COMMANDS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #AI IMG GEN--------------------------------------------------------------------------------------------------------------------
-@Cheddlatron.command(description=f"Generates an image with 3Guofeng3_v34 AI. \nUsage: {config_get('prefix')}guofeng3 <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with 3Guofeng3_v34 AI. \nUsage: {config_get('prefix')}guofeng3 <prompt> [negative] [seed]", help="ai")    
 async def guofeng3(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="3Guofeng3_v34.safetensors [50f420de]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Absolute Reality AI. \nUsage: {config_get('prefix')}absolutereality <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Absolute Reality AI. \nUsage: {config_get('prefix')}absolutereality <prompt> [negative] [seed]", help="ai")    
 async def absolutereality(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="absolutereality_v181.safetensors [3d9d4d2b]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Am I Real AI. \nUsage: {config_get('prefix')}amireal <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Am I Real AI. \nUsage: {config_get('prefix')}amireal <prompt> [negative] [seed]", help="ai")    
 async def amireal(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="amIReal_V41.safetensors [0a8a2e61]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Analog AI. \nUsage: {config_get('prefix')}analog <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Analog AI. \nUsage: {config_get('prefix')}analog <prompt> [negative] [seed]", help="ai")    
 async def analog(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="analog-diffusion-1.0.ckpt [9ca13f02]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Anything AI. \nUsage: {config_get('prefix')}anything <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Anything AI. \nUsage: {config_get('prefix')}anything <prompt> [negative] [seed]", help="ai")    
 async def anything(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="anythingV5_PrtRE.safetensors [893e49b9]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Abyss Orange Mix AI. \nUsage: {config_get('prefix')}abyssorangemix <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Abyss Orange Mix AI. \nUsage: {config_get('prefix')}abyssorangemix <prompt> [negative] [seed]", help="ai")    
 async def abyssorangemix(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="AOM3A3_orangemixs.safetensors [9600da17]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Blazing Drive AI. \nUsage: {config_get('prefix')}blazingdrive <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Blazing Drive AI. \nUsage: {config_get('prefix')}blazingdrive <prompt> [negative] [seed]", help="ai")    
 async def blazingdrive(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="blazing_drive_v10g.safetensors [ca1c1eab]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Break Domain AI. \nUsage: {config_get('prefix')}breakdomain <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Break Domain AI. \nUsage: {config_get('prefix')}breakdomain <prompt> [negative] [seed]", help="ai")    
 async def breakdomain(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="breakdomain_M2150.safetensors [15f7afca]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with CetusMix AI. \nUsage: {config_get('prefix')}cetusmix <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with CetusMix AI. \nUsage: {config_get('prefix')}cetusmix <prompt> [negative] [seed]", help="ai")    
 async def cetusmix(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="cetusMix_Version35.safetensors [de2f2560]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Chidlren's Stories 3D AI. \nUsage: {config_get('prefix')}stories3d <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Chidlren's Stories 3D AI. \nUsage: {config_get('prefix')}stories3d <prompt> [negative] [seed]", help="ai")    
 async def stories3d(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="childrensStories_v13D.safetensors [9dfaabcb]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Chidlren's Stories Semi-Real AI. \nUsage: {config_get('prefix')}storiessemi <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Chidlren's Stories Semi-Real AI. \nUsage: {config_get('prefix')}storiessemi <prompt> [negative] [seed]", help="ai")    
 async def storiessemi(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="childrensStories_v1SemiReal.safetensors [a1c56dbb]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Chidlren's Stories Anime AI. \nUsage: {config_get('prefix')}storiessemi <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Chidlren's Stories Anime AI. \nUsage: {config_get('prefix')}storiessemi <prompt> [negative] [seed]", help="ai")    
 async def storiesanime(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="childrensStories_v1ToonAnime.safetensors [2ec7b88b]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Counterfeit AI. \nUsage: {config_get('prefix')}counterfeit <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Counterfeit AI. \nUsage: {config_get('prefix')}counterfeit <prompt> [negative] [seed]", help="ai")    
 async def counterfeit(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="Counterfeit_v30.safetensors [9e2a8f19]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with CuteYukimix AI. \nUsage: {config_get('prefix')}cuteyukimix <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with CuteYukimix AI. \nUsage: {config_get('prefix')}cuteyukimix <prompt> [negative] [seed]", help="ai")    
 async def cuteyukimix(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="cuteyukimixAdorable_midchapter3.safetensors [04bdffe6]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Cyber Realistic AI. \nUsage: {config_get('prefix')}cyberrealistic <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Cyber Realistic AI. \nUsage: {config_get('prefix')}cyberrealistic <prompt> [negative] [seed]", help="ai")    
 async def cyberrealistic(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="cyberrealistic_v33.safetensors [82b0d085]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Dalcefo AI. \nUsage: {config_get('prefix')}dalcefo <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Dalcefo AI. \nUsage: {config_get('prefix')}dalcefo <prompt> [negative] [seed]", help="ai")    
 async def dalcefo(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="dalcefo_v4.safetensors [425952fe]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Deliberate AI. \nUsage: {config_get('prefix')}deliberate <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Deliberate AI. \nUsage: {config_get('prefix')}deliberate <prompt> [negative] [seed]", help="ai")    
 async def deliberate(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="deliberate_v3.safetensors [afd9d2d4]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Dreamlike Anime AI. \nUsage: {config_get('prefix')}dreamlikeanime <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Dreamlike Anime AI. \nUsage: {config_get('prefix')}dreamlikeanime <prompt> [negative] [seed]", help="ai")    
 async def dreamlikeanime(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="dreamlike-anime-1.0.safetensors [4520e090]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Dreamlike Diffusion AI. \nUsage: {config_get('prefix')}dreamlikediffusion <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Dreamlike Diffusion AI. \nUsage: {config_get('prefix')}dreamlikediffusion <prompt> [negative] [seed]", help="ai")    
 async def dreamlikediffusion(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="dreamlike-diffusion-1.0.safetensors [5c9fd6e0]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Dreamlike Photoreal AI. \nUsage: {config_get('prefix')}dreamlikephotoreal <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Dreamlike Photoreal AI. \nUsage: {config_get('prefix')}dreamlikephotoreal <prompt> [negative] [seed]", help="ai")    
 async def dreamlikephotoreal(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="dreamlike-photoreal-2.0.safetensors [fdcf65e7]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Dreamshaper AI. \nUsage: {config_get('prefix')}dreamshaper <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Dreamshaper AI. \nUsage: {config_get('prefix')}dreamshaper <prompt> [negative] [seed]", help="ai")    
 async def dreamshaper(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="dreamshaper_8.safetensors [9d40847d]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Edge of Realism AI. \nUsage: {config_get('prefix')}eor <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Edge of Realism AI. \nUsage: {config_get('prefix')}eor <prompt> [negative] [seed]", help="ai")    
 async def eor(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="edgeOfRealism_eorV20.safetensors [3ed5de15]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Anime Diffusion AI. \nUsage: {config_get('prefix')}animediffusion <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Anime Diffusion AI. \nUsage: {config_get('prefix')}animediffusion <prompt> [negative] [seed]", help="ai")    
 async def animediffusion(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="EimisAnimeDiffusion_V1.ckpt [4f828a15]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Elldreth's Vivid AI. \nUsage: {config_get('prefix')}vivid <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Elldreth's Vivid AI. \nUsage: {config_get('prefix')}vivid <prompt> [negative] [seed]", help="ai")    
 async def vivid(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="elldreths-vivid-mix.safetensors [342d9d26]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with PhotoGasm AI. \nUsage: {config_get('prefix')}photogasm <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with PhotoGasm AI. \nUsage: {config_get('prefix')}photogasm <prompt> [negative] [seed]", help="ai")    
 async def photogasm(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="epicphotogasm_xPlusPlus.safetensors [1a8f6d35]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with EpiCRealism AI. \nUsage: {config_get('prefix')}epicrealism <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with EpiCRealism AI. \nUsage: {config_get('prefix')}epicrealism <prompt> [negative] [seed]", help="ai")    
 async def epicrealism(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="epicrealism_naturalSinRC1VAE.safetensors [90a4c676]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with EpiCRealism Pure Evolution AI. \nUsage: {config_get('prefix')}erpure <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with EpiCRealism Pure Evolution AI. \nUsage: {config_get('prefix')}erpure <prompt> [negative] [seed]", help="ai")    
 async def erpure(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="epicrealism_pureEvolutionV3.safetensors [42c8440c]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Seco AI. \nUsage: {config_get('prefix')}seco <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Seco AI. \nUsage: {config_get('prefix')}seco <prompt> [negative] [seed]", help="ai")    
 async def seco(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="ICantBelieveItsNotPhotography_seco.safetensors [4e7a3dfd]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Indigo AI. \nUsage: {config_get('prefix')}indigo <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Indigo AI. \nUsage: {config_get('prefix')}indigo <prompt> [negative] [seed]", help="ai")    
 async def indigo(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="indigoFurryMix_v75Hybrid.safetensors [91208cbb]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Juggernaut AI. \nUsage: {config_get('prefix')}juggernaut <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Juggernaut AI. \nUsage: {config_get('prefix')}juggernaut <prompt> [negative] [seed]", help="ai")    
 async def juggernaut(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="juggernaut_aftermath.safetensors [5e20c455]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Lofi AI. \nUsage: {config_get('prefix')}lofi <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Lofi AI. \nUsage: {config_get('prefix')}lofi <prompt> [negative] [seed]", help="ai")    
 async def lofi(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="lofi_v4.safetensors [ccc204d6]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Lyriel AI. \nUsage: {config_get('prefix')}lyriel <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Lyriel AI. \nUsage: {config_get('prefix')}lyriel <prompt> [negative] [seed]", help="ai")    
 async def lyriel(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="lyriel_v16.safetensors [68fceea2]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with MajicMix AI. \nUsage: {config_get('prefix')}majicmix <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with MajicMix AI. \nUsage: {config_get('prefix')}majicmix <prompt> [negative] [seed]", help="ai")    
 async def majicmix(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="majicmixRealistic_v4.safetensors [29d0de58]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with MechaMix AI. \nUsage: {config_get('prefix')}mechamix <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with MechaMix AI. \nUsage: {config_get('prefix')}mechamix <prompt> [negative] [seed]", help="ai")    
 async def mechamix(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="mechamix_v10.safetensors [ee685731]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with MeinaMix AI. \nUsage: {config_get('prefix')}meinamix <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with MeinaMix AI. \nUsage: {config_get('prefix')}meinamix <prompt> [negative] [seed]", help="ai")    
 async def meinamix(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="meinamix_meinaV11.safetensors [b56ce717]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Neverending Dream AI. \nUsage: {config_get('prefix')}neverendingdream <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Neverending Dream AI. \nUsage: {config_get('prefix')}neverendingdream <prompt> [negative] [seed]", help="ai")    
 async def neverendingdream(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="neverendingDream_v122.safetensors [f964ceeb]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Openjourney AI. \nUsage: {config_get('prefix')}openjourney <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Openjourney AI. \nUsage: {config_get('prefix')}openjourney <prompt> [negative] [seed]", help="ai")    
 async def openjourney(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="openjourney_V4.ckpt [ca2f377f]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Pastek-Mix AI. \nUsage: {config_get('prefix')}pastelmix <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Pastek-Mix AI. \nUsage: {config_get('prefix')}pastelmix <prompt> [negative] [seed]", help="ai")    
 async def pastelmix(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="pastelMixStylizedAnime_pruned_fp16.safetensors [793a26e8]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Portrait AI. \nUsage: {config_get('prefix')}portrait <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Portrait AI. \nUsage: {config_get('prefix')}portrait <prompt> [negative] [seed]", help="ai")    
 async def portrait(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="portraitplus_V1.0.safetensors [1400e684]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Protogen AI. \nUsage: {config_get('prefix')}protogen <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Protogen AI. \nUsage: {config_get('prefix')}protogen <prompt> [negative] [seed]", help="ai")    
 async def protogen(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="protogenx34.safetensors [5896f8d5]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Realistic Vision AI. \nUsage: {config_get('prefix')}realisticvision <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Realistic Vision AI. \nUsage: {config_get('prefix')}realisticvision <prompt> [negative] [seed]", help="ai")    
 async def realisticvision(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="Realistic_Vision_V5.0.safetensors [614d1063]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with ReV Animated AI. \nUsage: {config_get('prefix')}rev <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with ReV Animated AI. \nUsage: {config_get('prefix')}rev <prompt> [negative] [seed]", help="ai")    
 async def rev(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="revAnimated_v122.safetensors [3f4fefd9]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with RunDiffusion AI. \nUsage: {config_get('prefix')}rundiffusion <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with RunDiffusion AI. \nUsage: {config_get('prefix')}rundiffusion <prompt> [negative] [seed]", help="ai")    
 async def rundiffusion(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="rundiffusionFX25D_v10.safetensors [cd12b0ee]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with RunDiffusion Photorealistic AI. \nUsage: {config_get('prefix')}rdrealistic <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with RunDiffusion Photorealistic AI. \nUsage: {config_get('prefix')}rdrealistic <prompt> [negative] [seed]", help="ai")    
 async def rdrealistic(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="rundiffusionFX_v10.safetensors [cd4e694d]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with SD AI. \nUsage: {config_get('prefix')}sd <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with SD AI. \nUsage: {config_get('prefix')}sd <prompt> [negative] [seed]", help="ai")    
 async def sd(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="v1-5-pruned-emaonly.safetensors [d7049739]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with SD Inpainting AI. \nUsage: {config_get('prefix')}sdinpainting <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with SD Inpainting AI. \nUsage: {config_get('prefix')}sdinpainting <prompt> [negative] [seed]", help="ai")    
 async def sdinpainting(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="v1-5-inpainting.safetensors [21c7ab71]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Shonin's Beautiful People AI. \nUsage: {config_get('prefix')}shonin <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Shonin's Beautiful People AI. \nUsage: {config_get('prefix')}shonin <prompt> [negative] [seed]", help="ai")    
 async def shonin(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="shoninsBeautiful_v10.safetensors [25d8c546]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with TheAlly's Mix AI. \nUsage: {config_get('prefix')}theallysmix <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with TheAlly's Mix AI. \nUsage: {config_get('prefix')}theallysmix <prompt> [negative] [seed]", help="ai")    
 async def theallysmix(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="theallys-mix-ii-churned.safetensors [5d9225a4]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with Timeless AI. \nUsage: {config_get('prefix')}timeless <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with Timeless AI. \nUsage: {config_get('prefix')}timeless <prompt> [negative] [seed]", help="ai")    
 async def timeless(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="timeless-1.0.ckpt [7c4971d4]", negative=negative, seed=seed)
 
-@Cheddlatron.command(description=f"Generates an image with ToonYou AI. \nUsage: {config_get('prefix')}toonyou <prompt> [negative] [seed]", help="ai")    
+@Repent.command(description=f"Generates an image with ToonYou AI. \nUsage: {config_get('prefix')}toonyou <prompt> [negative] [seed]", help="ai")    
 async def toonyou(ctx, prompt: str, negative: str="", seed=None):
     await aigen(ctx, prompt, model="toonyou_beta6.safetensors [980f6b15]", negative=negative, seed=seed)
 
@@ -9313,11 +9313,11 @@ def show_console():
     else: 
         subprocess.call(['wmctrl', '-r', ':ACTIVE:', '-b', '!hidden'])
 
-@Cheddlatron.command(description=f"Hides the console so only the gui is visible. \nUsage: {config_get('prefix')}hideconsole", help="utility")
+@Repent.command(description=f"Hides the console so only the gui is visible. \nUsage: {config_get('prefix')}hideconsole", help="utility")
 async def hideconsole(ctx):
     hide_console()
 
-@Cheddlatron.command(description=f"Shows the console. \nUsage: {config_get('prefix')}showconsole", help="utility")
+@Repent.command(description=f"Shows the console. \nUsage: {config_get('prefix')}showconsole", help="utility")
 async def showconsole(ctx):
     show_console()
 
@@ -9385,15 +9385,15 @@ class API:
         try:
             os_name = platform.system()
             if os_name == 'Windows':
-                os.startfile("Cheddlatron.exe")
+                os.startfile("Repent.exe")
                 os._exit(1)
             elif os_name in ['Darwin', 'Linux']:
-                os.system("./Cheddlatron.bin")
+                os.system("./Repent.bin")
             else:
                 raise NotImplementedError("Unsupported operating system")
             os._exit(1)
         except (FileNotFoundError, NotImplementedError):
-            os.system("python Cheddlatron.py")
+            os.system("python Repent.py")
             os._exit(1)
         except Exception as e:
             pass
@@ -9540,7 +9540,7 @@ def commandrecs():
     custom_cmds = []
     non_custom_cmds = []
     
-    for command in Cheddlatron.commands:
+    for command in Repent.commands:
         command_info = {
             'name': command.name,
             'description': command.description,
@@ -9589,7 +9589,7 @@ def load_profile():
     biotext = resp['bio']
     biotext = biotext.replace('"', r'\"').replace('\n', '\\n')
     avatar = resp['avatar']
-    cmdcount = len(Cheddlatron.commands)
+    cmdcount = len(Repent.commands)
     if resp['avatar'] != None:
         avatartype = getmediatype(f"https://cdn.discordapp.com/avatars/{id}/{avatar}") 
         pfpurl = f"https://cdn.discordapp.com/avatars/{id}/{avatar}.{avatartype}"
@@ -9680,11 +9680,11 @@ def run_webview():
     global api
     global window
     api = API()
-    window = webview.create_window('Cheddlatron', pkg_resources.resource_filename(__name__, 'GUI.html'), js_api=api, frameless=True, width=1080, height=700, easy_drag=False, vibrancy=True)
+    window = webview.create_window('Repent', pkg_resources.resource_filename(__name__, 'GUI.html'), js_api=api, frameless=True, width=1080, height=700, easy_drag=False, vibrancy=True)
     webview.start(load_profile, gui='edgechromium')
 
 def runbot():
-    asyncio.run(Cheddlatron.start(config_get("token")))
+    asyncio.run(Repent.start(config_get("token")))
 
 installed, dwiuahudiwahwad = is_webview2_installed()
 
@@ -9694,6 +9694,6 @@ if installed:
     run_webview()
 
 else:
-    print("Could not find Webview install, please install Microsoft Webview and rerun Cheddlatron.")
+    print("Could not find Webview install, please install Microsoft Webview and rerun Repent.")
     webbrowser.open("https://developer.microsoft.com/en-us/microsoft-edge/webview2/?form=MA13LH#download")
     time.sleep(5)
