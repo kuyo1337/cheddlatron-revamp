@@ -7,7 +7,7 @@ currentvc = None
 #IMPORTS-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 import shutil
 from typing import Union
-import discord, psutil, cpuinfo, GPUtil, time, os, base64, io, random, string, urllib.parse, urllib.request, json, http.client, aiohttp, asyncio, ctypes, ctypes.wintypes, pyfiglet, re, threading, webbrowser, aiofiles, httpx, websockets, warnings, glob, typing, platform, locale
+import discord as discord, psutil, cpuinfo, GPUtil, time, os, base64, io, random, string, urllib.parse, urllib.request, json, http.client, aiohttp, asyncio, ctypes, ctypes.wintypes, pyfiglet, re, threading, webbrowser, aiofiles, httpx, websockets, warnings, glob, typing, platform, locale
 from discord.utils import get
 from random import randint
 from youtube_search import YoutubeSearch
@@ -151,8 +151,11 @@ async def make_server(name, icon=None):
     res = conn.getresponse()
     data = res.read()
     data = json.loads(data.decode('utf-8'))
-    websocket = Cheddlatron.ws
-    await websocket.send_as_json({"op":37,"d":{"subscriptions":{data['id']:{"typing":True,"threads":True,"activities":True,"members":[],"member_updates":True,"channels":{},"thread_member_lists":[]}}}})
+    try:
+        websocket = Cheddlatron._get_websocket()
+        await websocket.send_as_json({"op":37,"d":{"subscriptions":{data['id']:{"typing":True,"threads":True,"activities":True,"members":[],"member_updates":True,"channels":{},"thread_member_lists":[]}}}})
+    except Exception as e:
+        pass
     return data
 
 def print(message):
@@ -837,7 +840,7 @@ def getxsuper():
         syslocale = "en-GB"
     osver = platform.version()
     cbuild = get_live_build_number()
-    x = {"os":os,"client_build_number":cbuild, "os_version":osver, "system_locale":syslocale,"browser":browser}
+    x = {"os":os,"build_number":cbuild, "os_version":osver, "system_locale":syslocale,"browser":browser}
     json_str = json.dumps(x)
     xsuper = base64.b64encode(json_str.encode()).decode()
     cached_xsuper = xsuper
@@ -1743,13 +1746,19 @@ async def retardpresence():
 
 
     presence = await RetardPresenceBuilder()
-    await ws.send_as_json(presence)
+    try:
+        await ws.send_as_json(presence)
+    except Exception as e:
+        pass
 
 start_time = time.time()
 async def subscringeguilds(ws):
     large_guilds = [g for g in Cheddlatron.guilds if g.member_count > 100000]
     for guild in large_guilds:
-        await ws.send_as_json({"op": 37, "d": {"subscriptions": {f"{guild.id}": {"typing": True,"threads": True,"activities": False,"members": [],"member_updates": False,"channels": {},"thread_member_lists": []}}}})
+        try:
+            await ws.send_as_json({"op": 37, "d": {"subscriptions": {f"{guild.id}": {"typing": True,"threads": True,"activities": False,"members": [],"member_updates": False,"channels": {},"thread_member_lists": []}}}})
+        except Exception as e:
+            pass
 
 async def subscringedms(ws):
     r = json.loads(requesters.get('https://discord.com/api/v9/users/@me/channels', headers={'authorization': config_get('token'), 'x-super-properties': getxsuper()}).text)
@@ -1759,7 +1768,7 @@ async def subscringedms(ws):
                 await ws.send_as_json({"op": 13, "d": {"channel_id": f"{channel['id']}"}})
                 await asyncio.sleep(0.5)
             except Exception as e:
-                print(e)
+                pass
         else:
             pass
 
@@ -1852,7 +1861,10 @@ async def activitycollector(data):
         ws = Cheddlatron._get_websocket()
         guild = Cheddlatron.get_guild(int(data['d']['id']))
         if guild.member_count > 100000:
-            await ws.send_as_json({"op": 37, "d": {"subscriptions": {f"{guild.id}": {"typing": True,"threads": True,"activities": True,"members": [],"member_updates": True,"channels": {},"thread_member_lists": []}}}})
+            try:
+                await ws.send_as_json({"op": 37, "d": {"subscriptions": {f"{guild.id}": {"typing": True,"threads": True,"activities": True,"members": [],"member_updates": True,"channels": {},"thread_member_lists": []}}}})
+            except Exception as e:
+                pass
 
     elif data['t'] == "GUILD_DELETE" or data['t'] == "GUILD_CREATE" or data['t'] == "RELATIONSHIP_REMOVE" or data['t'] == "RELATIONSHIP_ADD":
         friends = requesters.get("https://discord.com/api/v9/users/@me/relationships", headers={"Authorization": config_get('token'), "x-super-properties": getxsuper()}).json()
@@ -2464,10 +2476,10 @@ def getxsuper():
             current_locale = locale.getdefaultlocale()[0]
             syslocale = current_locale.replace("_", "-")
             osver = platform.version()
-            resp = requesters.get("https://raw.githubusercontent.com/Pixens/Discord-Build-Number/main/discord.json")
+            resp = requesters.get("https://discord.sale/api/builds")
             data = resp.json()
-            cbuild = data.get("client_build_number")
-            x = {"os":os,"client_build_number":cbuild, "os_version":osver, "system_locale":syslocale,"browser":browser}
+            cbuild = data.get("build_number")
+            x = {"os":os,"build_number":cbuild, "os_version":osver, "system_locale":syslocale,"browser":browser}
             json_str = json.dumps(x)
             xsuper = base64.b64encode(json_str.encode()).decode()
             return xsuper
