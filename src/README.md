@@ -1,0 +1,1 @@
+# if you wanna use userapp embed,host the bot yourself,ill fix the userapp embed soon idk im lazy
