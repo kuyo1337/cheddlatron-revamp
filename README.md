@@ -9,7 +9,12 @@ im renaming this project to **Repent**.
 and 
 
 If you want to countinue working on the original project,i recommend checking out on [Cheddlatron](https://github.com/Cheddlar/Cheddlatron-Source).
-
+stuff to fix:
+> web embed
+> hosting for the bot assets
+> remove updater since i will not compile this into an executeable or anything like that
+> userapp embed
+> more but ill remember later
 ---
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
