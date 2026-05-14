@@ -1,12 +1,12 @@
 # Cheddlatron Source
 
-This is a revamp of Cheddlatron.
 This revamp is vibe coded whether you hate it or not,so expect bugs,messy code or questionable naming lol,but bugs and stuff are manually fixed idk
 
 I’ll still be maintaining and updating it whenever I feel like working on it, same way the original project was handled.
 
 Also, a small request to the original dev team:
 im renaming this project to **Repent**.
+and 
 
 If you want to countinue working on the original project,i recommend checking out on [Cheddlatron](https://github.com/Cheddlar/Cheddlatron-Source).
 
