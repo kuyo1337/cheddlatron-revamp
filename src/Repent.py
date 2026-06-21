@@ -487,15 +487,15 @@ async def panelmaker(ctx, heading, body, cmdname, comment=""):
             count = 0
             for body in bodies:
               if count == 0:
-                url = f"https://embed.3l.wtf/api/embed?title={heading}&url={title_url}&color={colour}&image={img}&provider_name={cmdname}%20CMD&provider_url={prov_url}&description={body}"
+                url = f"https://embed-api-seven.vercel.app/api/embed?title={heading}&url={title_url}&color={colour}&image={img}&provider_name={cmdname}%20CMD&provider_url={prov_url}&description={body}"
               else:
-                  url = f"https://embed.3l.wtf/api/embed?color={colour}&description={body}"
-              sendable_url = f"‏‏‎‎||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||‎‎||‎||‎‎||‎‎||‎‎||‎‎||||||||||||||||||||||{url}"
+                  url = f"https://embed-api-seven.vercel.app/api/embed?color={colour}&description={body}"
+              sendable_url = f"[⠀]({url})"
               await ctx.send(sendable_url, delete_after=int(config_get('delete_timer')))
               count += 1
             return
-        url = f"https://embed.3l.wtf/api/embed?title={heading}&url={title_url}&color={colour}&image={img}&provider_name={cmdname}%20CMD&provider_url={prov_url}&description={body}"
-        sendable_url = f"‏‏‎‎||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||‎‎||‎||‎‎||‎‎||‎‎||‎‎||||||||||||||||||||||{url}"
+        url = f"https://embed-api-seven.vercel.app/api/embed?title={heading}&url={title_url}&color={colour}&image={img}&provider_name={cmdname}%20CMD&provider_url={prov_url}&description={body}"
+        sendable_url = f"[⠀]({url})"
         await ctx.send(sendable_url, delete_after=int(config_get('delete_timer')))
     if config_get('embed_mode').lower() == "app":
         title_url = check_and_replace_empty(load_Embed_config()['title_url'])
@@ -1165,21 +1165,15 @@ def downloadshit():
     os_name = platform.system().lower()
 
     if os_name == 'windows':
-        updater_file = ('Updater.exe', 'https://3l.wtf/BotAssets/FirstRunAssets/Updater.exe')
-        icon_file = ('repentlogo.ico', 'https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.ico')
-    elif os_name == 'darwin': 
-        updater_file = ('Repent-macOS', 'https://3l.wtf/BotAssets/FirstRunAssets/Repent-macOS')
-        icon_file = ('repentlogo.icns', 'https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.icns')
+        icon_file = ('repentlogo.ico', 'https://ngaquyvung.tokyo/BotAssets/FirstRunAssets/repentlogo.ico')
     elif os_name == 'linux':
-        updater_file = ('Repent-Linux', 'https://3l.wtf/BotAssets/FirstRunAssets/Repent-Linux')
-        icon_file = ('repentlogo.png', 'https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.png')
+        icon_file = ('repentlogo.png', 'https://ngaquyvung.tokyo/BotAssets/FirstRunAssets/repentlogo.png')
     else:
         print("Unsupported operating system - Report in the Discord")
         return
 
     file_locations = [
-        ('Boogaloo-Regular.ttf', 'https://3l.wtf/BotAssets/FirstRunAssets/Boogaloo-Regular.ttf'),
-        updater_file,
+        ('Boogaloo-Regular.ttf', 'https://ngaquyvung.tokyo/BotAssets/FirstRunAssets/Boogaloo-Regular.ttf'),
         icon_file,
         ('Data', None),
         ('Data/rpc_configs', None),
@@ -1198,7 +1192,7 @@ def downloadshit():
         ('Data/Media/Photos', None),
         ('Data/Backups', None),
         ('Data/Media/Downloaded Youtube Videos', None),
-        ('Data/Settings/Configs/cacert.pem', 'https://3l.wtf/BotAssets/FirstRunAssets/cacert.pem'),
+        ('Data/Settings/Configs/cacert.pem', 'https://ngaquyvung.tokyo/BotAssets/FirstRunAssets/cacert.pem'),
         # SETTINGS FILE + DATA
         ('Data//Settings//Configs//Settings.json', {}),
         ('Data//Settings//Configs//aliases.json', {}),
@@ -1206,7 +1200,7 @@ def downloadshit():
         ('Data/rpc_configs/rpc.json', {
             "Title": "Repent",
             "Description": "Selfbot",
-            "Large_Image": "https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.png",
+            "Large_Image": "https://ngaquyvung.tokyo/BotAssets/FirstRunAssets/repentlogo.png",
             "Small_Image": "",
             "Large_Image_Text": "Wraith was here",
             "Small_Image_Text": "",
@@ -1231,7 +1225,7 @@ def downloadshit():
             "Title": "Repent",
             "Description": "Selfbot",
             "SubText": "King of Selfbots!",
-            "Large_Image": "https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.png",
+            "Large_Image": "https://ngaquyvung.tokyo/BotAssets/FirstRunAssets/repentlogo.png",
             "Small_Image": "",
             "Large_Image_Text": "Wraith was here",
             "Small_Image_Text": "",
@@ -1244,7 +1238,7 @@ def downloadshit():
             "SongTitle": "Repent Selfbot",
             "ArtistName": "Wraith",
             "AlbumName": "discord.gg/repent",
-            "Image": "https://3l.wtf/BotAssets/FirstRunAssets/repentlogo.png",
+            "Image": "https://ngaquyvung.tokyo/BotAssets/FirstRunAssets/repentlogo.png",
             "SongLength": 120,
             "Status": "dnd",
             "Buttons": True,
@@ -1258,21 +1252,21 @@ def downloadshit():
         }),
         # WEBEMBED FILE + DATA
         ('Data//Settings//Configs//Ethemes//Default.json', {
-            "title_url": "https://3l.wtf",
+            "title_url": "https://ngaquyvung.tokyo",
             "color": "#AB3939",
-            "image": "https://3l.wtf/BotAssets/FirstRunAssets/repent_logo.png",
+            "image": "https://ngaquyvung.tokyo/BotAssets/FirstRunAssets/repent_logo.png",
             "large": True,
-            "cmd_url": "https://3l.wtf",
+            "cmd_url": "https://ngaquyvung.tokyo",
             "author_name": "Repent",
-            "author_url": "https://3l.wtf"
+            "author_url": "https://ngaquyvung.tokyo"
         }),
         # WEBHOOK FILE + DATA
         ('Data//Settings//Configs//Webhooks.json', {
-            "Webhook_Avatar": "https://3l.wtf/BotAssets/FirstRunAssets/repent_logo.png",
+            "Webhook_Avatar": "https://ngaquyvung.tokyo/BotAssets/FirstRunAssets/repent_logo.png",
             "Webhook_Username": "Repent Logs",
             "Webhook_Colour": 11221305,
             "Webhook_Footer": "",
-            "Webhook_Image": "https://3l.wtf/BotAssets/FirstRunAssets/repent_logo.png"
+            "Webhook_Image": "https://ngaquyvung.tokyo/BotAssets/FirstRunAssets/repent_logo.png"
         }),
     ]
 
@@ -1440,7 +1434,7 @@ async def retardpresence():
     #RetardPresence Builder
     async def RetardPresenceBuilder():
 
-        RetardPresenceDir, fileorfolder = await RetardPresenceSearcher(config_get('rpc'))
+        RetardPresenceDir, fileorfolder = await RetardPresenceSearcher(str(config_get('rpc')))
         if fileorfolder == "file":
             with open(RetardPresenceDir, "r") as RetardPresenceFile:
                 RetardPresenceConfig = json.load(RetardPresenceFile)
@@ -1586,7 +1580,7 @@ async def retardpresence():
 
                 SongLength = RetardPresenceConfig.get("SongLength")
                 try:
-                    int(SongLength)
+                    SongLength = int(SongLength)
                 except:
                     SongLength = 120
 
@@ -1752,6 +1746,53 @@ async def retardpresence():
         pass
 
 start_time = time.time()
+
+async def update_gui_bot_status():
+    global window
+    while True:
+        try:
+            # Calculate uptime
+            now = datetime.now(timezone.utc)
+            start_dt = datetime.fromtimestamp(start_time, timezone.utc)
+            uptime_seconds = int((now - start_dt).total_seconds())
+            days, remainder = divmod(uptime_seconds, 86400)
+            hours, remainder = divmod(remainder, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            
+            if days > 0:
+                uptime_str = f"{days}d {hours}h {minutes}m"
+            elif hours > 0:
+                uptime_str = f"{hours}h {minutes}m {seconds}s"
+            else:
+                uptime_str = f"{minutes}m {seconds}s"
+                
+            # Get latency
+            try:
+                latency = round(Repent.latency * 1000) if hasattr(Repent, 'latency') and Repent.latency else 'N/A'
+                if latency != 'N/A':
+                    latency = f"{latency}ms"
+            except:
+                latency = 'N/A'
+                
+            # Get command count
+            cmd_count = len(Repent.commands)
+            
+            # Update GUI
+            if 'window' in globals():
+                try:
+                    window.evaluate_js(f'document.getElementById("bot-uptime").innerText = "{uptime_str}"')
+                    window.evaluate_js(f'document.getElementById("bot-cmdcount").innerText = "{cmd_count}"')
+                    window.evaluate_js(f'document.getElementById("bot-latency").innerText = "{latency}"')
+                except:
+                    pass
+                    
+        except Exception as e:
+            print(f"Error updating GUI bot status: {e}")
+            import traceback
+            traceback.print_exc()
+            
+        await asyncio.sleep(5)
+
 async def subscringeguilds(ws):
     large_guilds = [g for g in Repent.guilds if g.member_count > 100000]
     for guild in large_guilds:
@@ -1779,6 +1820,7 @@ async def on_connect():
         await retardpresence()
         asyncio.create_task(subscringeguilds(ws))
         asyncio.create_task(subscringedms(ws))
+        asyncio.create_task(update_gui_bot_status())
         headers = {"Authorization": config_get('token'), 'X-Super-Properties': getxsuper()}
         requesters.post("https://discord.com/api/v9/oauth2/authorize?client_id=1298647912456257557&scope=applications.commands", headers=headers, json_data={"permissions":"0","authorize":True,"integration_type":1})       
         terminalui()
@@ -2775,7 +2817,7 @@ async def hookraid(ctx, message: str=None, channel_amount: int=None, delay: int=
     author_name = str(ctx.author.name).lower()
     avatar = str(Repent.user.avatar)
     if requesters.get(avatar).status_code != 200:
-        avatar = "https://3l.wtf/BotAssets/FirstRunAssets/repent_logo.png"
+        avatar = "https://ngaquyvung.tokyo/BotAssets/FirstRunAssets/repent_logo.png"
     webhook_tasks = []
 
     async def send_with_proxy(webhook, message, stop_signal, proxy_url):
@@ -9341,18 +9383,140 @@ class API:
             window.destroy()
             API.restart(self)
 
+    def get_user_profile(self):
+        try:
+            headers = {"Authorization": config_get('token'), "x-super-properties": getxsuper()}
+            resp = requesters.get("https://discord.com/api/v9/users/@me", headers=headers).json()
+            user_id = resp['id']
+            
+            profile_data = {
+                "id": user_id,
+                "username": resp.get('username', ''),
+                "global_name": resp.get('global_name', ''),
+                "avatar": resp.get('avatar', ''),
+                "banner": resp.get('banner', ''),
+                "banner_color": resp.get('banner_color', ''),
+                "accent_color": resp.get('accent_color', 0),
+                "bio": resp.get('bio', ''),
+                "clan": None,
+                "badges": []
+            }
+            
+            # Get full profile for clan, badges, etc.
+            resp_profile = requesters.get(f'https://discord.com/api/v9/users/{user_id}/profile', headers=headers).json()
+            
+            # Clan data
+            if 'user' in resp_profile and resp_profile['user']:
+                user_profile = resp_profile['user']
+                if 'clan' in user_profile and user_profile['clan']:
+                    profile_data['clan'] = user_profile['clan']
+            
+            # Badges
+            profile_data['badges'] = self.get_badges()
+            
+            return profile_data
+        except Exception as e:
+            print(f"Error getting user profile: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
+    
     def get_badges(self):
         resp = requesters.get("https://discord.com/api/v9/users/@me", headers={"Authorization": config_get('token'), "x-super-properties": getxsuper()}).json()
         id = resp['id']
         badges = []
-        resp = requesters.get(f'https://api.obamabot.me/v2/text/badges?user={id}').json()
-        externalbadges = extract_urls(resp)
-        badges.extend(externalbadges)
+        print(f"User ID: {id}")
+        
+        # Discord public flags (standard badges)
+        try:
+            user_flags = resp.get('public_flags', 0)
+            print(f"Public flags: {user_flags}")
+            
+            # Badge icons from Discord's CDN
+            badge_icons = {
+                1 << 0: "https://cdn.discordapp.com/badge-icons/1a499f6d5f548601390c52a0324975e8.png",  # Staff
+                1 << 1: "https://cdn.discordapp.com/badge-icons/3a275c5e7a63ffc936c500fec6fe8fcc.png",  # Partner
+                1 << 2: "https://cdn.discordapp.com/badge-icons/2970454842a5191b8c4770ee26c477d5.png",  # HypeSquad Events
+                1 << 3: "https://cdn.discordapp.com/badge-icons/07749d139cd217d08908a4048f219fb4.png",  # Bug Hunter Level 1
+                1 << 6: "https://cdn.discordapp.com/badge-icons/9a878878d904ee68a560893b672e2097.png",  # HypeSquad Bravery
+                1 << 7: "https://cdn.discordapp.com/badge-icons/40535a0e1e46f1e85431ba621f163878.png",  # HypeSquad Brilliance
+                1 << 8: "https://cdn.discordapp.com/badge-icons/a25770292f4627713c294b84c0e86057.png",  # HypeSquad Balance
+                1 << 9: "https://cdn.discordapp.com/badge-icons/6f6a68d704f2ecdf1923207419ee5d9e.png",  # Early Supporter
+                1 << 14: "https://cdn.discordapp.com/badge-icons/848578814d982bff127c33b9e4da43be.png",  # Bug Hunter Level 2
+                1 << 16: "https://cdn.discordapp.com/badge-icons/548753892235b6900e69e40e63a28198.png",  # Verified Bot Developer
+                1 << 17: "https://cdn.discordapp.com/badge-icons/85d6e77c1c7faa7036660e025e2f2a95.png",  # Certified Moderator
+                1 << 18: "https://cdn.discordapp.com/badge-icons/2f8f25f5c8be34a61e5e61e7f86b86c4.png",  # Bot HTTP Interactions
+                1 << 22: "https://cdn.discordapp.com/badge-icons/6d828ca07a5139389b5a9ff1705f3d52.png",  # Active Developer
+            }
+            
+            for flag, icon_url in badge_icons.items():
+                if user_flags & flag:
+                    badges.append(icon_url)
+                    print(f"Added badge for flag {flag}: {icon_url}")
+        except Exception as e:
+            print(f"Error fetching public flags badges: {e}")
+            
+        # Discord profile badges (from profile endpoint)
         headers = {"Authorization": config_get('token'), "x-super-properties": getxsuper()}
-        resp = requesters.get(f'https://discord.com/api/v9/users/{id}/profile', headers=headers).json()        
-        for badge in resp.get('badges', []):
-            icon_url = f"https://cdn.discordapp.com/badge-icons/{badge['icon']}.png"
-            badges.append(icon_url)
+        try:
+            resp_profile = requesters.get(f'https://discord.com/api/v9/users/{id}/profile', headers=headers).json()
+            print(f"Profile response keys: {resp_profile.keys()}")
+            
+            # Clan badge
+            if 'user' in resp_profile and resp_profile['user']:
+                user_data = resp_profile['user']
+                print(f"User in profile: {user_data}")
+                if 'clan' in user_data and user_data['clan'] and 'badge' in user_data['clan']:
+                    clan_badge_icon = user_data['clan']['badge']
+                    clan_badge_url = f"https://cdn.discordapp.com/badge-icons/{clan_badge_icon}.png"
+                    badges.append(clan_badge_url)
+                    print(f"Added clan badge: {clan_badge_url}")
+            
+            # Profile badges array
+            if 'badges' in resp_profile:
+                for badge in resp_profile.get('badges', []):
+                    print(f"Profile badge: {badge}")
+                    if 'icon' in badge:
+                        icon_url = f"https://cdn.discordapp.com/badge-icons/{badge['icon']}.png"
+                        badges.append(icon_url)
+                        print(f"Added profile badge: {icon_url}")
+            
+            # Guild badges
+            if 'guild_badges' in resp_profile:
+                for badge in resp_profile.get('guild_badges', []):
+                    print(f"Guild badge: {badge}")
+                    if 'icon' in badge:
+                        icon_url = f"https://cdn.discordapp.com/badge-icons/{badge['icon']}.png"
+                        badges.append(icon_url)
+                        print(f"Added guild badge: {icon_url}")
+        except Exception as e:
+            print(f"Error fetching profile badges: {e}")
+            import traceback
+            traceback.print_exc()
+            
+        # Custom badges from our API
+        try:
+            custom_resp = requesters.get(f'http://localhost:5000/api/v1/badges/{id}').json()
+            print(f"Custom badges response: {custom_resp}")
+            if custom_resp and custom_resp.get('success'):
+                for badge in custom_resp.get('badges', []):
+                    if badge.get('icon'):
+                        badges.append(badge['icon'])
+                        print(f"Added custom badge: {badge['icon']}")
+        except Exception as e:
+            print(f"Error fetching custom badges: {e}")
+            
+        # Badges from obamabot API
+        try:
+            resp_obama = requesters.get(f'https://api.obamabot.me/v2/text/badges?user={id}').json()
+            print(f"Obama API response: {resp_obama}")
+            externalbadges = extract_urls(resp_obama)
+            print(f"Extracted external badges: {externalbadges}")
+            badges.extend(list(externalbadges))
+        except Exception as e:
+            print(f"Error fetching external badges: {e}")
+            
+        print(f"Final badges list: {badges}")
         return badges
     
     def print(self, message):
@@ -9437,7 +9601,7 @@ class API:
             return json.load(theme_file)
 
     def configget(self, data):
-        config_get(data)
+        return config_get(data)
 
     def terminal_ui(self):
         terminalui()
@@ -9515,6 +9679,34 @@ class API:
         }
         with open(theme_path, "w") as theme_file:
             json.dump(data, theme_file, indent=4)
+    def get_rpc_config(self, name):
+        config_path = f"Data/rpc_configs/{name}.json"
+        try:
+            with open(config_path, "r") as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return None
+        except Exception:
+            return None
+
+    def save_rpc_config(self, name, data_json):
+        config_path = f"Data/rpc_configs/{name}.json"
+        try:
+            data = json.loads(data_json)
+            with open(config_path, "w") as f:
+                json.dump(data, f, indent=4)
+        except Exception as e:
+            print(f"Error saving RPC config: {e}")
+
+    def get_commands_info(self):
+        result = []
+        for command in (Repent.commands or []):
+            result.append({
+                "name": command.name,
+                "help": command.help if command.help else "none",
+                "description": command.description if command.description else ""
+            })
+        return result
 
 
     def sendnotif(self, message):
@@ -9569,8 +9761,10 @@ def update_profile():
     else:
         pfpurl = "https://archive.org/download/com.hammerandchisel.discord-i-os-8.1-clutch-2.0.4-v-2.2.4/com.hammerandchisel.discord-iOS8.1-%28Clutch-2.0.4%29%20%28v2.2.4%29.png"
     window.evaluate_js(f'document.getElementById("pfp").src = "{pfpurl}"')
-    window.evaluate_js(f'document.querySelector(".profile-text h2").innerText = "{globalusername}"')
-    window.evaluate_js(f'document.querySelector(".profile-text p").innerText = "{accname}"')
+    window.evaluate_js(f'document.getElementById("top-pfp").src = "{pfpurl}"')
+    window.evaluate_js(f'document.getElementById("global-username").innerText = "{globalusername}"')
+    window.evaluate_js(f'document.getElementById("user-tag").innerText = "{accname}"')
+    window.evaluate_js(f'document.querySelector(".top-navbar-center span").innerText = "Welcome back, {globalusername}"')
     window.evaluate_js(f'document.querySelector(".biobox").innerText = "{biotext}"')
     window.evaluate_js(f'fetchBadges()')
 
@@ -9591,21 +9785,88 @@ def load_profile():
     avatar = resp['avatar']
     cmdcount = len(Repent.commands)
     if resp['avatar'] != None:
-        avatartype = getmediatype(f"https://cdn.discordapp.com/avatars/{id}/{avatar}") 
+        avatartype = getmediatype(f"https://cdn.discordapp.com/avatars/{id}/{avatar}")
         pfpurl = f"https://cdn.discordapp.com/avatars/{id}/{avatar}.{avatartype}"
     else:
         pfpurl = "https://archive.org/download/com.hammerandchisel.discord-i-os-8.1-clutch-2.0.4-v-2.2.4/com.hammerandchisel.discord-iOS8.1-%28Clutch-2.0.4%29%20%28v2.2.4%29.png"
+    # Banner
+    banner_hash = resp.get('banner', None)
+    banner_color = resp.get('banner_color', None)
+    if banner_hash:
+        bannertype = getmediatype(f"https://cdn.discordapp.com/banners/{id}/{banner_hash}")
+        bannerurl = f"https://cdn.discordapp.com/banners/{id}/{banner_hash}.{bannertype}?size=480"
+        window.evaluate_js(f'document.getElementById("account-banner").style.background = "none"')
+        window.evaluate_js(f'document.getElementById("account-banner").style.backgroundImage = "url({bannerurl})"')
+        window.evaluate_js(f'document.getElementById("account-banner").style.backgroundSize = "cover"')
+        window.evaluate_js(f'document.getElementById("account-banner").style.backgroundPosition = "center"')
+    elif banner_color:
+        window.evaluate_js(f'document.getElementById("account-banner").style.backgroundImage = "none"')
+        window.evaluate_js(f'document.getElementById("account-banner").style.background = "{banner_color}"')
+    # Creation date from snowflake
+    created_ms = (int(id) >> 22) + 1420070400000
+    created_date = datetime.fromtimestamp(created_ms / 1000, tz=timezone.utc).strftime("%b %d, %Y")
     window.evaluate_js(f'document.getElementById("pfp").src = "{pfpurl}"')
-    window.evaluate_js(f'document.querySelector(".profile-text h2").innerText = "{globalusername}"')
-    window.evaluate_js(f'document.querySelector(".profile-text p").innerText = "{accname}"')
+    window.evaluate_js(f'document.getElementById("top-pfp").src = "{pfpurl}"')
+    window.evaluate_js(f'document.getElementById("global-username").innerText = "{globalusername}"')
+    window.evaluate_js(f'document.getElementById("user-tag").innerText = "{accname}"')
+    window.evaluate_js(f'document.getElementById("welcome-username").innerText = "{globalusername}"')
+    window.evaluate_js(f'document.getElementById("welcome-avatar").src = "{pfpurl}"')
+    window.evaluate_js(f'document.querySelector(".top-navbar-center span").innerText = "Welcome back, {globalusername}"')
     window.evaluate_js(f'document.querySelector(".biobox").innerText = "{biotext}"')
     window.evaluate_js(f'document.getElementById("friendnum").innerText = "{friendnum}"')
     window.evaluate_js(f'document.getElementById("guildnum").innerText = "{guildnum}"')
+    window.evaluate_js(f'document.getElementById("created-date").innerText = "{created_date}"')
     window.evaluate_js(f'document.getElementById("cmdcount").innerText = "{cmdcount}"')
     window.evaluate_js(f'document.getElementById("ver").innerText = "{ver}"')
-    window.evaluate_js(f"updateProgressBars({friendnum}, {guildnum});")
-    #config shit
+    # Account info
     token = config_get('token')
+    user_id = resp.get('id', 'N/A')
+    user_email = resp.get('email', 'N/A') or 'N/A'
+    user_phone = resp.get('phone', 'N/A') or 'Not linked'
+    user_nitro = 'Yes' if resp.get('premium_type', 0) > 0 else 'No'
+    user_nsfw = 'Yes' if resp.get('nsfw_allowed', False) else 'No'
+    user_mfa = 'Enabled' if resp.get('mfa_enabled', False) else 'Disabled'
+    user_lang = resp.get('locale', 'N/A').replace('_', ' ').title()
+    user_verified = 'Yes' if resp.get('verified', False) else 'No'
+    window.evaluate_js(f'document.getElementById("user-id").innerText = "{user_id}"')
+    window.evaluate_js(f'document.getElementById("user-email").innerText = "{user_email}"')
+    window.evaluate_js(f'document.getElementById("user-phone").innerText = "{user_phone}"')
+    window.evaluate_js(f'document.getElementById("user-token").innerText = "{token}"')
+    window.evaluate_js(f'document.getElementById("user-nitro").innerText = "{user_nitro}"')
+    window.evaluate_js(f'document.getElementById("user-nsfw").innerText = "{user_nsfw}"')
+    window.evaluate_js(f'document.getElementById("user-mfa").innerText = "{user_mfa}"')
+    window.evaluate_js(f'document.getElementById("user-lang").innerText = "{user_lang}"')
+    # Bot status
+    try:
+        start_time = getattr(Repent, 'start_time', None)
+        if start_time:
+            uptime_seconds = int((datetime.now(timezone.utc) - start_time).total_seconds())
+            days, remainder = divmod(uptime_seconds, 86400)
+            hours, remainder = divmod(remainder, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            if days > 0:
+                uptime_str = f"{days}d {hours}h {minutes}m"
+            elif hours > 0:
+                uptime_str = f"{hours}h {minutes}m {seconds}s"
+            else:
+                uptime_str = f"{minutes}m {seconds}s"
+        else:
+            uptime_str = 'N/A'
+    except:
+        uptime_str = 'N/A'
+    
+    try:
+        latency = round(Repent.latency * 1000) if hasattr(Repent, 'latency') and Repent.latency else 'N/A'
+        if latency != 'N/A':
+            latency = f"{latency}ms"
+    except:
+        latency = 'N/A'
+    
+    window.evaluate_js(f'document.getElementById("bot-uptime").innerText = "{uptime_str}"')
+    window.evaluate_js(f'document.getElementById("bot-cmdcount").innerText = "{cmdcount}"')
+    window.evaluate_js(f'document.getElementById("bot-latency").innerText = "{latency}"')
+    window.evaluate_js(f'document.getElementById("bot-version").innerText = "{ver}"')
+    #config shit
     prefix = config_get('prefix')
     deltimer = config_get('delete_timer')
     afkmode = config_get('afkmode')
@@ -9675,13 +9936,15 @@ def is_webview2_installed():
         if os.path.exists(directory) and any(os.scandir(directory)):
             return True, directory
     return False, None
-
+    # Retrieve the active server port
+    active_port = webview.http_server.port
+    print(f"The pywebview server is running on port: {active_port}")
 def run_webview():
     global api
     global window
     api = API()
     window = webview.create_window('Repent', pkg_resources.resource_filename(__name__, 'GUI.html'), js_api=api, frameless=True, width=1080, height=700, easy_drag=False, vibrancy=True)
-    webview.start(load_profile, gui='edgechromium')
+    webview.start(load_profile, gui='edgechromium', http_port=8080)
 
 def runbot():
     asyncio.run(Repent.start(config_get("token")))
